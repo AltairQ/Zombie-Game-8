@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public GameObject player;
+    public GameObject player = null;
     public float rotation = 0, distance = 5, distance_y = 10;
 
 	// Use this for initialization
 	void Start ()
     {
-		
+		if(player == null)
+        {
+            player = GameSystem.Get().Player;
+        }
 	}
 	
 	// Update is called once per frame

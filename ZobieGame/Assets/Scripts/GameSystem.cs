@@ -25,8 +25,9 @@ public class GameSystem : MonoBehaviour
     [SerializeField]
     private GameObject _zombiePrefab;
 
-    private GameObject _player;
-    private List<GameObject> _zombies;
+    private GameObject _player = null;
+    public GameObject Player { get { return _player; } }
+    private List<GameObject> _zombies = new List<GameObject>();
 
     public void StartGame()
     {
@@ -42,6 +43,7 @@ public class GameSystem : MonoBehaviour
         {
             Destroy(zombie);
         }
+        _zombies.Clear();
     }
 
 
@@ -49,7 +51,9 @@ public class GameSystem : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Z))
         {
-            SpawnZombie(_player.transform.position + Random.insideUnitSphere * 5);
+            Vector2 randomShift = Random.insideUnitCircle * 3;
+            Vector3 shiftPos = new Vector3(randomShift.x, 0, randomShift.y);
+            SpawnZombie(_player.transform.position + shiftPos);
         }
     }
 
