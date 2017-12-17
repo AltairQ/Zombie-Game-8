@@ -2,3 +2,6 @@
 ZobieGame/Library/
 ZobieGame/Temp/
 ZobieGame/.vs/
+ZobieGame/ZobieGame.csproj
+ZobieGame/ZobieGame.sln
+ZobieGame/ZobieGame.Editor.csproj
