@@ -4,23 +4,23 @@ using UnityEngine;
 
 public class ZombieScript : MonoBehaviour
 {
-    float health;
+    float _health;
 
     public void Damage(float damage)
     {
-        health -= damage;
+        _health -= damage;
     }
 
 	// Use this for initialization
 	void Start ()
     {
-        health = 100;
+        _health = 100;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-		if(health <= 0)
+		if(_health <= 0)
         {
             Destroy(this.gameObject);
         }

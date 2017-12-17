@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public GameObject player = null;
-    public float rotation = 0, distance = 5, distance_y = 10;
+    private GameObject _player = null;
+    public float _rotation = 0, _distance = 5, _distance_y = 10;
 
 	// Use this for initialization
 	void Start ()
     {
-		if(player == null)
+		if(_player == null)
         {
-            player = GameSystem.Get().Player;
+            _player = GameSystem.Get().Player;
         }
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        rotation = transform.rotation.eulerAngles.y;
-        transform.position = player.transform.position + new Vector3(-Mathf.Sin(rotation * Mathf.Deg2Rad) * distance, distance_y, -Mathf.Cos(rotation * Mathf.Deg2Rad) * distance);
+        _rotation = transform.rotation.eulerAngles.y;
+        transform.position = _player.transform.position + new Vector3(-Mathf.Sin(_rotation * Mathf.Deg2Rad) * _distance, _distance_y, -Mathf.Cos(_rotation * Mathf.Deg2Rad) * _distance);
 	}
 }

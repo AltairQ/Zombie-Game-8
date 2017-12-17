@@ -5,24 +5,24 @@ using UnityEngine.AI;
 
 public class ZombieController : MonoBehaviour
 {
-    Rigidbody rb;
-    NavMeshAgent nv;
+    Rigidbody _rb;
+    NavMeshAgent _nv;
 
 	// Use this for initialization
 	void Start ()
     {
-        rb = GetComponent<Rigidbody>();
-        nv = GetComponent<NavMeshAgent>();
+        _rb = GetComponent<Rigidbody>();
+        _nv = GetComponent<NavMeshAgent>();
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        nv.SetDestination(GlobalVariables.Get().player.transform.position);
+        _nv.SetDestination(GameSystem.Get().Player.transform.position);
 	}
 
     void FixedUpdate()
     {
-        rb.MovePosition(transform.position);
+//        rb.MovePosition(transform.position);
     }
 }
