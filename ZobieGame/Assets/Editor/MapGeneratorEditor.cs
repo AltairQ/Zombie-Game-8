@@ -21,7 +21,7 @@ public class MapGeneratorEditor : Editor
         _height = EditorGUILayout.Slider("Height", _height, 1, 4);
         _depth = EditorGUILayout.IntSlider("Depth", _depth, 5, 50);
 
-        if (GUILayout.Button("Click"))
+        if (GUILayout.Button("Generate"))
         {
             _mapGen.GenerateHouse(_width, _height, _depth);
         }
