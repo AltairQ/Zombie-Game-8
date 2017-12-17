@@ -4,13 +4,33 @@ using UnityEngine;
 
 public class WeaponScript : MonoBehaviour
 {
-    public GameObject bullet;
-    public GameObject barrel_end;
-    public float cooldown, reload_speed, damage;
-    public int spread, bullet_count, magazine_size, bullets_left;
-    System.Random rnd = new System.Random();
+    [SerializeField]
+    private GameObject _bullet;
+    [SerializeField]
+    private GameObject _bulletImage;
+    [SerializeField]
+    private GameObject _barrelEnd;
+    [SerializeField]
+    private float _cooldown, _reloadSpeed, _damage;
+    [SerializeField]
+    private int _spread, _bulletCount, _magazineSize, _bulletsLeft;
+    System.Random _rnd = new System.Random();
 
-    float current_cooldown, current_reload;
+    float _currentCooldown, _currentReload;
+
+    public void InitUI()
+    {
+        foreach (Transform child in GameSystem.Get().MainCanvas.transform.GetChild(0).transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        for (int i = 0; i < _magazineSize; i++)
+        {
+            GameObject newBullet = Instantiate(_bulletImage, GameSystem.Get().MainCanvas.transform.GetChild(0));
+            newBullet.transform.Translate(i * 8, 0, 0);
+        }
+    }
 
 	// Use this for initialization
 	void Start ()
@@ -20,32 +40,44 @@ public class WeaponScript : MonoBehaviour
 
     public void Shoot()
     {
-        if(current_cooldown <= 0 && bullets_left > 0 && current_reload <= 0)
+        if(_currentCooldown <= 0 && _bulletsLeft > 0 && _currentReload <= 0)
         {
-            for(int i = 0; i < bullet_count; i++)
+            for(int i = 0; i < _bulletCount; i++)
             {
-                GameObject new_bullet = Instantiate(bullet, barrel_end.transform.position, transform.rotation);
-                new_bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y + rnd.Next(-spread, spread), damage);
+                GameObject new__bullet = Instantiate(_bullet, _barrelEnd.transform.position, transform.rotation);
+                new__bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y + _rnd.Next(-_spread, _spread), _damage);
             }
 
-            bullets_left--;
-            current_cooldown = cooldown;
+            _bulletsLeft--;
+            _currentCooldown = _cooldown;
+            GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.active = false;
         }
     }
 
     public void Reload()
     {
-        if(current_reload <= 0 && bullets_left < magazine_size)
+        if(_currentReload <= 0 && _bulletsLeft < _magazineSize)
         {
-            bullets_left = magazine_size;
-            current_reload = reload_speed;
+/*
+            foreach(Transform child in GameSystem.Get().MainCanvas.transform.GetChild(0).transform)
+            {
+                child.gameObject.active = true;
+            }
+*/
+            _bulletsLeft = _magazineSize;
+            _currentReload = _reloadSpeed;
         }
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        current_reload -= Time.deltaTime;
-        current_cooldown -= Time.deltaTime;
+        if(_currentReload > 0)
+        {
+            _currentReload -= Time.deltaTime;
+            GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(Mathf.Min((int)((1 - (_currentReload / _reloadSpeed)) * _magazineSize), _magazineSize - 1)).gameObject.active = true;
+        }
+        if (_currentCooldown > 0)
+            _currentCooldown -= Time.deltaTime;
     }
 }
