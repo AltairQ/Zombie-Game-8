@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    float movement_speed = 1.0f;
+    float _movementSpeed = 1.0f;
     Rigidbody rb;
-    Vector3 movement = new Vector3();
+    Vector3 _movement = new Vector3();
 
-    public float direction;
-
-    public KeyCode ForwardKey = KeyCode.W;
-    public KeyCode BackKey = KeyCode.S;
-    public KeyCode LeftKey = KeyCode.A;
-    public KeyCode RightKey = KeyCode.D;
-    public KeyCode RotateLeft = KeyCode.Q;
-    public KeyCode RotateRight = KeyCode.E;
+    [SerializeField]
+    private KeyCode _ForwardKey = KeyCode.W;
+    [SerializeField]
+    private KeyCode _BackKey = KeyCode.S;
+    [SerializeField]
+    private KeyCode _LeftKey = KeyCode.A;
+    [SerializeField]
+    private KeyCode _RightKey = KeyCode.D;
 
     // Use this for initialization
     void Start ()
@@ -26,19 +26,18 @@ public class PlayerController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        bool moving = false;
-        movement = new Vector3(0, 0, 0);
+        _movement = new Vector3(0, 0, 0);
         int MX = 0, MZ = 0;
 
         float rotation = transform.rotation.eulerAngles.y;
 
-        if (Input.GetKey(ForwardKey))
+        if (Input.GetKey(_ForwardKey))
             MZ = 1;
-        if (Input.GetKey(BackKey))
+        if (Input.GetKey(_BackKey))
             MZ = -1;
-        if (Input.GetKey(RightKey))
+        if (Input.GetKey(_RightKey))
             MX = -1;
-        if (Input.GetKey(LeftKey))
+        if (Input.GetKey(_LeftKey))
             MX = 1;
 
         transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.eulerAngles.x, rotation, transform.rotation.eulerAngles.z));
@@ -50,11 +49,11 @@ public class PlayerController : MonoBehaviour
                     movement = new Vector3(Mathf.Sin(Mathf.Deg2Rad * new_rotation) * movement_speed, 0.0f, Mathf.Cos(Mathf.Deg2Rad * new_rotation) * movement_speed);
         */
 
-        movement = new Vector3(-MX * movement_speed, 0.0f, MZ * movement_speed);
+        _movement = new Vector3(-MX * _movementSpeed, 0.0f, MZ * _movementSpeed);
     }
 
     private void FixedUpdate()
     {
-        rb.MovePosition(transform.position + movement * 0.1f);
+        rb.MovePosition(transform.position + _movement * 0.1f);
     }
 }

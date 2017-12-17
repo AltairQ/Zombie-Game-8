@@ -4,23 +4,45 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    public GameObject Weapon;
-    public KeyCode ShootKey = KeyCode.Mouse0;
-    public Camera camera;
-    public float angle_x, angle_y;
-    PlayerController controller;
+    [SerializeField]
+    private GameObject _weapon;
+
+    [SerializeField]
+    private KeyCode _ShootKey = KeyCode.Mouse0;
+    [SerializeField]
+    private KeyCode _PickUpKey = KeyCode.E;
+
+    [SerializeField]
+    public Camera _camera;
+
+    [SerializeField]
+    public float _angleX, _angleY;
+    PlayerController _controller;
 
     // Use this for initialization
     void Start ()
     {
-        controller = GetComponent<PlayerController>();
+        _controller = GetComponent<PlayerController>();
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Weapon") && Input.GetKey(_PickUpKey))
+        {
+            _weapon = other.gameObject;
+            _weapon.GetComponent<BoxCollider>().enabled = false;
+            _weapon.transform.SetParent(transform);
+            _weapon.transform.position = transform.position + new Vector3(0.5f, 0.0f, -0.25f);
+            _weapon.transform.rotation = transform.rotation;
+            _weapon.GetComponent<WeaponScript>().InitUI();
+        }
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
         RaycastHit hit;
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out hit))
         {
@@ -28,22 +50,22 @@ public class PlayerScript : MonoBehaviour
 
             Vector3 rotation = transform.rotation.eulerAngles;
 
-            angle_y = Mathf.Atan2(hit.point.x - transform.position.x, hit.point.z - transform.position.z);
-            angle_x = Mathf.Atan2(hit.point.y - transform.position.y, Vector3.Distance(transform.position, hit.point));
+            _angleY = Mathf.Atan2(hit.point.x - transform.position.x, hit.point.z - transform.position.z);
+            _angleX = Mathf.Atan2(hit.point.y - transform.position.y, Vector3.Distance(transform.position, hit.point));
 
-            angle_y *= Mathf.Rad2Deg;
-            angle_x *= Mathf.Rad2Deg;
+            _angleY *= Mathf.Rad2Deg;
+            _angleX *= Mathf.Rad2Deg;
 
-            transform.rotation = Quaternion.Euler(new Vector3(0, angle_y, 0));
+            transform.rotation = Quaternion.Euler(new Vector3(0, _angleY, 0));
         }
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.R) && _weapon != null)
         {
-            Weapon.GetComponent<WeaponScript>().Reload();
+            _weapon.GetComponent<WeaponScript>().Reload();
         }
-        if (Input.GetKey(ShootKey))
+        if (Input.GetKey(_ShootKey) && _weapon != null)
         {
-            Weapon.GetComponent<WeaponScript>().Shoot();
+            _weapon.GetComponent<WeaponScript>().Shoot();
         }
     }
 }
