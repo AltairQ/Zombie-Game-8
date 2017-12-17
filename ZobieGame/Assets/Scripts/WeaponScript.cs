@@ -14,9 +14,22 @@ public class WeaponScript : MonoBehaviour
     private float _cooldown, _reloadSpeed, _damage;
     [SerializeField]
     private int _spread, _bulletCount, _magazineSize, _bulletsLeft;
+    [SerializeField]
+    private bool _primary;
+    public bool Primary{ get { return _primary; } }
     System.Random _rnd = new System.Random();
 
-    float _currentCooldown, _currentReload;
+    public float CurrentReload { get { return _currentReload; } }
+    private float _currentReload;
+    private float _currentCooldown;
+
+    public static void ClearUI()
+    {
+        foreach (Transform child in GameSystem.Get().MainCanvas.transform.GetChild(0).transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
 
     public void InitUI()
     {
@@ -29,6 +42,8 @@ public class WeaponScript : MonoBehaviour
         {
             GameObject newBullet = Instantiate(_bulletImage, GameSystem.Get().MainCanvas.transform.GetChild(0));
             newBullet.transform.Translate(i * 8, 0, 0);
+            if (i >= _bulletsLeft)
+                newBullet.active = false;
         }
     }
 
@@ -45,7 +60,7 @@ public class WeaponScript : MonoBehaviour
             for(int i = 0; i < _bulletCount; i++)
             {
                 GameObject new__bullet = Instantiate(_bullet, _barrelEnd.transform.position, transform.rotation);
-                new__bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y + _rnd.Next(-_spread, _spread), _damage);
+                new__bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y + _rnd.Next(-_spread * 10, _spread * 10) / 10, _damage);
             }
 
             _bulletsLeft--;

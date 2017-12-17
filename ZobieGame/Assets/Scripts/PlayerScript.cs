@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _weapon;
+    private GameObject _weaponPrimary, _weaponSecondary, _weapon;
 
     [SerializeField]
     private KeyCode _ShootKey = KeyCode.Mouse0;
@@ -19,28 +20,98 @@ public class PlayerScript : MonoBehaviour
     public float _angleX, _angleY;
     PlayerController _controller;
 
+    private Vector3 _gunPos = new Vector3(0.1f, 0.0f, 0.75f);
+    private bool _primarySelected = false;
+    private Image _healthBar;
+    private float _health;
+
     // Use this for initialization
     void Start ()
     {
         _controller = GetComponent<PlayerController>();
-	}
+        _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
+        _health = 100;
+    }
+
+    public void Damage(float damage)
+    {
+        _health -= damage;
+    }
+
+    private void PickUpWeapon(GameObject weapon, bool primary)
+    {
+        weapon.GetComponent<BoxCollider>().enabled = false;
+        weapon.transform.SetParent(transform);
+        weapon.transform.rotation = transform.rotation;
+        weapon.transform.position = transform.position;
+        weapon.transform.Translate(_gunPos);
+        weapon.GetComponent<WeaponScript>().InitUI();
+
+        if (primary)
+        {
+            _weaponPrimary = weapon;
+//            _weapon = _weaponPrimary;
+        }
+        else
+        {
+            _weaponSecondary = weapon;
+//            _weapon = _weaponSecondary;
+        }
+
+        if (primary != _primarySelected)
+            SwitchWeapons();
+
+        _primarySelected = primary;
+
+        if (primary)
+            _weapon = _weaponPrimary;
+        else
+            _weapon = _weaponSecondary;
+
+        //        _weapon.GetComponent<WeaponScript>().InitUI();
+    }
+
+    private void DropWeapon(bool primary)
+    {
+        if(primary)
+        {
+            _weaponPrimary.GetComponent<BoxCollider>().enabled = true;
+            _weaponPrimary.transform.SetParent(null);
+            _weaponPrimary.transform.rotation = transform.rotation;
+            _weaponPrimary.transform.position = transform.position;
+            _weaponPrimary = null;
+        }
+        else
+        {
+            _weaponSecondary.GetComponent<BoxCollider>().enabled = true;
+            _weaponSecondary.transform.SetParent(null);
+            _weaponSecondary.transform.rotation = transform.rotation;
+            _weaponSecondary.transform.position = transform.position;
+            _weaponSecondary = null;
+        }
+    }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Weapon") && Input.GetKey(_PickUpKey))
+        if (other.CompareTag("Weapon") && Input.GetKeyDown(_PickUpKey))
         {
-            _weapon = other.gameObject;
-            _weapon.GetComponent<BoxCollider>().enabled = false;
-            _weapon.transform.SetParent(transform);
-            _weapon.transform.position = transform.position + new Vector3(0.5f, 0.0f, -0.25f);
-            _weapon.transform.rotation = transform.rotation;
-            _weapon.GetComponent<WeaponScript>().InitUI();
+            if (other.gameObject.GetComponent<WeaponScript>().Primary && _weaponPrimary != null)
+                DropWeapon(other.gameObject.GetComponent<WeaponScript>().Primary);
+            if (!other.gameObject.GetComponent<WeaponScript>().Primary && _weaponSecondary != null)
+                DropWeapon(other.gameObject.GetComponent<WeaponScript>().Primary);
+
+            PickUpWeapon(other.gameObject, other.gameObject.GetComponent<WeaponScript>().Primary);
         }
     }
 
     // Update is called once per frame
     void Update ()
     {
+        if (_health <= 0)
+            this.gameObject.active = false;
+
+        _healthBar.rectTransform.sizeDelta = new Vector2(_health, 10);
+
         RaycastHit hit;
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 
@@ -66,6 +137,51 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(_ShootKey) && _weapon != null)
         {
             _weapon.GetComponent<WeaponScript>().Shoot();
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SwitchWeapons();
+        }
+    }
+
+    void SwitchWeapons()
+    {
+        if(_weapon == null || (_weapon != null && _weapon.GetComponent<WeaponScript>().CurrentReload <= 0))
+        {
+            if (!_primarySelected)
+            {
+                if (_weapon != null)
+                {
+                    _weapon.transform.position = transform.position;
+                    _weapon.transform.Translate(new Vector3(0, -10, 0));
+                }
+                _weapon = _weaponPrimary;
+                if (_weapon != null)
+                {
+                    _weapon.GetComponent<WeaponScript>().InitUI();
+                    _weapon.transform.position = transform.position;
+                    _weapon.transform.Translate(_gunPos);
+                }
+            }
+            if (_primarySelected)
+            {
+                if (_weapon != null)
+                {
+                    _weapon.transform.position = transform.position;
+                    _weapon.transform.Translate(new Vector3(0, -10, 0));
+                }
+                _weapon = _weaponSecondary;
+                if (_weapon != null)
+                {
+                    _weapon.GetComponent<WeaponScript>().InitUI();
+                    _weapon.transform.position = transform.position;
+                    _weapon.transform.Translate(_gunPos);
+                }
+            }
+
+            if (_weapon == null)
+                WeaponScript.ClearUI();
+            _primarySelected = _primarySelected ? false : true;
         }
     }
 }
