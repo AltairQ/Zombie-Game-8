@@ -3,8 +3,21 @@ using System.Collections;
 
 public class MapGenerator : MonoBehaviour
 {
-    private int num = 0;
     public void GenerateHouse(float width, float height, float depth)
+    {
+        Clear();
+
+        float x = 0;
+        float z = 0;
+        Rect houseRect = new Rect(x-width/2, z-depth/2, width, depth);
+
+        House house = new House(houseRect, height);
+        GameObject houseGO = house.Generate();
+        houseGO.transform.parent = transform;
+    }
+
+    private int num = 0;
+    public void GenerateHouseOLD(float width, float height, float depth)
     {
         Clear();
 
