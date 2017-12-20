@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wall : MonoBehaviour {
+public class Wall {
     public const float WallDepth = 0.2f;
 
     private List<WallPart> _parts = new List<WallPart>();
@@ -13,27 +13,51 @@ public class Wall : MonoBehaviour {
         _parts.Add(new WallPart(p1, p2));
     }
 
-    public GameObject Generate()
+    public bool Overlaps(Rect rect)
+    {
+        foreach(var part in _parts)
+        {
+            if(rect.Overlaps(part.rect))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public GameObject Make()
     {
         GameObject go = new GameObject();
         go.name = "Wall";
         foreach(var part in _parts)
         {
-            var partGO = part.Generate(_height);
+            var partGO = part.Make(_height);
             partGO.transform.parent = go.transform;
         }
 
         return go;
     }
 
-    public void AddPart(Vector2 p1, Vector2 p2, PartType type)
+    public bool AddPart(Vector2 p1, Vector2 p2, PartType type)
     {
-        WallPart newPart = new WallPart(p1, p2, type);
-        var partToSplit = _parts.Find(part => part.rect.Contains(newPart.rect.center));
+        if(!Contains(p1,p2))
+        {
+            return false;
+        }
 
+        var partToSplit = _parts.Find(part => part.rect.ContainsE(p1) && part.rect.ContainsE(p2));
+        
+        WallPart newPart = new WallPart(p1, p2, type);
         var newAfterSplit = partToSplit.Split(newPart);
         _parts.Add(newPart);
         _parts.Add(newAfterSplit);
+
+        return true;
+    }
+
+    public bool Contains(Vector2 p1, Vector2 p2)
+    {
+        return _parts.Exists(part => part.rect.ContainsE(p1) && part.rect.ContainsE(p2));
     }
 
     public enum PartType
@@ -56,12 +80,12 @@ public class Wall : MonoBehaviour {
             float top = Mathf.Min(p1.y, p2.y);
             float width = Mathf.Abs(p1.x - p2.x);
             float height = Mathf.Abs(p1.y - p2.y);
-            if (width==0)
+            if (Mathf.Approximately(width, 0))
             {
                 width = WallDepth;
                 left -= WallDepth / 2;
             }
-            if (height == 0)
+            if (Mathf.Approximately(height, 0))
             {
                 height = WallDepth;
                 top -= WallDepth / 2;
@@ -70,7 +94,7 @@ public class Wall : MonoBehaviour {
             rect = new Rect(left, top, width, height);
         }
 
-        public GameObject Generate(float height)
+        public GameObject Make(float height)
         {
             float centerY = height / 2;
             float scaleH = height;
@@ -85,25 +109,39 @@ public class Wall : MonoBehaviour {
             go.transform.position = rect.Center(centerY);
             go.transform.localScale = rect.Scale(scaleH);
 
+            if(type == PartType.Window)
+            {
+                GameObject go2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                go2.name = "WallPart2: " + type;
+                go2.transform.position = rect.Center(height * 0.2f);
+                go2.transform.localScale = rect.Scale(height * 0.4f);
+
+                GameObject window = new GameObject();
+                window.name = "WindowPack";
+                go.transform.parent = window.transform;
+                go2.transform.parent = window.transform;
+
+                return window;
+            }
+
             return go;
         }
 
         // changes size of current object and returns other half
         public WallPart Split(WallPart part)
         {
-            if(rect.xMin == part.rect.xMin)
+            if(Mathf.Approximately(rect.xMin, part.rect.xMin))
             {
                 float firstEnd = part.rect.yMin;
                 float secondBeg = part.rect.yMax;
                 float secondEnd = rect.yMax;
                 rect.height = firstEnd - rect.yMin;
-
                 
                 Vector2 p1 = new Vector2(rect.xMin + WallDepth / 2, secondBeg);
                 Vector2 p2 = new Vector2(rect.xMin + WallDepth / 2, secondEnd);
                 return new WallPart(p1, p2, type);
             }
-            if (rect.yMin == part.rect.yMin)
+            if (Mathf.Approximately(rect.yMin, part.rect.yMin))
             {
                 float firstEnd = part.rect.xMin;
                 float secondBeg = part.rect.xMax;
@@ -116,6 +154,7 @@ public class Wall : MonoBehaviour {
                 return new WallPart(p1, p2, type);
             }
 
+            Debug.LogError("WallPart.Split(): null returning!");
             return null;
         }
     }
