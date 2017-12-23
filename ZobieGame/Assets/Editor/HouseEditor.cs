@@ -22,6 +22,10 @@ public class HouseEditor : Editor
         _house.MinRoomArea = EditorGUILayout.Slider("MinRoomArea", _house.MinRoomArea, 4, 10);
         _house.MaxRoomArea = EditorGUILayout.Slider("MaxRoomArea", _house.MaxRoomArea, 20, 100);
 
+        _house.DoorSize = EditorGUILayout.Slider("DoorSize", _house.DoorSize, 1f, 4f);
+        _house.WindowSize = EditorGUILayout.Slider("WindowSize", _house.WindowSize, 0.5f, 2f);
+        _house.SpaceBetweenWindows = EditorGUILayout.Slider("SpaceBetweenWindows", _house.SpaceBetweenWindows, 0.5f, 2f);
+
         if (GUILayout.Button("Generate"))
         {
             _house.Generate();

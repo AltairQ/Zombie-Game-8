@@ -15,6 +15,10 @@ public class House : MonoBehaviour {
     public float MinRoomArea { get; set; }
     public float MaxRoomArea { get; set; }
 
+    public float DoorSize { get; set; }
+    public float WindowSize { get; set; }
+    public float SpaceBetweenWindows { get; set; }
+
     public void Generate()
     {
         _rect = new Rect(-Width / 2, -Depth / 2, Width, Depth);
@@ -28,8 +32,10 @@ public class House : MonoBehaviour {
         }
 
         GenerateRooms(_rect);
-        GenerateWindows();
+        ConnectRooms();
+
         GenerateDoor();
+        GenerateWindows();
     }
 
     private void AddWall(Vector2 p1, Vector2 p2)
@@ -86,6 +92,20 @@ public class House : MonoBehaviour {
         GenerateRooms(newRects[0]);
         GenerateRooms(newRects[1]);
     }
+    
+    private void ConnectRooms()
+    {
+        var edges = RoomConnecting.GenerateConnections(_rooms, DoorSize);
+        foreach(var edge in edges)
+        {
+            var doorPoints = RoomConnecting.Connection(_rooms[edge.v], _rooms[edge.w], DoorSize);
+            var wall = _walls.Find(w => w.ContainsInPart(doorPoints[0], doorPoints[1]));
+            if(wall != null)
+            {
+                AddDoor(wall, doorPoints[0], doorPoints[1]);
+            }
+        }
+    }
 
     private bool RandomEndRoom(Rect rect)
     {
@@ -121,13 +141,8 @@ public class House : MonoBehaviour {
 
     private void GenerateWindows(Wall wall, Vector2 p1, Vector2 p2)
     {
-        if(p2.IsSmaller(p1))
-        {
-            Utils.Swap(ref p1, ref p2);
-        }
-
-        float windowSize = MinRoomEdge / 2;
-        float distBetween = windowSize;
+        float windowSize = WindowSize;
+        float distBetween = SpaceBetweenWindows;
 
         float segmentLength = (p2-p1).magnitude;
         int windowsToPut = 0;
@@ -154,14 +169,41 @@ public class House : MonoBehaviour {
 
     private void GenerateDoor()
     {
-        int idx = Random.Range(0, 4);
-        Wall doorWall = _walls[idx];
-        doorWall.RandomWindowToDoor();
+        int wallIdx = Random.Range(0, 4);
+        Wall doorWall = _walls[wallIdx];
+
+        var rooms = OverlapppingRooms(doorWall);
+        int roomIdx = Random.Range(0, rooms.Count);
+        Room doorRoom = rooms[roomIdx];
+
+        var points = PointsInWall(doorWall, doorRoom);
+        AddDoor(doorWall, points[0], points[1]);
+    }
+
+    private void AddDoor(Wall wall, Vector2 p1, Vector2 p2)
+    {
+        Vector2 center = (p1 + p2) / 2;
+        Vector2 dir = (p1 - p2).normalized;
+        wall.AddPart(center - dir * DoorSize / 2, center + dir * DoorSize / 2, Wall.PartType.Door);
     }
 
     private List<Room> OverlapppingRooms(Wall w)
     {
         return _rooms.FindAll(r => w.Overlaps(r.Rect));
+    }
+
+    private Vector2[] PointsInWall(Wall wall, Room room)
+    {
+        var points = room.Rect.AllPoints();
+        for (int j = 0; j < 4; j++)
+        {
+            if (wall.ContainsInPart(points[j], points[j + 1]))
+            {
+                return new Vector2[] { points[j], points[j + 1] };
+            }
+        }
+
+        return null;
     }
 
     public GameObject Make()

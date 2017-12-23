@@ -40,12 +40,11 @@ public class Wall {
 
     public bool AddPart(Vector2 p1, Vector2 p2, PartType type)
     {
-        if(!ContainsInPart(p1,p2))
+        var partToSplit = FindInPart(p1, p2);
+        if(partToSplit == null)
         {
             return false;
         }
-
-        var partToSplit = _parts.Find(part => part.rect.ContainsE(p1) && part.rect.ContainsE(p2));
         
         WallPart newPart = new WallPart(p1, p2, type);
         var newAfterSplit = partToSplit.Split(newPart);
@@ -55,9 +54,14 @@ public class Wall {
         return true;
     }
 
+    private WallPart FindInPart(Vector2 p1, Vector2 p2)
+    {
+        return _parts.Find(part => part.rect.ContainsE(p1) && part.rect.ContainsE(p2));
+    }
+
     public bool ContainsInPart(Vector2 p1, Vector2 p2)
     {
-        return _parts.Exists(part => part.rect.ContainsE(p1) && part.rect.ContainsE(p2));
+        return FindInPart(p1, p2) != null;
     }
 
     public void RandomWindowToDoor()
