@@ -17,7 +17,10 @@ public class HouseEditor : Editor
         _house.Width = EditorGUILayout.IntSlider("Width", (int)_house.Width, 5, 50);
         _house.Height = EditorGUILayout.Slider("Height", _house.Height, 1, 4);
         _house.Depth = EditorGUILayout.IntSlider("Depth", (int)_house.Depth, 5, 50);
-        _house.MinRoomSize = EditorGUILayout.Slider("MinRoomSize", _house.MinRoomSize, 2, 10);
+
+        _house.MinRoomEdge = EditorGUILayout.Slider("MinRoomEdge", _house.MinRoomEdge, 2, 10);
+        _house.MinRoomArea = EditorGUILayout.Slider("MinRoomArea", _house.MinRoomArea, 4, 10);
+        _house.MaxRoomArea = EditorGUILayout.Slider("MaxRoomArea", _house.MaxRoomArea, 20, 100);
 
         if (GUILayout.Button("Generate"))
         {

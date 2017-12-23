@@ -40,7 +40,7 @@ public class Wall {
 
     public bool AddPart(Vector2 p1, Vector2 p2, PartType type)
     {
-        if(!Contains(p1,p2))
+        if(!ContainsInPart(p1,p2))
         {
             return false;
         }
@@ -55,9 +55,16 @@ public class Wall {
         return true;
     }
 
-    public bool Contains(Vector2 p1, Vector2 p2)
+    public bool ContainsInPart(Vector2 p1, Vector2 p2)
     {
         return _parts.Exists(part => part.rect.ContainsE(p1) && part.rect.ContainsE(p2));
+    }
+
+    public void RandomWindowToDoor()
+    {
+        var windows = _parts.FindAll(w => w.type == PartType.Window);
+        int idx = Random.Range(0, windows.Count);
+        windows[idx].type = PartType.Door;
     }
 
     public enum PartType
