@@ -23,13 +23,15 @@ public class PlayerScript : MonoBehaviour
     private Vector3 _gunPos = new Vector3(0.1f, 0.0f, 0.75f);
     private bool _primarySelected = false;
     private Image _healthBar;
+    private Image _healthBarBG;
     private float _health;
 
     // Use this for initialization
     void Start ()
     {
         _controller = GetComponent<PlayerController>();
-        _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
+        _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
+        _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
         _health = 100;
     }
 
@@ -44,7 +46,10 @@ public class PlayerScript : MonoBehaviour
         weapon.transform.SetParent(transform);
         weapon.transform.rotation = transform.rotation;
         weapon.transform.position = transform.position;
-        weapon.transform.Translate(_gunPos);
+//        print(_gunPos + " " + (_gunPos + new Vector3(0, 0, weapon.GetComponent<WeaponScript>().Offset)));
+        weapon.transform.Translate(_gunPos + new Vector3(0, 0, weapon.GetComponent<WeaponScript>().Offset));
+//        weapon.transform.Translate(_gunPos);
+
         weapon.GetComponent<WeaponScript>().InitUI();
 
         if (primary)
@@ -111,6 +116,7 @@ public class PlayerScript : MonoBehaviour
             this.gameObject.active = false;
 
         _healthBar.rectTransform.sizeDelta = new Vector2(_health, 10);
+        _healthBarBG.rectTransform.sizeDelta = new Vector2(_health + 4, 14);
 
         RaycastHit hit;
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
@@ -160,7 +166,7 @@ public class PlayerScript : MonoBehaviour
                 {
                     _weapon.GetComponent<WeaponScript>().InitUI();
                     _weapon.transform.position = transform.position;
-                    _weapon.transform.Translate(_gunPos);
+                    _weapon.transform.Translate(_gunPos + new Vector3(0, 0, _weapon.GetComponent<WeaponScript>().Offset));
                 }
             }
             if (_primarySelected)
@@ -175,7 +181,7 @@ public class PlayerScript : MonoBehaviour
                 {
                     _weapon.GetComponent<WeaponScript>().InitUI();
                     _weapon.transform.position = transform.position;
-                    _weapon.transform.Translate(_gunPos);
+                    _weapon.transform.Translate(_gunPos + new Vector3(0, 0, _weapon.GetComponent<WeaponScript>().Offset));
                 }
             }
 

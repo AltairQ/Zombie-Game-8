@@ -11,12 +11,13 @@ public class WeaponScript : MonoBehaviour
     [SerializeField]
     private GameObject _barrelEnd;
     [SerializeField]
-    private float _cooldown, _reloadSpeed, _damage;
+    private float _cooldown, _reloadSpeed, _damage, _offset;
     [SerializeField]
     private int _spread, _bulletCount, _magazineSize, _bulletsLeft;
     [SerializeField]
     private bool _primary;
     public bool Primary{ get { return _primary; } }
+    public float Offset{ get { return _offset; } }
     System.Random _rnd = new System.Random();
 
     public float CurrentReload { get { return _currentReload; } }
@@ -73,21 +74,30 @@ public class WeaponScript : MonoBehaviour
     {
         if(_currentReload <= 0 && _bulletsLeft < _magazineSize)
         {
-/*
-            foreach(Transform child in GameSystem.Get().MainCanvas.transform.GetChild(0).transform)
-            {
-                child.gameObject.active = true;
-            }
-*/
+            /*
+                        foreach(Transform child in GameSystem.Get().MainCanvas.transform.GetChild(0).transform)
+                        {
+                            child.gameObject.active = true;
+                        }
+            */
+
+            _currentReload = ((float)(_magazineSize - _bulletsLeft) / _magazineSize) * _reloadSpeed;
             _bulletsLeft = _magazineSize;
-            _currentReload = _reloadSpeed;
         }
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if(_currentReload > 0)
+        if (transform.parent != null)
+            transform.GetChild(0).gameObject.active = false;
+        else
+        {
+            transform.GetChild(0).gameObject.active = true;
+            transform.Rotate(Vector3.up, Time.deltaTime * 60);
+        }
+
+        if (_currentReload > 0)
         {
             _currentReload -= Time.deltaTime;
             GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(Mathf.Min((int)((1 - (_currentReload / _reloadSpeed)) * _magazineSize), _magazineSize - 1)).gameObject.active = true;

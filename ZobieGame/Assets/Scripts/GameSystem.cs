@@ -38,6 +38,9 @@ public class GameSystem : MonoBehaviour
         Vector3 startPos = Vector3.up;
         _player = Instantiate(_playerPrefab, startPos, Quaternion.identity);
         _player.GetComponent<PlayerScript>()._camera = _mainCamera;
+
+        _mainCanvas.transform.GetChild(0).transform.position = new Vector3(20, Screen.height - 20, 0);
+        _mainCanvas.transform.GetChild(1).transform.position = new Vector3(10, Screen.height - 50, 0);
     }
 
     public void EndGame()
@@ -57,7 +60,7 @@ public class GameSystem : MonoBehaviour
         {
 //            Vector2 randomShift = Random.insideUnitCircle * 3;
             Vector2 randomShift = new Vector2(Mathf.Sin(Random.Range(-Mathf.PI, Mathf.PI)) * 5, Mathf.Cos(Random.Range(-Mathf.PI, Mathf.PI)) * 5);
-            Vector3 shiftPos = new Vector3(randomShift.x, 0, randomShift.y);
+            Vector3 shiftPos = new Vector3(randomShift.x, 1, randomShift.y);
             SpawnZombie(_player.transform.position + shiftPos);
         }
     }
