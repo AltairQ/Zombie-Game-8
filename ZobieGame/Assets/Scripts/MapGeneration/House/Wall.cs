@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Wall {
     public const float WallDepth = 0.2f;
+    public bool ShadowsEnabled { get; set; }
 
     private List<WallPart> _parts = new List<WallPart>();
     private float _height;
     public Wall(Vector2 p1, Vector2 p2, float height = 2)
     {
+        ShadowsEnabled = false;
         _height = height;
         _parts.Add(new WallPart(p1, p2));
     }
@@ -31,7 +33,7 @@ public class Wall {
         go.name = "Wall";
         foreach(var part in _parts)
         {
-            var partGO = part.Make(_height);
+            var partGO = part.Make(_height, ShadowsEnabled);
             partGO.transform.parent = go.transform;
         }
 
@@ -105,7 +107,7 @@ public class Wall {
             rect = new Rect(left, top, width, height);
         }
 
-        public GameObject Make(float height)
+        public GameObject Make(float height, bool shadowsEnabled)
         {
             float centerY = height / 2;
             float scaleH = height;
@@ -119,7 +121,7 @@ public class Wall {
             go.name = "WallPart: " + type;
             go.transform.position = rect.Center(centerY);
             go.transform.localScale = rect.Scale(scaleH);
-            RemoveShadows(go);
+            RemoveShadows(go, shadowsEnabled);
 
             if(type == PartType.Window)
             {
@@ -127,7 +129,7 @@ public class Wall {
                 go2.name = "WallPart2: " + type;
                 go2.transform.position = rect.Center(height * 0.2f);
                 go2.transform.localScale = rect.Scale(height * 0.4f);
-                RemoveShadows(go2);
+                RemoveShadows(go2, shadowsEnabled);
 
                 GameObject window = new GameObject();
                 window.name = "WindowPack";
@@ -140,8 +142,13 @@ public class Wall {
             return go;
         }
 
-        private void RemoveShadows(GameObject go)
+        private void RemoveShadows(GameObject go, bool shadowsEnabled)
         {
+            if(shadowsEnabled)
+            {
+                return;
+            }
+
             var mr = go.GetComponent<MeshRenderer>();
             if (mr == null)
             {
