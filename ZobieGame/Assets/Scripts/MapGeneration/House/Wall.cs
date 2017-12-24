@@ -119,6 +119,7 @@ public class Wall {
             go.name = "WallPart: " + type;
             go.transform.position = rect.Center(centerY);
             go.transform.localScale = rect.Scale(scaleH);
+            RemoveShadows(go);
 
             if(type == PartType.Window)
             {
@@ -126,6 +127,7 @@ public class Wall {
                 go2.name = "WallPart2: " + type;
                 go2.transform.position = rect.Center(height * 0.2f);
                 go2.transform.localScale = rect.Scale(height * 0.4f);
+                RemoveShadows(go2);
 
                 GameObject window = new GameObject();
                 window.name = "WindowPack";
@@ -138,6 +140,16 @@ public class Wall {
             return go;
         }
 
+        private void RemoveShadows(GameObject go)
+        {
+            var mr = go.GetComponent<MeshRenderer>();
+            if (mr == null)
+            {
+                Debug.Log("no mesh renderer!");
+            }
+            mr.receiveShadows = false;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
         // changes size of current object and returns other half
         public WallPart Split(WallPart part)
         {
