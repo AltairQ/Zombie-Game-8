@@ -557,6 +557,7 @@ MonoBehaviour:
   _bulletImage: {fileID: 1754290454144132, guid: c323089acd76f4c458ce4fd33551b8f6,
     type: 2}
   _barrelEnd: {fileID: 1311955525144104}
+  _casing: {fileID: 1963460963354598, guid: 6abcb5f63ec6e5d47b18a97f81b74e34, type: 2}
   _cooldown: 0.2
   _reloadSpeed: 4
   _damage: 20
@@ -566,3 +567,4 @@ MonoBehaviour:
   _magazineSize: 30
   _bulletsLeft: 30
   _primary: 1
+  _dropOnReload: 0

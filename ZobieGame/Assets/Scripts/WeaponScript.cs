@@ -5,17 +5,13 @@ using UnityEngine;
 public class WeaponScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _bullet;
-    [SerializeField]
-    private GameObject _bulletImage;
-    [SerializeField]
-    private GameObject _barrelEnd;
+    private GameObject _bullet, _bulletImage, _barrelEnd, _casing;
     [SerializeField]
     private float _cooldown, _reloadSpeed, _damage, _offset;
     [SerializeField]
     private int _spread, _bulletCount, _magazineSize, _bulletsLeft;
     [SerializeField]
-    private bool _primary;
+    private bool _primary, _dropOnReload;
     public bool Primary{ get { return _primary; } }
     public float Offset{ get { return _offset; } }
     System.Random _rnd = new System.Random();
@@ -58,10 +54,17 @@ public class WeaponScript : MonoBehaviour
     {
         if(_currentCooldown <= 0 && _bulletsLeft > 0 && _currentReload <= 0)
         {
-            for(int i = 0; i < _bulletCount; i++)
+            for (int i = 0; i < _bulletCount; i++)
             {
-                GameObject new__bullet = Instantiate(_bullet, _barrelEnd.transform.position, transform.rotation);
-                new__bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y + _rnd.Next(-_spread * 10, _spread * 10) / 10, _damage);
+                GameObject new_bullet = Instantiate(_bullet, _barrelEnd.transform.position, transform.rotation);
+                new_bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y + _rnd.Next(-_spread * 10, _spread * 10) / 10, _damage);
+            }
+
+            if (!_dropOnReload)
+            {
+                GameObject new_casing = Instantiate(_casing, transform.position, transform.rotation);
+                new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(100 + _rnd.Next(-50, 50), 25 + _rnd.Next(50), _rnd.Next(-25, 25)));
+                new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
             }
 
             _bulletsLeft--;
@@ -74,6 +77,15 @@ public class WeaponScript : MonoBehaviour
     {
         if(_currentReload <= 0 && _bulletsLeft < _magazineSize)
         {
+            if (_dropOnReload)
+            {
+                for (int i = 0; i < _magazineSize - _bulletsLeft; i++)
+                {
+                    GameObject new_casing = Instantiate(_casing, transform.position, transform.rotation);
+                    new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(100 + _rnd.Next(-50, 50), 25 + _rnd.Next(50), _rnd.Next(-25, 25)));
+                    new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
+                }
+            }
             /*
                         foreach(Transform child in GameSystem.Get().MainCanvas.transform.GetChild(0).transform)
                         {

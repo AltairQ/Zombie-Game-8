@@ -24,7 +24,6 @@ public class GameSystem : MonoBehaviour
 
     [SerializeField]
     private GameObject _playerPrefab;
-
     [SerializeField]
     private GameObject _zombiePrefab;
 
