@@ -28,7 +28,7 @@ public class HouseEditor : Editor
 
         if (GUILayout.Button("Generate"))
         {
-            _house.Generate();
+            _house.Generate(new Vector2(0,0));
             _house.Make();
         }
     }

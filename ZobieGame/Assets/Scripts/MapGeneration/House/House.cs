@@ -19,9 +19,9 @@ public class House : MonoBehaviour {
     public float WindowSize { get; set; }
     public float SpaceBetweenWindows { get; set; }
 
-    public void Generate()
+    public void Generate(Vector2 center)
     {
-        _rect = new Rect(-Width / 2, -Depth / 2, Width, Depth);
+        _rect = new Rect(center.x - Width / 2, center.y - Depth / 2, Width, Depth);
         _walls.Clear();
         _rooms.Clear();
 
@@ -232,13 +232,6 @@ public class House : MonoBehaviour {
 
     private GameObject MakeFloor()
     {
-        GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        floor.name = "Floor";
-
-        floor.transform.position = _rect.Center(0);
-        floor.transform.localScale = new Vector3(_rect.width, _rect.height, 1);
-        floor.transform.Rotate(new Vector3(90, 0, 0));
-
-        return floor;
+        return _rect.ToQuad("Floor", 0.02f);
     }
 }
