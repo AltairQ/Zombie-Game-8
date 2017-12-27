@@ -7,15 +7,13 @@ public class City : MonoBehaviour
     private List<Street> _streets = new List<Street>();
     private List<Estate> _estates = new List<Estate>();
 
-    public float Width { get; set; }
-    public float Depth { get; set; }
+    private CitySettings _settings;
 
-    public float MinEstateEdge { get; set; }
-    public float StreetSize { get; set; }
-
-    public void Generate()
+    public void Generate(Rect rect)
     {
-        _rect = new Rect(-Width / 2, -Depth / 2, Width, Depth);
+        _rect = rect;
+        _settings = GeneratorAssets.Get().CitySettings;
+
         _streets.Clear();
         _estates.Clear();
 
@@ -24,7 +22,7 @@ public class City : MonoBehaviour
 
     private void AddStreet(Vector2 p1, Vector2 p2)
     {
-        _streets.Add(new Street(p1, p2, StreetSize));
+        _streets.Add(new Street(p1, p2, _settings.StreetSize));
     }
 
     private void AddEstate(Rect rect)
@@ -34,11 +32,11 @@ public class City : MonoBehaviour
 
     private bool CanBeSplitVertically(Rect rect)
     {
-        return rect.width > MinEstateEdge * 2;
+        return rect.width > _settings.MinEstateEdge * 2;
     }
     private bool CanBeSplitHorizontally(Rect rect)
     {
-        return rect.height > MinEstateEdge * 2;
+        return rect.height > _settings.MinEstateEdge * 2;
     }
 
     private void GenerateEstates(Rect rect)
@@ -61,18 +59,19 @@ public class City : MonoBehaviour
         }
 
         Vector2 p1, p2;
+        float minEdge = _settings.MinEstateEdge;
         if (splitVertical)
         {
-            float deltaX = rect.width - 2 * MinEstateEdge;
+            float deltaX = rect.width - 2 * minEdge;
             float randX = Random.Range(0, deltaX);
-            p1 = new Vector2(rect.xMin + MinEstateEdge + randX, rect.yMin);
+            p1 = new Vector2(rect.xMin + minEdge + randX, rect.yMin);
             p2 = p1 + new Vector2(0, rect.height);
         }
         else
         {
-            float deltaY = rect.height - 2 * MinEstateEdge;
+            float deltaY = rect.height - 2 * minEdge;
             float randY = Random.Range(0, deltaY);
-            p1 = new Vector2(rect.xMin, rect.yMin + MinEstateEdge + randY);
+            p1 = new Vector2(rect.xMin, rect.yMin + minEdge + randY);
             p2 = p1 + new Vector2(rect.width, 0);
         }
 
@@ -90,7 +89,8 @@ public class City : MonoBehaviour
         //    return false;
         //}
 
-        float createEstate = Random.Range(0, area / (MinEstateEdge*MinEstateEdge)); // the bigger area the lower chance
+        float minArea = _settings.MinEstateEdge * _settings.MinEstateEdge; 
+        float createEstate = Random.Range(0, area / minArea); // the bigger area the lower chance
         return createEstate < 1.0f;
     }
 

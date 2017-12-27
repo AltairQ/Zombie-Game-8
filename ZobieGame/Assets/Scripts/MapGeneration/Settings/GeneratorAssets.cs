@@ -6,13 +6,16 @@ public class GeneratorAssets : MonoBehaviour
 {
     public Material StreetMaterial { get; private set; }
     public HouseSettings HouseSettings { get; private set; }
+    public CitySettings CitySettings { get; private set; }
 
     private static GeneratorAssets _instance = null;
     private void Start()
     {
         _instance = this;
-        StreetMaterial = Resources.Load("Materials/StreetMaterial.mat", typeof(Material)) as Material;
+        StreetMaterial = Resources.Load("Materials/StreetMaterial", typeof(Material)) as Material;
         HouseSettings = Resources.Load("ScriptableObjects/HouseSettings", typeof(HouseSettings)) as HouseSettings;
+        CitySettings = Resources.Load("ScriptableObjects/CitySettings", typeof(CitySettings)) as CitySettings;
+
         Debug.Log("GeneratorAssets instance created");
     }
 

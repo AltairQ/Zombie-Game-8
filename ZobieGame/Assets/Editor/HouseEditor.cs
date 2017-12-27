@@ -4,28 +4,28 @@ using UnityEngine;
 [CustomEditor(typeof(House))]
 public class HouseEditor : Editor
 {
-    [SerializeField]
+    private House _house;
     private HouseSettings _settings;
 
-    private float _width = 10;
-    private float _depth = 10;
-    private House _house;
     private void OnEnable()
     {
         _house = target as House;
+        _settings = GeneratorAssets.Get().HouseSettings;
     }
 
+    private float _width = 10;
+    private float _depth = 10;
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
 
+        EditorGUILayout.LabelField("Instance settings");
+
         _width = EditorGUILayout.IntSlider("Width", (int)_width, 5, 50);
         _depth = EditorGUILayout.IntSlider("Depth", (int)_depth, 5, 50);
 
-        if(_settings == null)
-        {
-            _settings = GeneratorAssets.Get().HouseSettings;  
-        }
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Global settings");
 
         _settings.Height = EditorGUILayout.Slider("Height", _settings.Height, 1, 4);
 

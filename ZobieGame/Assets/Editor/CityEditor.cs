@@ -5,24 +5,35 @@ using UnityEngine;
 public class CityEditor : Editor
 {
     private City _city;
+    private CitySettings _settings;
+
     private void OnEnable()
     {
         _city = target as City;
+        _settings = GeneratorAssets.Get().CitySettings;
     }
 
+    private float _width = 100;
+    private float _depth = 100;
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
 
-        _city.Width = EditorGUILayout.IntSlider("Width", (int)_city.Width, 100, 200);
-        _city.Depth = EditorGUILayout.IntSlider("Depth", (int)_city.Depth, 100, 200);
+        EditorGUILayout.LabelField("Instance settings");
 
-        _city.MinEstateEdge = EditorGUILayout.Slider("MinEstateEdge", _city.MinEstateEdge, 10, 20);
-        _city.StreetSize = EditorGUILayout.Slider("StreetSize", _city.StreetSize, 2, 4);
+        _width = EditorGUILayout.IntSlider("Width", (int)_width, 100, 200);
+        _depth = EditorGUILayout.IntSlider("Depth", (int)_depth, 100, 200);
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Global settings");
+
+        _settings.MinEstateEdge = EditorGUILayout.Slider("MinEstateEdge", _settings.MinEstateEdge, 10, 20);
+        _settings.StreetSize = EditorGUILayout.Slider("StreetSize", _settings.StreetSize, 2, 4);
 
         if (GUILayout.Button("Generate"))
         {
-            _city.Generate();
+            Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
+            _city.Generate(rect);
             _city.Make();
         }
     }
