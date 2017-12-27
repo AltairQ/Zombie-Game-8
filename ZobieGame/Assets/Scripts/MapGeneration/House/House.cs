@@ -199,25 +199,27 @@ public class House : MonoBehaviour {
         return null;
     }
 
-    public GameObject Make()
+    public GameObject Make(bool selfParent = false)
     {
-        GameObject go = new GameObject();
-        go.name = "House";
+        GameObject go = new GameObject("House");
 
+        if (selfParent)
+        {
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                DestroyImmediate(transform.GetChild(i).gameObject);
+            }
+            go.SetParent(gameObject);
+        }
+        
         var floor = MakeFloor();
-        floor.transform.parent = go.transform;
+        floor.SetParent(go);
 
         foreach (var wall in _walls)
         {
             var wallGO = wall.Make();
-            wallGO.transform.parent = go.transform;
+            wallGO.SetParent(go);
         }
-
-        for (int i = transform.childCount - 1; i >= 0; i--)
-        {
-            DestroyImmediate(transform.GetChild(i).gameObject);
-        }
-        go.transform.parent = transform;
 
         return go;
     }

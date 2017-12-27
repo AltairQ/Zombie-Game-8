@@ -21,12 +21,14 @@ public class HouseEditor : Editor
 
         EditorGUILayout.LabelField("Instance settings");
 
-        _width = EditorGUILayout.IntSlider("Width", (int)_width, 5, 50);
-        _depth = EditorGUILayout.IntSlider("Depth", (int)_depth, 5, 50);
+        _width = EditorGUILayout.IntSlider("Width", (int)_width, (int)_settings.MinHouseEdge, (int)_settings.MaxHouseEdge);
+        _depth = EditorGUILayout.IntSlider("Depth", (int)_depth, (int)_settings.MinHouseEdge, (int)_settings.MaxHouseEdge);
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Global settings");
 
+        _settings.MinHouseEdge = EditorGUILayout.Slider("MinHouseEdge", _settings.MinHouseEdge, 10, _settings.MaxHouseEdge);
+        _settings.MaxHouseEdge = EditorGUILayout.Slider("MaxHouseEdge", _settings.MaxHouseEdge, 15, 50);
         _settings.Height = EditorGUILayout.Slider("Height", _settings.Height, 1, 4);
 
         _settings.MinRoomEdge = EditorGUILayout.Slider("MinRoomEdge", _settings.MinRoomEdge, 2, 10);
@@ -41,7 +43,7 @@ public class HouseEditor : Editor
         {
             Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
             _house.Generate(rect);
-            _house.Make();
+            _house.Make(true);
         }
     }
 

@@ -27,7 +27,9 @@ public class City : MonoBehaviour
 
     private void AddEstate(Rect rect)
     {
-        _estates.Add(new Estate(rect));
+        var estate = new Estate(rect);
+        estate.Generate();
+        _estates.Add(estate);
     }
 
     private bool CanBeSplitVertically(Rect rect)
@@ -96,11 +98,16 @@ public class City : MonoBehaviour
 
     public GameObject Make()
     {
-        GameObject go = new GameObject();
-        go.name = "City";
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+        
+        GameObject go = new GameObject("City");
+        go.SetParent(gameObject);
 
         var terrain = _rect.ToQuad("Terrain", ObjectHeight.Ground);
-        terrain.transform.parent = go.transform;
+        terrain.SetParent(go);
 
         foreach (var street in _streets)
         {
@@ -108,17 +115,12 @@ public class City : MonoBehaviour
             streetGO.SetParent(go);
         }
 
+        House house = GetComponent<House>();
         foreach (var estate in _estates)
         {
-            var estateGO = estate.Make(GetComponent<House>());
+            var estateGO = estate.Make(house);
             estateGO.SetParent(go);
         }
-
-        for (int i = transform.childCount - 1; i >= 0; i--)
-        {
-            DestroyImmediate(transform.GetChild(i).gameObject);
-        }
-        go.SetParent(gameObject);
 
         return go;
     }
