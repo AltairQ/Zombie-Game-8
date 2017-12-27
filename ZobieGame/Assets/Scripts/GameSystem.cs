@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GameSystem : MonoBehaviour
 {
@@ -34,6 +35,9 @@ public class GameSystem : MonoBehaviour
 
     public void StartGame()
     {
+        NavMeshSurface surface = GetComponent<NavMeshSurface>();
+        surface.BuildNavMesh();
+
         Vector3 startPos = Vector3.up;
         _player = Instantiate(_playerPrefab, startPos, Quaternion.identity);
         _player.GetComponent<PlayerScript>()._camera = _mainCamera;
