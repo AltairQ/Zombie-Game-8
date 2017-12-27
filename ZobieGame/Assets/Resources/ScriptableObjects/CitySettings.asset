@@ -11,3 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b583dd6b222df424cb6d13066aa905c4, type: 3}
   m_Name: CitySettings
   m_EditorClassIdentifier: 
+  EstateStreetOffset: 2
+  MinEstateEdge: 10
+  StreetSize: 3
+  SpaceBetweenHouses: 4

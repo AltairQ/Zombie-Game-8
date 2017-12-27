@@ -29,8 +29,10 @@ public class CityEditor : Editor
 
         _settings.EstateStreetOffset = EditorGUILayout.Slider("EstateStreetOffset", _settings.EstateStreetOffset, 1, 4);
         _settings.MinEstateEdge = EditorGUILayout.Slider("MinEstateEdge", _settings.MinEstateEdge, 10, 20);
-        _settings.StreetSize = EditorGUILayout.Slider("StreetSize", _settings.StreetSize, 2, 4);
+        _settings.StreetSize = EditorGUILayout.Slider("StreetSize", _settings.StreetSize, 2, 6);
         _settings.SpaceBetweenHouses = EditorGUILayout.Slider("SpaceBetweenHouses", _settings.SpaceBetweenHouses, 2, 5);
+
+        EditorUtility.SetDirty(_settings);
 
         if (GUILayout.Button("Generate"))
         {

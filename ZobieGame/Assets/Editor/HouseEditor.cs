@@ -39,6 +39,8 @@ public class HouseEditor : Editor
         _settings.WindowSize = EditorGUILayout.Slider("WindowSize", _settings.WindowSize, 0.5f, 2f);
         _settings.SpaceBetweenWindows = EditorGUILayout.Slider("SpaceBetweenWindows", _settings.SpaceBetweenWindows, 0.5f, 2f);
 
+        EditorUtility.SetDirty(_settings);
+
         if (GUILayout.Button("Generate"))
         {
             Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);

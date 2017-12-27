@@ -3,15 +3,15 @@
 [CreateAssetMenu(fileName = "HouseSettings", menuName = "Generator/HouseSettings")]
 public class HouseSettings : ScriptableObject
 {
-    public float MinHouseEdge { get; set; }
-    public float MaxHouseEdge { get; set; }
-    public float Height { get; set; }
+    public float MinHouseEdge;
+    public float MaxHouseEdge;
+    public float Height;
 
-    public float MinRoomEdge { get; set; }
-    public float MinRoomArea { get; set; }
-    public float MaxRoomArea { get; set; }
+    public float MinRoomEdge;
+    public float MinRoomArea;
+    public float MaxRoomArea;
 
-    public float DoorSize { get; set; }
-    public float WindowSize { get; set; }
-    public float SpaceBetweenWindows { get; set; }
+    public float DoorSize;
+    public float WindowSize;
+    public float SpaceBetweenWindows;
 }

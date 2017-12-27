@@ -11,3 +11,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cde4de71f9a6ee346b6fce8db15f8ffe, type: 3}
   m_Name: HouseSettings
   m_EditorClassIdentifier: 
+  MinHouseEdge: 10
+  MaxHouseEdge: 20
+  Height: 3
+  MinRoomEdge: 4
+  MinRoomArea: 16
+  MaxRoomArea: 36
+  DoorSize: 1.5
+  WindowSize: 1
+  SpaceBetweenWindows: 1.25
