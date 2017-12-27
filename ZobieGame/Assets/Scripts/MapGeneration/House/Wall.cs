@@ -50,9 +50,13 @@ public class Wall {
         
         WallPart newPart = new WallPart(p1, p2, type);
         var newAfterSplit = partToSplit.Split(newPart);
+        if(newAfterSplit == null)
+        {
+            return false;
+        }
+
         _parts.Add(newPart);
         _parts.Add(newAfterSplit);
-
         return true;
     }
 
@@ -168,7 +172,7 @@ public class Wall {
                 return new WallPart(p1, p2, type);
             }
 
-            Debug.LogError("WallPart.Split(): null returning!");
+            Debug.LogWarning("WallPart.Split(): null returning!");
             return null;
         }
     }

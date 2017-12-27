@@ -4,6 +4,11 @@ using UnityEngine;
 [CustomEditor(typeof(House))]
 public class HouseEditor : Editor
 {
+    [SerializeField]
+    private HouseSettings _settings;
+
+    private float _width = 10;
+    private float _depth = 10;
     private House _house;
     private void OnEnable()
     {
@@ -14,21 +19,28 @@ public class HouseEditor : Editor
     {
         serializedObject.Update();
 
-        _house.Width = EditorGUILayout.IntSlider("Width", (int)_house.Width, 5, 50);
-        _house.Height = EditorGUILayout.Slider("Height", _house.Height, 1, 4);
-        _house.Depth = EditorGUILayout.IntSlider("Depth", (int)_house.Depth, 5, 50);
+        _width = EditorGUILayout.IntSlider("Width", (int)_width, 5, 50);
+        _depth = EditorGUILayout.IntSlider("Depth", (int)_depth, 5, 50);
 
-        _house.MinRoomEdge = EditorGUILayout.Slider("MinRoomEdge", _house.MinRoomEdge, 2, 10);
-        _house.MinRoomArea = EditorGUILayout.Slider("MinRoomArea", _house.MinRoomArea, 4, 100);
-        _house.MaxRoomArea = EditorGUILayout.Slider("MaxRoomArea", _house.MaxRoomArea, 20, 300);
+        if(_settings == null)
+        {
+            _settings = GeneratorAssets.Get().HouseSettings;  
+        }
 
-        _house.DoorSize = EditorGUILayout.Slider("DoorSize", _house.DoorSize, 1f, 4f);
-        _house.WindowSize = EditorGUILayout.Slider("WindowSize", _house.WindowSize, 0.5f, 2f);
-        _house.SpaceBetweenWindows = EditorGUILayout.Slider("SpaceBetweenWindows", _house.SpaceBetweenWindows, 0.5f, 2f);
+        _settings.Height = EditorGUILayout.Slider("Height", _settings.Height, 1, 4);
+
+        _settings.MinRoomEdge = EditorGUILayout.Slider("MinRoomEdge", _settings.MinRoomEdge, 2, 10);
+        _settings.MinRoomArea = EditorGUILayout.Slider("MinRoomArea", _settings.MinRoomArea, 4, 100);
+        _settings.MaxRoomArea = EditorGUILayout.Slider("MaxRoomArea", _settings.MaxRoomArea, 20, 300);
+
+        _settings.DoorSize = EditorGUILayout.Slider("DoorSize", _settings.DoorSize, 1f, 4f);
+        _settings.WindowSize = EditorGUILayout.Slider("WindowSize", _settings.WindowSize, 0.5f, 2f);
+        _settings.SpaceBetweenWindows = EditorGUILayout.Slider("SpaceBetweenWindows", _settings.SpaceBetweenWindows, 0.5f, 2f);
 
         if (GUILayout.Button("Generate"))
         {
-            _house.Generate(new Vector2(0,0));
+            Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
+            _house.Generate(rect);
             _house.Make();
         }
     }

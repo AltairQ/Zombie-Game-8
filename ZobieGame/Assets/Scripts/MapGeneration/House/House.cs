@@ -6,27 +6,18 @@ public class House : MonoBehaviour {
     private Rect _rect;
     private List<Wall> _walls = new List<Wall>();
     private List<Room> _rooms = new List<Room>();
+    private HouseSettings _settings;
 
-    public float Width { get; set; }
-    public float Height { get; set; }
-    public float Depth { get; set; }
-
-    public float MinRoomEdge { get; set; }
-    public float MinRoomArea { get; set; }
-    public float MaxRoomArea { get; set; }
-
-    public float DoorSize { get; set; }
-    public float WindowSize { get; set; }
-    public float SpaceBetweenWindows { get; set; }
-
-    public void Generate(Vector2 center)
+    public void Generate(Rect rect)
     {
-        _rect = new Rect(center.x - Width / 2, center.y - Depth / 2, Width, Depth);
+        _rect = rect;
+        _settings = GeneratorAssets.Get().HouseSettings;
+
         _walls.Clear();
         _rooms.Clear();
 
         var points = _rect.AllPoints();
-        for(int i=0;i<4;i++)
+        for (int i = 0; i < 4; i++)
         {
             AddWall(points[i], points[(i + 1) % 4]);
             _walls[i].ShadowsEnabled = true;
@@ -41,16 +32,16 @@ public class House : MonoBehaviour {
 
     private void AddWall(Vector2 p1, Vector2 p2)
     {
-        _walls.Add(new Wall(p1, p2, Height));
+        _walls.Add(new Wall(p1, p2, _settings.Height));
     }
 
     private bool CanBeSplitVertically(Rect rect)
     {
-        return rect.width > MinRoomEdge * 2;
+        return rect.width > _settings.MinRoomEdge * 2;
     }
     private bool CanBeSplitHorizontally(Rect rect)
     {
-        return rect.height > MinRoomEdge * 2;
+        return rect.height > _settings.MinRoomEdge * 2;
     }
 
     private void GenerateRooms(Rect rect)
@@ -73,18 +64,19 @@ public class House : MonoBehaviour {
         }
 
         Vector2 p1, p2;
-        if(splitVertical)
+        float minEdge = _settings.MinRoomEdge;
+        if (splitVertical)
         {
-            float deltaX = rect.width - 2 * MinRoomEdge;
+            float deltaX = rect.width - 2 * minEdge;
             float randX = Random.Range(0, deltaX);
-            p1 = new Vector2(rect.xMin + MinRoomEdge + randX, rect.yMin);
+            p1 = new Vector2(rect.xMin + minEdge + randX, rect.yMin);
             p2 = p1 + new Vector2(0, rect.height);
         }
         else
         {
-            float deltaY = rect.height - 2 * MinRoomEdge;
+            float deltaY = rect.height - 2 * minEdge;
             float randY = Random.Range(0, deltaY);
-            p1 = new Vector2(rect.xMin, rect.yMin + MinRoomEdge + randY);
+            p1 = new Vector2(rect.xMin, rect.yMin + minEdge + randY);
             p2 = p1 + new Vector2(rect.width, 0);
         }
 
@@ -96,10 +88,10 @@ public class House : MonoBehaviour {
     
     private void ConnectRooms()
     {
-        var edges = RoomConnecting.GenerateConnections(_rooms, DoorSize);
+        var edges = RoomConnecting.GenerateConnections(_rooms, _settings.DoorSize);
         foreach(var edge in edges)
         {
-            var doorPoints = RoomConnecting.Connection(_rooms[edge.v], _rooms[edge.w], DoorSize);
+            var doorPoints = RoomConnecting.Connection(_rooms[edge.v], _rooms[edge.w], _settings.DoorSize);
             var wall = _walls.Find(w => w.ContainsInPart(doorPoints[0], doorPoints[1]));
             if(wall != null)
             {
@@ -111,12 +103,12 @@ public class House : MonoBehaviour {
     private bool RandomEndRoom(Rect rect)
     {
         float area = rect.Area();
-        if(area > MaxRoomArea)
+        if(area > _settings.MaxRoomArea)
         {
             return false;
         }
 
-        float createRoom = Random.Range(0, area / MinRoomArea); // the bigger area the lower chance
+        float createRoom = Random.Range(0, area / _settings.MinRoomArea); // the bigger area the lower chance
         return createRoom < 1.0f;
     }
 
@@ -142,8 +134,8 @@ public class House : MonoBehaviour {
 
     private void GenerateWindows(Wall wall, Vector2 p1, Vector2 p2)
     {
-        float windowSize = WindowSize;
-        float distBetween = SpaceBetweenWindows;
+        float windowSize = _settings.WindowSize;
+        float distBetween = _settings.SpaceBetweenWindows;
 
         float segmentLength = (p2-p1).magnitude;
         int windowsToPut = 0;
@@ -185,7 +177,7 @@ public class House : MonoBehaviour {
     {
         Vector2 center = (p1 + p2) / 2;
         Vector2 dir = (p1 - p2).normalized;
-        wall.AddPart(center - dir * DoorSize / 2, center + dir * DoorSize / 2, Wall.PartType.Door);
+        wall.AddPart(center - dir * _settings.DoorSize / 2, center + dir * _settings.DoorSize / 2, Wall.PartType.Door);
     }
 
     private List<Room> OverlapppingRooms(Wall w)
@@ -232,6 +224,6 @@ public class House : MonoBehaviour {
 
     private GameObject MakeFloor()
     {
-        return _rect.ToQuad("Floor", 0.02f);
+        return _rect.ToQuad("Floor", ObjectHeight.Floor);
     }
 }

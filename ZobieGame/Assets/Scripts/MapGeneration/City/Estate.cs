@@ -15,7 +15,7 @@ public class Estate
 
     public GameObject Make(House h)
     {
-        h.Generate(_rect.center);
+        h.Generate(_rect);
         return h.Make();
     }
 }

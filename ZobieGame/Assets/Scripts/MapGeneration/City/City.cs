@@ -99,7 +99,7 @@ public class City : MonoBehaviour
         GameObject go = new GameObject();
         go.name = "City";
 
-        var terrain = _rect.ToQuad("Terrain", 0);
+        var terrain = _rect.ToQuad("Terrain", ObjectHeight.Ground);
         terrain.transform.parent = go.transform;
 
         foreach (var street in _streets)
