@@ -10,7 +10,7 @@ interface IAIActions
     // Go towards player (using pathfinding)
     // true  - player is reachable
     // false - player is unreachable
-    bool GotoPlayer();
+    bool GoToPlayer();
 }
 
 // Interface to query the state of an individual enemy
