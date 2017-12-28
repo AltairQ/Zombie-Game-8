@@ -400,5 +400,6 @@ MonoBehaviour:
   _bulletCount: 6
   _magazineSize: 8
   _bulletsLeft: 8
+  _ammoType: 3
   _primary: 1
   _dropOnReload: 0
