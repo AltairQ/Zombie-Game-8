@@ -1,6 +1,6 @@
 ﻿
 // Interface to perform external actions with the enemy
-interface IAIActions
+public interface IAIActions
 {
     // Try to perform a melee attack towards the player
     // true  - the action has/will succeed
@@ -14,10 +14,16 @@ interface IAIActions
 }
 
 // Interface to query the state of an individual enemy
-interface IAIState
+public interface IAIState
 {
+    // Return the Game Director ID for this enemy
+    int GetID();
+    
     // Current health of the enemy
     float CurrentHealth();
+
+    // Is the enemy alive
+    bool IsAlive();
 
     // Distance to the player in a straight line
     float EuclidDistanceToPlayer();
