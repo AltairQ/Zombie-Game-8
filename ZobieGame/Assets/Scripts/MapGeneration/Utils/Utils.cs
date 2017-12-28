@@ -52,4 +52,25 @@ public class Utils
 
         return ans;
     }
+
+    public static Rect SegmentToRect(Vector2 p1, Vector2 p2, float size)
+    {
+        float left = Mathf.Min(p1.x, p2.x);
+        float top = Mathf.Min(p1.y, p2.y);
+        float width = Mathf.Abs(p1.x - p2.x);
+        float height = Mathf.Abs(p1.y - p2.y);
+
+        if (Mathf.Approximately(width, 0))
+        {
+            width = size;
+            left -= size / 2;
+        }
+        if (Mathf.Approximately(height, 0))
+        {
+            height = size;
+            top -= size / 2;
+        }
+
+        return new Rect(left, top, width, height);
+    }
 }

@@ -398,7 +398,8 @@ MonoBehaviour:
   _offset: 0
   _spread: 2
   _bulletCount: 1
-  _magazineSize: 15
-  _bulletsLeft: 15
+  _magazineSize: 12
+  _bulletsLeft: 12
+  _ammoType: 0
   _primary: 0
   _dropOnReload: 0

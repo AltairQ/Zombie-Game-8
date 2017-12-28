@@ -20,6 +20,11 @@ public class PlayerScript : MonoBehaviour
     public float _angleX, _angleY;
     PlayerController _controller;
 
+    [SerializeField]
+    private int[] _ammo = new int[6];
+    [SerializeField]
+    private int[] _ammoMax = new int[6];
+
     private Vector3 _gunPos = new Vector3(0.1f, 0.0f, 0.75f);
     private bool _primarySelected = false;
     private Image _healthBar;
@@ -96,6 +101,16 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    public void Restock(float amount)
+    {
+        for (int i = 0; i < _ammo.Length; i++)
+        {
+            _ammo[i] += (int)(amount * _ammoMax[i]);
+            if (_ammo[i] > _ammoMax[i])
+                _ammo[i] = _ammoMax[i];
+        }
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Weapon") && Input.GetKeyDown(_PickUpKey))
@@ -138,7 +153,12 @@ public class PlayerScript : MonoBehaviour
 
         if (Input.GetKey(KeyCode.R) && _weapon != null)
         {
-            _weapon.GetComponent<WeaponScript>().Reload();
+            int x = _weapon.GetComponent<WeaponScript>().MagazineSize - _weapon.GetComponent<WeaponScript>().BulletsLeft;
+            if (_weapon.GetComponent<WeaponScript>().CurrentReload > 0)
+                x = 0;
+            _weapon.GetComponent<WeaponScript>().Reload(_ammo[_weapon.GetComponent<WeaponScript>().AmmoType]);
+            _ammo[_weapon.GetComponent<WeaponScript>().AmmoType] -= x;
+            _ammo[_weapon.GetComponent<WeaponScript>().AmmoType] = Mathf.Max(_ammo[_weapon.GetComponent<WeaponScript>().AmmoType], 0);
         }
         if (Input.GetKey(_ShootKey) && _weapon != null)
         {

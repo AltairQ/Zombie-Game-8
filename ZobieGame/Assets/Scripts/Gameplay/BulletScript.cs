@@ -32,6 +32,12 @@ public class BulletScript : MonoBehaviour
         }
 	}
 
+    void OnCollisionEnter(Collision col)
+    {
+        if(!col.gameObject.CompareTag("Bullet"))
+            Destroy(this.gameObject);
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Zombie"))
@@ -44,6 +50,7 @@ public class BulletScript : MonoBehaviour
     void FixedUpdate()
     {
         _movement = new Vector3(Mathf.Sin(transform.rotation.eulerAngles.y * Mathf.Deg2Rad) * _bulletSpeed, 0, Mathf.Cos(transform.rotation.eulerAngles.y * Mathf.Deg2Rad) * _bulletSpeed);
-        _rb.MovePosition(transform.position + _movement);
+        transform.position += _movement;
+        //        _rb.MovePosition(transform.position + _movement);
     }
 }

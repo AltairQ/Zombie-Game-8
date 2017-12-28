@@ -110,11 +110,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c92c9e49f3599e4daded15b526af451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _weaponPrimary: {fileID: 0}
+  _weaponSecondary: {fileID: 0}
   _weapon: {fileID: 0}
-  ShootKey: 323
+  _ShootKey: 323
+  _PickUpKey: 101
   _camera: {fileID: 0}
   _angleX: 0
   _angleY: 0
+  _ammo: 000000000000000000000000000000000000000000000000
+  _ammoMax: 3c0000001e00000096000000280000009600000019000000
 --- !u!114 &114724594504816506
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -130,8 +135,6 @@ MonoBehaviour:
   _BackKey: 115
   _LeftKey: 97
   _RightKey: 100
-  _RotateLeft: 113
-  _RotateRight: 101
 --- !u!136 &136504823061985894
 CapsuleCollider:
   m_ObjectHideFlags: 1

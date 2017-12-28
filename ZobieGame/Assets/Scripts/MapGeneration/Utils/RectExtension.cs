@@ -84,5 +84,16 @@ public static class RectExtension
         return onEdge;
     }
 
+    public static GameObject ToQuad(this Rect rect, string name, float height)
+    {
+        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        go.name = name;
+
+        go.transform.position = rect.Center(height);
+        go.transform.localScale = new Vector3(rect.width, rect.height, 1);
+        go.transform.Rotate(new Vector3(90, 0, 0));
+
+        return go;
+    }
 }
 

@@ -50,9 +50,13 @@ public class Wall {
         
         WallPart newPart = new WallPart(p1, p2, type);
         var newAfterSplit = partToSplit.Split(newPart);
+        if(newAfterSplit == null)
+        {
+            return false;
+        }
+
         _parts.Add(newPart);
         _parts.Add(newAfterSplit);
-
         return true;
     }
 
@@ -88,23 +92,7 @@ public class Wall {
         public WallPart(Vector2 p1, Vector2 p2, PartType partType = PartType.Wall)
         {
             type = partType;
-
-            float left = Mathf.Min(p1.x, p2.x);
-            float top = Mathf.Min(p1.y, p2.y);
-            float width = Mathf.Abs(p1.x - p2.x);
-            float height = Mathf.Abs(p1.y - p2.y);
-            if (Mathf.Approximately(width, 0))
-            {
-                width = WallDepth;
-                left -= WallDepth / 2;
-            }
-            if (Mathf.Approximately(height, 0))
-            {
-                height = WallDepth;
-                top -= WallDepth / 2;
-            }
-
-            rect = new Rect(left, top, width, height);
+            rect = Utils.SegmentToRect(p1, p2, WallDepth);
         }
 
         public GameObject Make(float height, bool shadowsEnabled)
@@ -184,7 +172,7 @@ public class Wall {
                 return new WallPart(p1, p2, type);
             }
 
-            Debug.LogError("WallPart.Split(): null returning!");
+            Debug.LogWarning("WallPart.Split(): null returning!");
             return null;
         }
     }
