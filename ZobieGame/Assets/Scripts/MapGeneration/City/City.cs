@@ -102,12 +102,11 @@ public class City : MonoBehaviour
         {
             DestroyImmediate(transform.GetChild(i).gameObject);
         }
-        
-        GameObject go = new GameObject("City");
+
+        GameObject go = Utils.TerrainObject("City");
         go.SetParent(gameObject);
 
-        var terrain = _rect.ToQuad("Terrain", ObjectHeight.Ground);
-        terrain.SetParent(go);
+        MakeTerrain(go);
 
         foreach (var street in _streets)
         {
@@ -123,5 +122,14 @@ public class City : MonoBehaviour
         }
 
         return go;
+    }
+
+    private GameObject MakeTerrain(GameObject parent)
+    {
+        var terrain = _rect.ToTerrainQuad("Terrain", ObjectHeight.Ground);
+        terrain.SetParent(parent);
+        terrain.SetMaterial(GeneratorAssets.Get().TerrainMaterial);
+
+        return terrain;
     }
 }

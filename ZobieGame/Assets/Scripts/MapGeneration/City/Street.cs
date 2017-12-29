@@ -12,8 +12,8 @@ public class Street
 
     public GameObject Make()
     {
-        var street =  _rect.ToQuad("Street", ObjectHeight.Floor);
-        street.GetComponent<MeshRenderer>().material = GeneratorAssets.Get().StreetMaterial;
+        var street =  _rect.ToTerrainQuad("Street", ObjectHeight.Floor);
+        street.SetMaterial(GeneratorAssets.Get().StreetMaterial);
 
         return street;
     }

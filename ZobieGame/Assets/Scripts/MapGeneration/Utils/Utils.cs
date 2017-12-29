@@ -73,4 +73,21 @@ public class Utils
 
         return new Rect(left, top, width, height);
     }
+
+    public static GameObject TerrainObject(string name)
+    {
+        GameObject go = new GameObject(name);
+        go.layer = 8; // Terrain layer
+
+        return go;
+    }
+
+    public static GameObject TerrainObject(PrimitiveType type, string name)
+    {
+        GameObject go = GameObject.CreatePrimitive(type);
+        go.name = name;
+        go.layer = 8; // Terrain layer
+        
+        return go;
+    }
 }

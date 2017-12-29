@@ -44,12 +44,12 @@ public class Estate
     private float RandomHouseEdge(float size)
     {
         float value = Random.Range(_houseSettings.MinHouseEdge, _houseSettings.MaxHouseEdge);
-        return Mathf.Min(value, size - 2 * _citySettings.EstateStreetOffset - float.Epsilon);
+        return Mathf.Min(value, size - 2 * Offset() - float.Epsilon);
     }
 
     private int CalcNumber(float edge, float size)
     {
-        size -= _citySettings.EstateStreetOffset * 2;
+        size -= Offset() * 2;
         int num = 1;
         while(size >= edge) 
         {
@@ -66,9 +66,14 @@ public class Estate
         return space / 2; 
     }
 
+    private float Offset()
+    {
+        return _citySettings.EstateStreetOffset + _citySettings.StreetSize / 2;
+    }
+
     public GameObject Make(House h)
     {
-        GameObject go = new GameObject("Estate");
+        GameObject go = Utils.TerrainObject("Estate");
         foreach (var houseRect in _houses)
         {
             h.Generate(houseRect);

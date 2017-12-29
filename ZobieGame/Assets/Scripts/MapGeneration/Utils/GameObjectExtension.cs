@@ -5,5 +5,10 @@ public static class GameObjectExtension
     {
         go.transform.parent = parent.transform;
     }
+
+    public static void SetMaterial(this GameObject go, Material material)
+    {
+        go.GetComponent<MeshRenderer>().material = material;
+    }
 }
 

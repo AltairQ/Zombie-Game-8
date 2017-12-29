@@ -20,7 +20,7 @@ public class House : MonoBehaviour {
         for (int i = 0; i < 4; i++)
         {
             AddWall(points[i], points[(i + 1) % 4]);
-            _walls[i].ShadowsEnabled = true;
+            //_walls[i].ShadowsEnabled = true; // it looks bad, should be done better
         }
 
         GenerateRooms(_rect);
@@ -201,7 +201,7 @@ public class House : MonoBehaviour {
 
     public GameObject Make(bool selfParent = false)
     {
-        GameObject go = new GameObject("House");
+        GameObject go = Utils.TerrainObject("House");
 
         if (selfParent)
         {
@@ -212,8 +212,7 @@ public class House : MonoBehaviour {
             go.SetParent(gameObject);
         }
         
-        var floor = MakeFloor();
-        floor.SetParent(go);
+        MakeFloor(go);
 
         foreach (var wall in _walls)
         {
@@ -224,8 +223,11 @@ public class House : MonoBehaviour {
         return go;
     }
 
-    private GameObject MakeFloor()
+    private GameObject MakeFloor(GameObject parent)
     {
-        return _rect.ToQuad("Floor", ObjectHeight.Floor);
+        var floor = _rect.ToTerrainQuad("Floor", ObjectHeight.Floor);
+        floor.SetParent(parent);
+        floor.SetMaterial(GeneratorAssets.Get().FloorMaterial);
+        return floor;
     }
 }
