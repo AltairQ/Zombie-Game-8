@@ -14,6 +14,7 @@ public class Street
     {
         var street =  _rect.ToTerrainQuad("Street", ObjectHeight.Floor);
         street.SetMaterial(GeneratorAssets.Get().StreetMaterial);
+        street.GetComponent<Collider>().enabled = false;
 
         return street;
     }

@@ -39,6 +39,8 @@ public class HouseEditor : Editor
         _settings.WindowSize = EditorGUILayout.Slider("WindowSize", _settings.WindowSize, 0.5f, 2f);
         _settings.SpaceBetweenWindows = EditorGUILayout.Slider("SpaceBetweenWindows", _settings.SpaceBetweenWindows, 0.5f, 2f);
 
+        _settings.Combine = EditorGUILayout.Toggle("Combine", _settings.Combine);
+
         EditorUtility.SetDirty(_settings);
 
         if (GUILayout.Button("Generate"))

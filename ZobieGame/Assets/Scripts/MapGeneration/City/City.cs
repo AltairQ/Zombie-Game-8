@@ -98,21 +98,13 @@ public class City : MonoBehaviour
 
     public GameObject Make()
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
-        {
-            DestroyImmediate(transform.GetChild(i).gameObject);
-        }
+        gameObject.Clear(DestroyImmediate);
 
         GameObject go = Utils.TerrainObject("City");
         go.SetParent(gameObject);
 
         MakeTerrain(go);
-
-        foreach (var street in _streets)
-        {
-            var streetGO = street.Make();
-            streetGO.SetParent(go);
-        }
+        MakeStreets(go);
 
         House house = GetComponent<House>();
         foreach (var estate in _estates)
@@ -131,5 +123,19 @@ public class City : MonoBehaviour
         terrain.SetMaterial(GeneratorAssets.Get().TerrainMaterial);
 
         return terrain;
+    }
+
+    private GameObject MakeStreets(GameObject parent)
+    {
+        GameObject streets = new GameObject("Streets");
+        streets.SetParent(parent);
+        foreach (var street in _streets)
+        {
+            var streetGO = street.Make();
+            streetGO.SetParent(streets);
+        }
+
+        parent.Combine(streets);
+        return streets;
     }
 }

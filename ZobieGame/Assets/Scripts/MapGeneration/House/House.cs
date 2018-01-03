@@ -205,21 +205,20 @@ public class House : MonoBehaviour {
 
         if (selfParent)
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                DestroyImmediate(transform.GetChild(i).gameObject);
-            }
+            gameObject.Clear(DestroyImmediate);
             go.SetParent(gameObject);
         }
         
-        MakeFloor(go);
+        var floor = MakeFloor(go);
+        var walls = MakeWalls(go);
 
-        foreach (var wall in _walls)
+        if(_settings.Combine)
         {
-            var wallGO = wall.Make();
-            wallGO.SetParent(go);
+            go.Combine(floor);
+            go.Combine(walls);
+            go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
-
+        
         return go;
     }
 
@@ -229,5 +228,19 @@ public class House : MonoBehaviour {
         floor.SetParent(parent);
         floor.SetMaterial(GeneratorAssets.Get().FloorMaterial);
         return floor;
+    }
+
+    private GameObject MakeWalls(GameObject parent)
+    {
+        GameObject walls = new GameObject("Walls");
+        walls.SetParent(parent);
+
+        foreach (var wall in _walls)
+        {
+            var wallGO = wall.Make();
+            wallGO.SetParent(walls);
+        }
+
+        return walls;
     }
 }
