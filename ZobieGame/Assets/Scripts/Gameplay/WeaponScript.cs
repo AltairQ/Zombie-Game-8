@@ -54,9 +54,9 @@ public class WeaponScript : MonoBehaviour
 
     }
 
-    public void Shoot()
+    void R_Shoot()
     {
-        if(_currentCooldown <= 0 && _bulletsLeft > 0 && _currentReload <= 0)
+        if (_currentCooldown <= 0 && _bulletsLeft > 0 && _currentReload <= 0)
         {
             for (int i = 0; i < _bulletCount; i++)
             {
@@ -76,6 +76,27 @@ public class WeaponScript : MonoBehaviour
             _casings++;
             GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.active = false;
         }
+    }
+
+    public void Shoot()
+    {
+        RaycastHit hit;
+        var rayDirection = _barrelEnd.transform.position - (GameSystem.Get().Player.transform.position + Vector3.Scale(GameSystem.Get().GunPos, new Vector3(0, 1, 0)));
+        rayDirection = Vector3.Scale(rayDirection, new Vector3(1, 0, 1));
+
+        GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = false;
+
+        if (Physics.Raycast(transform.position - Vector3.Normalize(rayDirection), rayDirection, out hit))
+        {
+            if (hit.distance > 2.0f)
+            {
+                R_Shoot();
+            }
+        }
+        else
+            R_Shoot();
+
+        GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = true;
     }
 
     public void Reload(int ammo)

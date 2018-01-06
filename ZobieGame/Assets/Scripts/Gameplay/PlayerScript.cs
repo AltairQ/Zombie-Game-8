@@ -25,7 +25,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     private int[] _ammoMax = new int[6];
 
-    private Vector3 _gunPos = new Vector3(0.1f, 0.0f, 0.75f);
+    private Vector3 _gunPos;
     private bool _primarySelected = false;
     private Image _healthBar;
     private Image _healthBarBG;
@@ -34,6 +34,7 @@ public class PlayerScript : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+        _gunPos = GameSystem.Get().GunPos;
         _controller = GetComponent<PlayerController>();
         _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
         _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
@@ -167,6 +168,16 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             SwitchWeapons();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            if(_primarySelected != true)
+                SwitchWeapons();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            if (_primarySelected == true)
+                SwitchWeapons();
         }
     }
 
