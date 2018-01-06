@@ -96,12 +96,14 @@ public class City : MonoBehaviour
         return createEstate < 1.0f;
     }
 
-    public GameObject Make()
+    public GameObject Make(bool selfParent = false)
     {
-        gameObject.Clear(DestroyImmediate);
-
         GameObject go = Utils.TerrainObject("City");
-        go.SetParent(gameObject);
+        if (selfParent)
+        {
+            gameObject.Clear(DestroyImmediate);
+            go.SetParent(gameObject);
+        }
 
         MakeTerrain(go);
         MakeStreets(go);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Wall {
-    public const float WallDepth = 0.2f;
+    public const float WallDepth = 0.4f;
     public bool ShadowsEnabled { get; set; }
 
     private List<WallPart> _parts = new List<WallPart>();

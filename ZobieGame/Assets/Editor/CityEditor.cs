@@ -38,7 +38,7 @@ public class CityEditor : Editor
         {
             Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
             _city.Generate(rect);
-            _city.Make();
+            _city.Make(true);
         }
     }
 

@@ -8,8 +8,11 @@ public class GeneratorAssets : MonoBehaviour
     public Material FloorMaterial { get; private set; }
     public Material WallMaterial { get; private set; }
     public Material TerrainMaterial { get; private set; }
+    public Material UpperTreeMaterial { get; private set; }
+    public Material LowerTreeMaterial { get; private set; }
     public HouseSettings HouseSettings { get; private set; }
     public CitySettings CitySettings { get; private set; }
+    public TreeSettings TreeSettings { get; private set; }
 
     private static GeneratorAssets _instance = null;
     private void Start()
@@ -19,8 +22,12 @@ public class GeneratorAssets : MonoBehaviour
         FloorMaterial = Resources.Load("Materials/FloorMaterial", typeof(Material)) as Material;
         WallMaterial = Resources.Load("Materials/WallMaterial", typeof(Material)) as Material;
         TerrainMaterial = Resources.Load("Materials/TerrainMaterial", typeof(Material)) as Material;
+        UpperTreeMaterial = Resources.Load("Materials/UpperTreeMaterial", typeof(Material)) as Material;
+        LowerTreeMaterial = Resources.Load("Materials/LowerTreeMaterial", typeof(Material)) as Material;
+
         HouseSettings = Resources.Load("ScriptableObjects/HouseSettings", typeof(HouseSettings)) as HouseSettings;
         CitySettings = Resources.Load("ScriptableObjects/CitySettings", typeof(CitySettings)) as CitySettings;
+        TreeSettings = Resources.Load("ScriptableObjects/TreeSettings", typeof(TreeSettings)) as TreeSettings;
 
         Debug.Log("GeneratorAssets instance created");
     }
