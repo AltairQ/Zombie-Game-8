@@ -1,15 +1,13 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(City))]
+[CustomEditor(typeof(CityComponent))]
 public class CityEditor : Editor
 {
-    private City _city;
     private CitySettings _settings;
 
     private void OnEnable()
     {
-        _city = target as City;
         _settings = GeneratorAssets.Get().CitySettings;
     }
 
@@ -37,8 +35,7 @@ public class CityEditor : Editor
         if (GUILayout.Button("Generate"))
         {
             Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
-            _city.Generate(rect);
-            _city.Make(true);
+            (target as CityComponent).Create(new City(rect));
         }
     }
 

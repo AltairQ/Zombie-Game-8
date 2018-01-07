@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class City : MonoBehaviour
+public class City : MapObject
 {   
     private Rect _rect;
     private List<Street> _streets = new List<Street>();
     private List<Estate> _estates = new List<Estate>();
 
     private CitySettings _settings;
-
-    public void Generate(Rect rect)
+    public City(Rect rect) : base(rect)
     {
-        _rect = rect;
         _settings = GeneratorAssets.Get().CitySettings;
+    }
 
+    public override void Generate()
+    {
         _streets.Clear();
         _estates.Clear();
 
@@ -96,35 +97,18 @@ public class City : MonoBehaviour
         return createEstate < 1.0f;
     }
 
-    public GameObject Make(bool selfParent = false)
+    public override GameObject Make()
     {
         GameObject go = Utils.TerrainObject("City");
-        if (selfParent)
-        {
-            gameObject.Clear(DestroyImmediate);
-            go.SetParent(gameObject);
-        }
-
-        MakeTerrain(go);
         MakeStreets(go);
 
-        House house = GetComponent<House>();
         foreach (var estate in _estates)
         {
-            var estateGO = estate.Make(house);
+            var estateGO = estate.Make();
             estateGO.SetParent(go);
         }
 
         return go;
-    }
-
-    private GameObject MakeTerrain(GameObject parent)
-    {
-        var terrain = _rect.ToTerrainQuad("Terrain", ObjectHeight.Ground);
-        terrain.SetParent(parent);
-        terrain.SetMaterial(GeneratorAssets.Get().TerrainMaterial);
-
-        return terrain;
     }
 
     private GameObject MakeStreets(GameObject parent)

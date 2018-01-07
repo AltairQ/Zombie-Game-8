@@ -2,28 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class House : MonoBehaviour {
-    private Rect _rect;
+public class House : MapObject
+{
     private List<Wall> _walls = new List<Wall>();
     private List<Room> _rooms = new List<Room>();
     private HouseSettings _settings;
-
-    public void Generate(Rect rect)
+    public House(Rect rect) : base(rect)
     {
-        _rect = rect;
         _settings = GeneratorAssets.Get().HouseSettings;
+    }
 
+    public override void Generate()
+    {
         _walls.Clear();
         _rooms.Clear();
 
-        var points = _rect.AllPoints();
+        var points = Rect.AllPoints();
         for (int i = 0; i < 4; i++)
         {
             AddWall(points[i], points[(i + 1) % 4]);
             //_walls[i].ShadowsEnabled = true; // it looks bad, should be done better
         }
 
-        GenerateRooms(_rect);
+        GenerateRooms(Rect);
         ConnectRooms();
 
         GenerateDoor();
@@ -199,15 +200,9 @@ public class House : MonoBehaviour {
         return null;
     }
 
-    public GameObject Make(bool selfParent = false)
+    public override GameObject Make()
     {
         GameObject go = Utils.TerrainObject("House");
-
-        if (selfParent)
-        {
-            gameObject.Clear(DestroyImmediate);
-            go.SetParent(gameObject);
-        }
         
         var floor = MakeFloor(go);
         var walls = MakeWalls(go);
@@ -224,7 +219,7 @@ public class House : MonoBehaviour {
 
     private GameObject MakeFloor(GameObject parent)
     {
-        var floor = _rect.ToTerrainQuad("Floor", ObjectHeight.Floor);
+        var floor = Rect.ToTerrainQuad("Floor", ObjectHeight.Floor);
         floor.SetParent(parent);
         floor.SetMaterial(GeneratorAssets.Get().FloorMaterial);
         return floor;

@@ -1,17 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Room {
-
-    private Rect _rect;
-    public Rect Rect 
+public class Room : MapObject
+{
+    public Room(Rect rect) : base(rect)
     {
-        get { return _rect; }
     }
 
-    public Room(Rect rect)
+    public override void Generate()
     {
-        _rect = rect;
+        throw new System.NotImplementedException();
+    }
+
+    public override GameObject Make()
+    {
+        throw new System.NotImplementedException();
     }
 }

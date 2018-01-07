@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Forest : MonoBehaviour {
-
-    private Rect _rect;
+public class Forest : MapObject {
     private List<Tree> _trees;
-    public void Generate(Rect rect)
+    public Forest(Rect rect) : base(rect)
     {
-        _rect = rect;
+    }
+
+    public override void Generate()
+    {
         _trees = new List<Tree>();
 
         float treeRectSize = 4;
         float perlinOff = Random.Range(0f, 666f);
-        for(float y = _rect.yMin; y + treeRectSize < _rect.yMax; y += treeRectSize)
+        for(float y = Rect.yMin; y + treeRectSize < Rect.yMax; y += treeRectSize)
         {
-            for (float x = _rect.xMin; x + treeRectSize < _rect.xMax; x += treeRectSize)
+            for (float x = Rect.xMin; x + treeRectSize < Rect.xMax; x += treeRectSize)
             {
                 float val = Mathf.PerlinNoise(x+perlinOff, y+perlinOff);
                 float randVal = Random.Range(0f, 1f);
@@ -36,17 +37,9 @@ public class Forest : MonoBehaviour {
         _trees.Add(tree);
     }
 
-    public GameObject Make(bool selfParent = false)
+    public override GameObject Make()
     {
         GameObject go = Utils.TerrainObject("Forest");
-        if (selfParent)
-        {
-            gameObject.Clear(DestroyImmediate);
-            go.SetParent(gameObject);
-        }     
-
-        MakeTerrain(go);
-
         foreach (var tree in _trees)
         {
             var treeGO = tree.Make();
@@ -54,14 +47,5 @@ public class Forest : MonoBehaviour {
         }
 
         return go;
-    }
-
-    private GameObject MakeTerrain(GameObject parent)
-    {
-        var terrain = _rect.ToTerrainQuad("Terrain", ObjectHeight.Ground);
-        terrain.SetParent(parent);
-        terrain.SetMaterial(GeneratorAssets.Get().TerrainMaterial);
-        
-        return terrain;
     }
 }

@@ -3,16 +3,18 @@ using System.Collections;
 
 public class MapGenerator : MonoBehaviour
 {
-    public void GenerateHouse(float width, float height, float depth)
-    {
-        Clear();
-    }
+    [SerializeField]
+    private GameObject _player;
 
-    private void Clear()
+    private Forest _forest;
+    private City _city;
+    private void Awake()
     {
-        for(int i = transform.childCount-1; i>=0; i--)
-        {
-            DestroyImmediate(transform.GetChild(i).gameObject);
-        }
+        _forest = GetComponent<Forest>();
+        _city = GetComponent<City>();
+    }
+    private void Start()
+    {
+        
     }
 }

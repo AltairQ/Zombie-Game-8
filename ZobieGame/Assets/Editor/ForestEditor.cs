@@ -2,15 +2,13 @@
 using UnityEditor;
 
 
-[CustomEditor(typeof(Forest))]
+[CustomEditor(typeof(ForestComponent))]
 public class ForestEditor : Editor
 {
-    private Forest _forest;
     //private CitySettings _settings;
 
     private void OnEnable()
     {
-        _forest = target as Forest;
         //_settings = GeneratorAssets.Get().CitySettings;
     }
 
@@ -35,11 +33,10 @@ public class ForestEditor : Editor
 
         //EditorUtility.SetDirty(_settings);
 
-        if (GUILayout.Button("Generate"))
+        if (GUILayout.Button("Create"))
         {
             Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
-            _forest.Generate(rect);
-            _forest.Make(true);
+            (target as ForestComponent).Create(new Forest(rect));
         }
     }
 
