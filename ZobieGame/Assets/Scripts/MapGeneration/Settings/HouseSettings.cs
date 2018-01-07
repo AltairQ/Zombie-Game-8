@@ -14,4 +14,6 @@ public class HouseSettings : ScriptableObject
     public float DoorSize;
     public float WindowSize;
     public float SpaceBetweenWindows;
+
+    public bool Combine;
 }

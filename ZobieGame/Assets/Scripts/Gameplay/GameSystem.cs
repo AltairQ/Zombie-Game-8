@@ -29,14 +29,22 @@ public class GameSystem : MonoBehaviour
     private GameObject _zombiePrefab;
 
     private GameObject _player = null;
+    private Vector3 _gunPos = new Vector3(0.1f, 0.3f, 0.75f);
+
     public GameObject Player { get { return _player; } }
+    public Vector3 GunPos { get { return _gunPos; } }
     public Canvas MainCanvas { get { return _mainCanvas; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
-    public void StartGame()
+    void BuildNavMesh()
     {
         NavMeshSurface surface = GetComponent<NavMeshSurface>();
         surface.BuildNavMesh();
+    }
+
+    public void StartGame()
+    {
+        BuildNavMesh();
 
         Vector3 startPos = Vector3.up;
         _player = Instantiate(_playerPrefab, startPos, Quaternion.identity);

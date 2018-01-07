@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class City : MonoBehaviour
+public class City : MapObject
 {   
     private Rect _rect;
     private List<Street> _streets = new List<Street>();
     private List<Estate> _estates = new List<Estate>();
 
     private CitySettings _settings;
-
-    public void Generate(Rect rect)
+    public City(Rect rect) : base(rect)
     {
-        _rect = rect;
         _settings = GeneratorAssets.Get().CitySettings;
+    }
 
+    public override void Generate()
+    {
         _streets.Clear();
         _estates.Clear();
 
@@ -96,32 +97,31 @@ public class City : MonoBehaviour
         return createEstate < 1.0f;
     }
 
-    public GameObject Make()
+    public override GameObject Make()
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
-        {
-            DestroyImmediate(transform.GetChild(i).gameObject);
-        }
-        
-        GameObject go = new GameObject("City");
-        go.SetParent(gameObject);
+        GameObject go = Utils.TerrainObject("City");
+        MakeStreets(go);
 
-        var terrain = _rect.ToQuad("Terrain", ObjectHeight.Ground);
-        terrain.SetParent(go);
-
-        foreach (var street in _streets)
-        {
-            var streetGO = street.Make();
-            streetGO.SetParent(go);
-        }
-
-        House house = GetComponent<House>();
         foreach (var estate in _estates)
         {
-            var estateGO = estate.Make(house);
+            var estateGO = estate.Make();
             estateGO.SetParent(go);
         }
 
         return go;
+    }
+
+    private GameObject MakeStreets(GameObject parent)
+    {
+        GameObject streets = new GameObject("Streets");
+        streets.SetParent(parent);
+        foreach (var street in _streets)
+        {
+            var streetGO = street.Make();
+            streetGO.SetParent(streets);
+        }
+
+        parent.Combine(streets);
+        return streets;
     }
 }

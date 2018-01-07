@@ -1,55 +1,61 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Estate
+public class Estate : MapObject
 {
-    private Rect _rect;
-    private List<Rect> _houses = new List<Rect>(); // placeholders for houses
+    private List<House> _houses = new List<House>();
     private HouseSettings _houseSettings;
     private CitySettings _citySettings;
 
-    public Estate(Rect rect)
+    public Estate(Rect rect) : base(rect)
     {
-        _rect = rect;
         _houseSettings = GeneratorAssets.Get().HouseSettings;
         _citySettings = GeneratorAssets.Get().CitySettings;
     }
 
-    public void Generate()
+    public override void Generate()
     {
         _houses.Clear();
 
-        float horizontalEdge = RandomHouseEdge(_rect.width);
-        int horizontalNum = CalcNumber(horizontalEdge, _rect.width);
+        float horizontalEdge = RandomHouseEdge(Rect.width);
+        int horizontalNum = CalcNumber(horizontalEdge, Rect.width);
 
-        float verticalEdge = RandomHouseEdge(_rect.height);
-        int verticalNum = CalcNumber(verticalEdge, _rect.height);
+        float verticalEdge = RandomHouseEdge(Rect.height);
+        int verticalNum = CalcNumber(verticalEdge, Rect.height);
 
-        float horOffset = CalcFinalOffset(horizontalNum, _rect.width, horizontalEdge);
-        float verOffset = CalcFinalOffset(verticalNum, _rect.height, verticalEdge);
+        float horOffset = CalcFinalOffset(horizontalNum, Rect.width, horizontalEdge);
+        float verOffset = CalcFinalOffset(verticalNum, Rect.height, verticalEdge);
 
         float space = _citySettings.SpaceBetweenHouses;
         for(int i=0; i<verticalNum; i++)
         {
             for(int j=0; j<horizontalNum; j++)
             {
-                float x = _rect.xMin + horOffset + j * (space + horizontalEdge);
-                float y = _rect.yMin + verOffset + i * (space + verticalEdge);
+                float x = Rect.xMin + horOffset + j * (space + horizontalEdge);
+                float y = Rect.yMin + verOffset + i * (space + verticalEdge);
 
-                _houses.Add(new Rect(x, y, horizontalEdge, verticalEdge));
+                AddHouse(x, y, horizontalEdge, verticalEdge);
             }
         }
+    }
+
+    private void AddHouse(float x, float y, float width, float height)
+    {
+        Rect houseRect = new Rect(x, y, width, height);
+        House house = new House(houseRect);
+        house.Generate();
+        _houses.Add(house);
     }
 
     private float RandomHouseEdge(float size)
     {
         float value = Random.Range(_houseSettings.MinHouseEdge, _houseSettings.MaxHouseEdge);
-        return Mathf.Min(value, size - 2 * _citySettings.EstateStreetOffset - float.Epsilon);
+        return Mathf.Min(value, size - 2 * Offset() - float.Epsilon);
     }
 
     private int CalcNumber(float edge, float size)
     {
-        size -= _citySettings.EstateStreetOffset * 2;
+        size -= Offset() * 2;
         int num = 1;
         while(size >= edge) 
         {
@@ -66,13 +72,17 @@ public class Estate
         return space / 2; 
     }
 
-    public GameObject Make(House h)
+    private float Offset()
     {
-        GameObject go = new GameObject("Estate");
-        foreach (var houseRect in _houses)
+        return _citySettings.EstateStreetOffset + _citySettings.StreetSize / 2;
+    }
+
+    public override GameObject Make()
+    {
+        GameObject go = Utils.TerrainObject("Estate");
+        foreach (var house in _houses)
         {
-            h.Generate(houseRect);
-            var houseGO = h.Make();
+            var houseGO = house.Make();
             houseGO.SetParent(go);
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Wall {
-    public const float WallDepth = 0.2f;
+    public const float WallDepth = 0.4f;
     public bool ShadowsEnabled { get; set; }
 
     private List<WallPart> _parts = new List<WallPart>();
@@ -29,8 +29,7 @@ public class Wall {
 
     public GameObject Make()
     {
-        GameObject go = new GameObject();
-        go.name = "Wall";
+        GameObject go = Utils.TerrainObject("Wall");
         foreach(var part in _parts)
         {
             var partGO = part.Make(_height, ShadowsEnabled);
@@ -105,22 +104,21 @@ public class Wall {
                 scaleH = height * 0.1f;
             }
 
-            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = "WallPart: " + type;
+            GameObject go = Utils.TerrainObject(PrimitiveType.Cube, "WallPart: " + type);
             go.transform.position = rect.Center(centerY);
             go.transform.localScale = rect.Scale(scaleH);
+            go.SetMaterial(GeneratorAssets.Get().WallMaterial);
             RemoveShadows(go, shadowsEnabled);
 
             if(type == PartType.Window)
             {
-                GameObject go2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                go2.name = "WallPart2: " + type;
+                GameObject go2 = Utils.TerrainObject(PrimitiveType.Cube, "WallPart2: " + type);
                 go2.transform.position = rect.Center(height * 0.2f);
                 go2.transform.localScale = rect.Scale(height * 0.4f);
+                go2.SetMaterial(GeneratorAssets.Get().WallMaterial);
                 RemoveShadows(go2, shadowsEnabled);
 
-                GameObject window = new GameObject();
-                window.name = "WindowPack";
+                GameObject window = Utils.TerrainObject("WindowPack");
                 go.transform.parent = window.transform;
                 go2.transform.parent = window.transform;
 
@@ -141,6 +139,7 @@ public class Wall {
             if (mr == null)
             {
                 Debug.Log("no mesh renderer!");
+                return;
             }
             mr.receiveShadows = false;
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;

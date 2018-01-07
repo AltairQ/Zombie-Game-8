@@ -1,15 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(House))]
+[CustomEditor(typeof(HouseComponent))]
 public class HouseEditor : Editor
 {
-    private House _house;
     private HouseSettings _settings;
-
     private void OnEnable()
     {
-        _house = target as House;
         _settings = GeneratorAssets.Get().HouseSettings;
     }
 
@@ -39,13 +36,14 @@ public class HouseEditor : Editor
         _settings.WindowSize = EditorGUILayout.Slider("WindowSize", _settings.WindowSize, 0.5f, 2f);
         _settings.SpaceBetweenWindows = EditorGUILayout.Slider("SpaceBetweenWindows", _settings.SpaceBetweenWindows, 0.5f, 2f);
 
+        _settings.Combine = EditorGUILayout.Toggle("Combine", _settings.Combine);
+
         EditorUtility.SetDirty(_settings);
 
-        if (GUILayout.Button("Generate"))
+        if (GUILayout.Button("Create"))
         {
             Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
-            _house.Generate(rect);
-            _house.Make(true);
+            (target as HouseComponent).Create(new House(rect));
         }
     }
 

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Name: CitySettings
   m_EditorClassIdentifier: 
   EstateStreetOffset: 2
-  MinEstateEdge: 10
+  MinEstateEdge: 20
   StreetSize: 3
   SpaceBetweenHouses: 4

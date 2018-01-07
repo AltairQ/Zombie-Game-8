@@ -20,3 +20,4 @@ MonoBehaviour:
   DoorSize: 1.5
   WindowSize: 1
   SpaceBetweenWindows: 1.25
+  Combine: 1

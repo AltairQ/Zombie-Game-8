@@ -2,28 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class House : MonoBehaviour {
-    private Rect _rect;
+public class House : MapObject
+{
     private List<Wall> _walls = new List<Wall>();
     private List<Room> _rooms = new List<Room>();
     private HouseSettings _settings;
-
-    public void Generate(Rect rect)
+    public House(Rect rect) : base(rect)
     {
-        _rect = rect;
         _settings = GeneratorAssets.Get().HouseSettings;
+    }
 
+    public override void Generate()
+    {
         _walls.Clear();
         _rooms.Clear();
 
-        var points = _rect.AllPoints();
+        var points = Rect.AllPoints();
         for (int i = 0; i < 4; i++)
         {
             AddWall(points[i], points[(i + 1) % 4]);
-            _walls[i].ShadowsEnabled = true;
+            //_walls[i].ShadowsEnabled = true; // it looks bad, should be done better
         }
 
-        GenerateRooms(_rect);
+        GenerateRooms(Rect);
         ConnectRooms();
 
         GenerateDoor();
@@ -199,33 +200,42 @@ public class House : MonoBehaviour {
         return null;
     }
 
-    public GameObject Make(bool selfParent = false)
+    public override GameObject Make()
     {
-        GameObject go = new GameObject("House");
+        GameObject go = Utils.TerrainObject("House");
+        
+        var floor = MakeFloor(go);
+        var walls = MakeWalls(go);
 
-        if (selfParent)
+        if(_settings.Combine)
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                DestroyImmediate(transform.GetChild(i).gameObject);
-            }
-            go.SetParent(gameObject);
+            go.Combine(floor);
+            go.Combine(walls);
+            go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
         
-        var floor = MakeFloor();
-        floor.SetParent(go);
+        return go;
+    }
+
+    private GameObject MakeFloor(GameObject parent)
+    {
+        var floor = Rect.ToTerrainQuad("Floor", ObjectHeight.Floor);
+        floor.SetParent(parent);
+        floor.SetMaterial(GeneratorAssets.Get().FloorMaterial);
+        return floor;
+    }
+
+    private GameObject MakeWalls(GameObject parent)
+    {
+        GameObject walls = new GameObject("Walls");
+        walls.SetParent(parent);
 
         foreach (var wall in _walls)
         {
             var wallGO = wall.Make();
-            wallGO.SetParent(go);
+            wallGO.SetParent(walls);
         }
 
-        return go;
-    }
-
-    private GameObject MakeFloor()
-    {
-        return _rect.ToQuad("Floor", ObjectHeight.Floor);
+        return walls;
     }
 }
