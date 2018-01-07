@@ -15,7 +15,12 @@ public class GameSystem : MonoBehaviour
     {
         _instance = this;
         StartGame();
-	}
+    }
+
+    private void Start()
+    {
+        MapSystem.Get().Init(_player);
+    }
 
     [SerializeField]
     private Camera _mainCamera;
@@ -36,20 +41,18 @@ public class GameSystem : MonoBehaviour
     public Canvas MainCanvas { get { return _mainCanvas; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
-    void BuildNavMesh()
+    public void BuildNavMesh()
     {
         NavMeshSurface surface = GetComponent<NavMeshSurface>();
         surface.BuildNavMesh();
     }
 
     public void StartGame()
-    {
-        BuildNavMesh();
-
+    { 
         Vector3 startPos = Vector3.up;
         _player = Instantiate(_playerPrefab, startPos, Quaternion.identity);
         _player.GetComponent<PlayerScript>()._camera = _mainCamera;
-
+        
         _mainCanvas.transform.GetChild(0).transform.position = new Vector3(20, Screen.height - 20, 0);
         _mainCanvas.transform.GetChild(1).transform.position = new Vector3(10, Screen.height - 50, 0);
     }

@@ -71,11 +71,11 @@ public static class RectExtension
         {
             Vector2 p1 = points[i], p2 = points[i+1];
             
-            if(Mathf.Approximately(p1.x, p.x) && Mathf.Approximately(p2.x, p.x))
+            if(Utils.TheSame(p1.x, p.x) && Utils.TheSame(p2.x, p.x))
             {
                 onEdge = onEdge || Mathf.Min(p1.y, p2.y) <= p.y && Mathf.Max(p1.y, p2.y) >= p.y; 
             }
-            if (Mathf.Approximately(p1.y, p.y) && Mathf.Approximately(p2.y, p.y))
+            if (Utils.TheSame(p1.y, p.y) && Utils.TheSame(p2.y, p.y))
             {
                 onEdge = onEdge || Mathf.Min(p1.x, p2.x) <= p.x && Mathf.Max(p1.x, p2.x) >= p.x;
             }

@@ -34,8 +34,8 @@ public class Utils
     {
         OrderSwap(ref p1, ref p2);
         OrderSwap(ref v1, ref v2);
-        bool sameX = IsTrue(new Vector2[]{ p1,p2,v1,v2}, v => Mathf.Approximately(v.x, p1.x));
-        bool sameY = IsTrue(new Vector2[] { p1, p2, v1, v2 }, v => Mathf.Approximately(v.y, p1.y));
+        bool sameX = IsTrue(new Vector2[]{ p1,p2,v1,v2}, v => Utils.TheSame(v.x, p1.x));
+        bool sameY = IsTrue(new Vector2[] { p1, p2, v1, v2 }, v => Utils.TheSame(v.y, p1.y));
 
         if(!sameX && !sameY)
         {
@@ -60,12 +60,12 @@ public class Utils
         float width = Mathf.Abs(p1.x - p2.x);
         float height = Mathf.Abs(p1.y - p2.y);
 
-        if (Mathf.Approximately(width, 0))
+        if (Utils.TheSame(width, 0))
         {
             width = size;
             left -= size / 2;
         }
-        if (Mathf.Approximately(height, 0))
+        if (Utils.TheSame(height, 0))
         {
             height = size;
             top -= size / 2;
@@ -89,5 +89,19 @@ public class Utils
         go.layer = 8; // Terrain layer
         
         return go;
+    }
+
+    public static GameObject CreateGround(Rect rect, GameObject parent)
+    {
+        var terrain = rect.ToTerrainQuad("Ground", ObjectHeight.Ground);
+        terrain.SetParent(parent);
+        terrain.SetMaterial(GeneratorAssets.Get().GroundMaterial);
+
+        return terrain;
+    }
+
+    public static bool TheSame(float a, float b)
+    {
+        return Mathf.Abs(a - b) < 1e-6;
     }
 }

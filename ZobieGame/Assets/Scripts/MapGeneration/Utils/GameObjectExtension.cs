@@ -21,6 +21,12 @@ public static class GameObjectExtension
         }
     }
 
+    public static Vector2 Get2dPos(this GameObject go)
+    {
+        Vector3 pos = go.transform.position;
+        return new Vector2(pos.x, pos.z);
+    }
+
     public static T GetOrAdd<T>(this GameObject go) where T : Component
     {
         T comp = go.GetComponent<T>();
@@ -34,8 +40,14 @@ public static class GameObjectExtension
     public static void Combine(this GameObject go, GameObject toCombine)
     {
         var renderer = go.GetOrAdd<MeshRenderer>();
-        var newMaterial = toCombine.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+        var combineRenderer = toCombine.GetComponentInChildren<MeshRenderer>();
+        if(combineRenderer == null)
+        {
+            Debug.LogError("Renderer not found for toCombine game object!");
+            return;
+        }
 
+        var newMaterial = combineRenderer.sharedMaterial;
         var combines = GetCombines(toCombine);
 
         int newSize = renderer.sharedMaterials.Length + 1;
