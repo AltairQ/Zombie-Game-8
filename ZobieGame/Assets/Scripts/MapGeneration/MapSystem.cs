@@ -65,18 +65,31 @@ public class MapSystem : MonoBehaviour
     private bool _navMeshRebuild = false;
     private void UpdateMapAround(int x, int y, Action<GameObject, int, int> action)
     {
-        for(int dx = -1; dx <= 1; dx++)
+        if (_navMeshRebuild)
+        {
+            BuildNavMesh();
+            _navMeshRebuild = false;
+        }
+
+        for (int dx = -1; dx <= 1; dx++)
         {
             for(int dy = -1; dy <= 1; dy++)
             {
                 UpdateMapAt(x + dx, y + dy, action);
             }
         }
+    }
 
-        if(_navMeshRebuild)
+    private void BuildNavMesh()
+    {
+        foreach(var go in _map)
         {
-            GameSystem.Get().BuildNavMesh();
-            _navMeshRebuild = false;
+            go.Value.SetActive(true);
+        }
+        GameSystem.Get().BuildNavMesh();
+        foreach(var go in _map)
+        {
+            go.Value.SetActive(false);
         }
     }
 
