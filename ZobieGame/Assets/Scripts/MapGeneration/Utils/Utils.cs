@@ -60,12 +60,12 @@ public class Utils
         float width = Mathf.Abs(p1.x - p2.x);
         float height = Mathf.Abs(p1.y - p2.y);
 
-        if (Utils.TheSame(width, 0))
+        if (TheSame(width, 0))
         {
             width = size;
             left -= size / 2;
         }
-        if (Utils.TheSame(height, 0))
+        if (TheSame(height, 0))
         {
             height = size;
             top -= size / 2;
