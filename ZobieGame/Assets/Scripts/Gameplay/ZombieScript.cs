@@ -5,9 +5,13 @@ using UnityEngine;
 public class ZombieScript : MonoBehaviour
 {
     float _health;
-    float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 2.0f;
+    float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 2.0f, _timeLeft = 5.0f;
     GameObject _player;
     PlayerScript _playerScript;
+    Animator _anim;
+    bool _dead = false;
+
+    public bool Dead { get { return _dead; } }
 
     public void Damage(float damage)
     {
@@ -20,6 +24,8 @@ public class ZombieScript : MonoBehaviour
         _health = 100;
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
         _player = GameSystem.Get().Player;
+        _anim = transform.GetChild(0).GetComponent<Animator>();
+        _anim.Play("Walk");
     }
 
     void Attack()
@@ -28,19 +34,47 @@ public class ZombieScript : MonoBehaviour
         {
             _playerScript.Damage(_attack);
             _currentAttackCooldown = _attackCooldown;
+            _anim.Play("Attack 1", 0, 0f);
         }
     }
 	
+    void Die()
+    {
+        Destroy(this.gameObject);
+    }
+
 	// Update is called once per frame
 	void Update ()
     {
+        if((_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack 1") && _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1))
+        {
+            _anim.Play("Walk");
+//            _anim.Play("Idle 1");
+        }
+
         _currentAttackCooldown -= Time.deltaTime;
 
-        Attack();
+        if(!_dead)
+            Attack();
 
         if (_health <= 0)
         {
-            Destroy(this.gameObject);
+            if (_timeLeft >= 5.0f)
+            {
+                _anim.Play("Die 1");
+                _dead = true;
+                transform.GetChild(0).Translate(new Vector3(0, 0.3f, 0));
+
+                foreach (CapsuleCollider collider in GetComponents<CapsuleCollider>())
+                {
+                    collider.enabled = false;
+                }
+            }
+
+            _timeLeft -= Time.deltaTime;
         }
+
+        if (_timeLeft <= 0)
+            Die();
 	}
 }

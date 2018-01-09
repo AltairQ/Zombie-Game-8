@@ -67,7 +67,6 @@ public class GameSystem : MonoBehaviour
         _zombies.Clear();
     }
 
-
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Z))
