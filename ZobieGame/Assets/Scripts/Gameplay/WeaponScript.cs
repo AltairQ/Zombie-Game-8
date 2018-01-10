@@ -130,10 +130,10 @@ public class WeaponScript : MonoBehaviour
 	void Update ()
     {
         if (transform.parent != null)
-            transform.GetChild(0).gameObject.active = false;
+            transform.GetChild(0).gameObject.SetActive(false);
         else
         {
-            transform.GetChild(0).gameObject.active = true;
+            transform.GetChild(0).gameObject.SetActive(true);
             transform.Rotate(Vector3.up, Time.deltaTime * 60);
         }
 
