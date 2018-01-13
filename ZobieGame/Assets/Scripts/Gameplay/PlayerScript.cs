@@ -30,6 +30,7 @@ public class PlayerScript : MonoBehaviour
     private Image _healthBar;
     private Image _healthBarBG;
     private float _health;
+    private Text _ammoLeft;
 
     // Use this for initialization
     void Start ()
@@ -39,6 +40,7 @@ public class PlayerScript : MonoBehaviour
         _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
         _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
         _health = 100;
+        _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(1).GetComponent<Text>();
     }
 
     public void Damage(float damage)
@@ -49,6 +51,7 @@ public class PlayerScript : MonoBehaviour
     private void PickUpWeapon(GameObject weapon, bool primary)
     {
         weapon.GetComponent<BoxCollider>().enabled = false;
+        weapon.GetComponent<WeaponScript>().Held = true;
         weapon.transform.SetParent(transform);
         weapon.transform.rotation = transform.rotation;
         weapon.transform.position = transform.position;
@@ -88,6 +91,7 @@ public class PlayerScript : MonoBehaviour
         {
             _weaponPrimary.GetComponent<BoxCollider>().enabled = true;
             _weaponPrimary.transform.SetParent(null);
+            _weaponPrimary.GetComponent<WeaponScript>().Held = false;
             _weaponPrimary.transform.rotation = transform.rotation;
             _weaponPrimary.transform.position = transform.position;
             _weaponPrimary = null;
@@ -96,6 +100,7 @@ public class PlayerScript : MonoBehaviour
         {
             _weaponSecondary.GetComponent<BoxCollider>().enabled = true;
             _weaponSecondary.transform.SetParent(null);
+            _weaponSecondary.GetComponent<WeaponScript>().Held = false;
             _weaponSecondary.transform.rotation = transform.rotation;
             _weaponSecondary.transform.position = transform.position;
             _weaponSecondary = null;
@@ -128,6 +133,14 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        if ((_primarySelected && _weaponPrimary == null) || (!_primarySelected && _weaponSecondary == null))
+            _ammoLeft.gameObject.SetActive(false);
+        else
+        {
+            _ammoLeft.gameObject.SetActive(true);
+            _ammoLeft.text = (_primarySelected ? _ammo[_weaponPrimary.GetComponent<WeaponScript>().AmmoType] : _ammo[_weaponSecondary.GetComponent<WeaponScript>().AmmoType]).ToString();
+        }
+
         if (_health <= 0)
             this.gameObject.active = false;
 

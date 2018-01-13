@@ -55,6 +55,7 @@ public class GameSystem : MonoBehaviour
         
         _mainCanvas.transform.GetChild(0).transform.position = new Vector3(20, Screen.height - 20, 0);
         _mainCanvas.transform.GetChild(1).transform.position = new Vector3(10, Screen.height - 50, 0);
+        _mainCanvas.transform.GetChild(2).transform.position = new Vector3(Screen.width - 70, Screen.height - 20, 0);
     }
 
     public void EndGame()
