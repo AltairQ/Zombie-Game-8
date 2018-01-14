@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // All the information describing an individual enemy
-public struct Genotype
+public class Genotype
 {
     // physical information
     public Genes genes;

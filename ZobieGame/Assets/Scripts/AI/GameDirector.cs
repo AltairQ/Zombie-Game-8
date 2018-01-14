@@ -5,14 +5,26 @@ using System.Collections.Generic;
 public class GameDirector{
 
     // Bundle of info to be stored in the GD's database
-    struct ActorInfo
+    class ActorInfo
     {
         public Genes genes;
         public Memes memes;
+        public float att_score;
+        public float dist_score;
+
+        public ActorInfo(Genes g, Memes m)
+        {
+            this.genes = g;
+            this.memes = m;
+        }
+
     }
 
     // Internal storage
     private Dictionary<int, ActorInfo> _database;
+
+    private int _max_candidates;
+    private List<int> _candidates;
 
     // Last assigned Id
     private int _lastId = 0;
@@ -39,6 +51,50 @@ public class GameDirector{
         actor.GoToPlayer();
     }
 
+
+    public Genes NewEnemy()
+    {
+        _candidates.Sort(
+            (a, b) => {
+                float s_a = _database[a].att_score * 10 + _database[a].dist_score;
+                float s_b = _database[b].att_score * 10 + _database[b].dist_score;
+
+                return s_b.CompareTo(s_a);
+            });
+
+        _lastId++;
+
+        Genes newgenes = new Genes
+        {
+            Id = _lastId,
+            G_health = 100.0f,
+            G_melee_range = 2.0f,
+            G_speed = 1.0f,
+            G_strength = 10.0f
+        };
+
+        Memes newmemes = new Memes
+        {
+            M_courage = 1.0f
+        };
+
+        _database.Add(newgenes.Id, new ActorInfo(newgenes, newmemes));
+
+        return newgenes;
+    }
+
+    // QUICK AND DIRTY
+    // To be called with:
+    // - enemy ID (from the genes)
+    // - score representing a sum(?) of damage done to the player
+    // - score representing proximity to the player
+    public void EnemyDead(int eid, float att_score, float dist_score)
+    {
+        _database[eid].att_score = att_score;
+        _database[eid].dist_score = dist_score;
+        _candidates.Add(eid);
+    }
+
     // To be executed every X frames
     public void WorldTick<T>(T warudo)
         where T : IAIEnvActions, IAIEnvState
@@ -47,15 +103,7 @@ public class GameDirector{
 
         if (_tick_count % 10000 == 0)
         {
-            Genes newgenes = new Genes();
-
-            newgenes.Id = ++_lastId;
-            newgenes.G_health = 100.0f;
-            newgenes.G_melee_range = 2.0f;
-            newgenes.G_speed = 1.0f;
-            newgenes.G_strength = 10.0f;
-
-            warudo.SpawnEnemy(newgenes);
+            warudo.SpawnEnemy(this.NewEnemy());
         }
     }
 
