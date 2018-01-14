@@ -40,7 +40,7 @@ public class PlayerScript : MonoBehaviour
         _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
         _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
         _health = 100;
-        _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(1).GetComponent<Text>();
+        _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(0).GetComponent<Text>();
     }
 
     public void Damage(float damage)
