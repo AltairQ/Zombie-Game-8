@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class City : MapObject
 {   
-    private Rect _rect;
     private List<Street> _streets = new List<Street>();
     private List<Estate> _estates = new List<Estate>();
 
@@ -18,7 +17,7 @@ public class City : MapObject
         _streets.Clear();
         _estates.Clear();
 
-        GenerateEstates(_rect);
+        GenerateEstates(Rect);
     }
 
     private void AddStreet(Vector2 p1, Vector2 p2)
@@ -113,6 +112,11 @@ public class City : MapObject
 
     private GameObject MakeStreets(GameObject parent)
     {
+        if(_streets.Count == 0)
+        {
+            return null;
+        }
+
         GameObject streets = new GameObject("Streets");
         streets.SetParent(parent);
         foreach (var street in _streets)

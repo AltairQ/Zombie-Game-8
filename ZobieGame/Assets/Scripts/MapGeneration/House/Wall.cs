@@ -147,7 +147,7 @@ public class Wall {
         // changes size of current object and returns other half
         public WallPart Split(WallPart part)
         {
-            if(Mathf.Approximately(rect.xMin, part.rect.xMin))
+            if(Utils.TheSame(rect.xMin, part.rect.xMin))
             {
                 float firstEnd = part.rect.yMin;
                 float secondBeg = part.rect.yMax;
@@ -158,7 +158,7 @@ public class Wall {
                 Vector2 p2 = new Vector2(rect.xMin + WallDepth / 2, secondEnd);
                 return new WallPart(p1, p2, type);
             }
-            if (Mathf.Approximately(rect.yMin, part.rect.yMin))
+            if (Utils.TheSame(rect.yMin, part.rect.yMin))
             {
                 float firstEnd = part.rect.xMin;
                 float secondBeg = part.rect.xMax;

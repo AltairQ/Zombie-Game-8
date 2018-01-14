@@ -7,19 +7,24 @@ public class ZombieController : MonoBehaviour
 {
     Rigidbody _rb;
     NavMeshAgent _nv;
+    ZombieScript _zs;
 
 	// Use this for initialization
 	void Start ()
     {
         _rb = GetComponent<Rigidbody>();
         _nv = GetComponent<NavMeshAgent>();
-	}
+        _zs = GetComponent<ZombieScript>();
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        _nv.SetDestination(GameSystem.Get().Player.transform.position);
-	}
+        if (_zs.Dead)
+            _nv.enabled = false;
+        else
+            _nv.SetDestination(GameSystem.Get().Player.transform.position);
+    }
 
     void FixedUpdate()
     {

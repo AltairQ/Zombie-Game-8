@@ -15,5 +15,6 @@ public class HouseSettings : ScriptableObject
     public float WindowSize;
     public float SpaceBetweenWindows;
 
+    public float RoomSpawnChance;
     public bool Combine;
 }

@@ -11,7 +11,7 @@ public class WeaponScript : MonoBehaviour
     [SerializeField]
     private int _spread, _bulletCount, _magazineSize, _bulletsLeft, _ammoType;
     [SerializeField]
-    private bool _primary, _dropOnReload;
+    private bool _primary, _dropOnReload, _held = false;
     public bool Primary{ get { return _primary; } }
     public float Offset{ get { return _offset; } }
     System.Random _rnd = new System.Random();
@@ -20,6 +20,7 @@ public class WeaponScript : MonoBehaviour
     public int MagazineSize { get { return _magazineSize; } }
     public int BulletsLeft { get { return _bulletsLeft; } }
     public int AmmoType { get { return _ammoType; } set { _ammoType = value; } }
+    public bool Held { get { return _held; } set { _held = value; } }
     private float _currentReload;
     private float _currentCooldown;
     private int _casings;
@@ -46,12 +47,15 @@ public class WeaponScript : MonoBehaviour
             if (i >= _bulletsLeft)
                 newBullet.active = false;
         }
+
+        GameObject bulletIndicator = Instantiate(_bulletImage, GameSystem.Get().MainCanvas.transform.GetChild(2));
+        bulletIndicator.SetParent(GameSystem.Get().MainCanvas.transform.GetChild(0).gameObject);
     }
 
 	// Use this for initialization
 	void Start ()
     {
-
+        _held = false;
     }
 
     void R_Shoot()
@@ -67,7 +71,7 @@ public class WeaponScript : MonoBehaviour
             if (!_dropOnReload)
             {
                 GameObject new_casing = Instantiate(_casing, transform.position, transform.rotation);
-                new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(100 + _rnd.Next(-50, 50), 25 + _rnd.Next(50), _rnd.Next(-25, 25)));
+                new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3((100 + _rnd.Next(-50, 50)) / 10, (25 + _rnd.Next(50)) / 10, _rnd.Next(-25, 25) / 10));
                 new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
             }
 
@@ -88,7 +92,7 @@ public class WeaponScript : MonoBehaviour
 
         if (Physics.Raycast(transform.position - Vector3.Normalize(rayDirection), rayDirection, out hit))
         {
-            if (hit.distance > 2.0f)
+            if (hit.distance > 2.0f || hit.transform.gameObject.CompareTag("Zombie"))
             {
                 R_Shoot();
             }
@@ -129,11 +133,11 @@ public class WeaponScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (transform.parent != null)
-            transform.GetChild(0).gameObject.active = false;
+        if (_held == true)
+            transform.GetChild(0).gameObject.SetActive(false);
         else
         {
-            transform.GetChild(0).gameObject.active = true;
+            transform.GetChild(0).gameObject.SetActive(true);
             transform.Rotate(Vector3.up, Time.deltaTime * 60);
         }
 

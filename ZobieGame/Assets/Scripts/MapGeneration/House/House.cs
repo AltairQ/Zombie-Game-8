@@ -5,6 +5,7 @@ using UnityEngine;
 public class House : MapObject
 {
     private List<Wall> _walls = new List<Wall>();
+    private List<Wall> _corners = new List<Wall>();
     private List<Room> _rooms = new List<Room>();
     private HouseSettings _settings;
     public House(Rect rect) : base(rect)
@@ -14,15 +15,11 @@ public class House : MapObject
 
     public override void Generate()
     {
+        _corners.Clear();
         _walls.Clear();
         _rooms.Clear();
 
-        var points = Rect.AllPoints();
-        for (int i = 0; i < 4; i++)
-        {
-            AddWall(points[i], points[(i + 1) % 4]);
-            //_walls[i].ShadowsEnabled = true; // it looks bad, should be done better
-        }
+        InitWalls();    
 
         GenerateRooms(Rect);
         ConnectRooms();
@@ -31,9 +28,26 @@ public class House : MapObject
         GenerateWindows();
     }
 
+    private void InitWalls()
+    {
+        var points = Rect.AllPoints();
+        Vector2 cornerOff = new Vector2(Wall.WallDepth/2, Wall.WallDepth/2);
+        for (int i = 0; i < 4; i++)
+        {
+            AddWall(points[i], points[(i + 1) % 4]);
+            AddCorner(points[i] - cornerOff, points[i] + cornerOff); //creates corners
+            //_walls[i].ShadowsEnabled = true; // it looks bad, should be done better
+        }
+    }
+
     private void AddWall(Vector2 p1, Vector2 p2)
     {
         _walls.Add(new Wall(p1, p2, _settings.Height));
+    }
+
+    private void AddCorner(Vector2 p1, Vector2 p2)
+    {
+        _corners.Add(new Wall(p1, p2, _settings.Height));
     }
 
     private bool CanBeSplitVertically(Rect rect)
@@ -49,12 +63,12 @@ public class House : MapObject
     {
         if(!CanBeSplitVertically(rect) && !CanBeSplitHorizontally(rect)) // we cannot split given rect
         { 
-            _rooms.Add(new Room(rect));
+            AddRoom(rect);
             return;
         }
         if(RandomEndRoom(rect))
         {
-            _rooms.Add(new Room(rect));
+            AddRoom(rect);
             return;
         }
 
@@ -87,6 +101,13 @@ public class House : MapObject
         GenerateRooms(newRects[1]);
     }
     
+    private void AddRoom(Rect rect)
+    {
+        Room room = new Room(rect);
+        room.Generate();
+        _rooms.Add(room);
+    }
+
     private void ConnectRooms()
     {
         var edges = RoomConnecting.GenerateConnections(_rooms, _settings.DoorSize);
@@ -206,14 +227,14 @@ public class House : MapObject
         
         var floor = MakeFloor(go);
         var walls = MakeWalls(go);
-
-        if(_settings.Combine)
+        var rooms = MakeRooms(go);
+        if (_settings.Combine)
         {
             go.Combine(floor);
             go.Combine(walls);
             go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
-        
+       
         return go;
     }
 
@@ -235,7 +256,31 @@ public class House : MapObject
             var wallGO = wall.Make();
             wallGO.SetParent(walls);
         }
+        foreach (var wall in _corners)
+        {
+            var wallGO = wall.Make();
+            wallGO.SetParent(walls);
+        }
 
         return walls;
+    }
+
+    private GameObject MakeRooms(GameObject parent)
+    {
+        GameObject rooms = new GameObject("Rooms");
+        rooms.SetParent(parent);
+
+        foreach (var room in _rooms)
+        {
+            var roomGO = room.Make();
+            if(roomGO == null)
+            {
+                continue;
+            }
+
+            roomGO.SetParent(rooms);
+        }
+
+        return rooms;
     }
 }

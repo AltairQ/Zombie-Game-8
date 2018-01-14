@@ -32,7 +32,7 @@ public class CityEditor : Editor
 
         EditorUtility.SetDirty(_settings);
 
-        if (GUILayout.Button("Generate"))
+        if (GUILayout.Button("Create"))
         {
             Rect rect = new Rect(-_width / 2, -_depth / 2, _width, _depth);
             (target as CityComponent).Create(new City(rect));
