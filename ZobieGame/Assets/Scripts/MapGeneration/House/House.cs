@@ -205,6 +205,12 @@ public class House : MapObject
             Room doorRoom = rooms[roomIdx];
 
             var points = PointsInWall(doorWall, doorRoom);
+            if(points == null)
+            {
+                Debug.LogWarning("GenerateDoors() null door points");
+                continue;
+            }
+
             AddDoor(doorWall, points[0], points[1]);
         }
     }

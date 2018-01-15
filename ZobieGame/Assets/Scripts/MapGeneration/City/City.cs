@@ -55,32 +55,69 @@ public class City : MapObject
         }
 
         bool splitVertical = CanBeSplitVertically(rect);
+        bool crossroad = false;
         if (CanBeSplitHorizontally(rect) && CanBeSplitVertically(rect))
         {
             splitVertical = Random.Range(0, 2) == 0;
+            crossroad = Random.Range(0, 2) == 0;
         }
 
-        Vector2 p1, p2;
-        float minEdge = _settings.MinEstateEdge;
-        if (splitVertical)
+        Rect[] newRects;
+        if(crossroad)
         {
-            float deltaX = rect.width - 2 * minEdge;
-            float randX = Random.Range(0, deltaX);
-            p1 = new Vector2(rect.xMin + minEdge + randX, rect.yMin);
-            p2 = p1 + new Vector2(0, rect.height);
+            newRects = CrossroadSplit(rect);
         }
         else
         {
-            float deltaY = rect.height - 2 * minEdge;
-            float randY = Random.Range(0, deltaY);
-            p1 = new Vector2(rect.xMin, rect.yMin + minEdge + randY);
+            newRects = NormalSplit(rect, splitVertical);
+        }   
+        
+        foreach(var newRect in newRects)
+        {
+            GenerateEstates(newRect);
+        }
+    }
+
+    private Rect[] CrossroadSplit(Rect rect)
+    {
+        var vertSplit = NormalSplit(rect, true);
+        var leftSplit = NormalSplit(vertSplit[0], false);
+
+        float shift = Mathf.Min(leftSplit[0].yMax, leftSplit[1].yMax);
+        var rightSplit = NormalSplit(vertSplit[1], false, shift);
+        return new Rect[] { leftSplit[0], leftSplit[1], rightSplit[0], rightSplit[1] };
+    }
+
+    private Rect[] NormalSplit(Rect rect, bool splitVertical, float shift = float.PositiveInfinity)
+    {
+        Vector2 p1, p2;
+        float minEdge = _settings.MinEstateEdge;
+        bool randomShift = float.IsPositiveInfinity(shift);
+        if (splitVertical)
+        {       
+            if (randomShift)
+            {
+                float deltaX = rect.width - 2 * minEdge;
+                float randX = Random.Range(0, deltaX);
+                shift = rect.xMin + minEdge + randX;
+            }
+            p1 = new Vector2(shift, rect.yMin);
+            p2 = p1 + new Vector2(0, rect.height);
+        }
+        else
+        {         
+            if (randomShift)
+            {
+                float deltaY = rect.height - 2 * minEdge;
+                float randY = Random.Range(0, deltaY);
+                shift = rect.yMin + minEdge + randY;
+            }
+            p1 = new Vector2(rect.xMin, shift);
             p2 = p1 + new Vector2(rect.width, 0);
         }
 
         AddStreet(p1, p2);
-        var newRects = rect.Split(p1, p2);
-        GenerateEstates(newRects[0]);
-        GenerateEstates(newRects[1]);
+        return rect.Split(p1, p2);
     }
 
     private bool RandomEndEstate(Rect rect)

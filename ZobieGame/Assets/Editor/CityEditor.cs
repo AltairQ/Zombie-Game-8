@@ -19,8 +19,8 @@ public class CityEditor : Editor
 
         EditorGUILayout.LabelField("Instance settings");
 
-        _width = EditorGUILayout.IntSlider("Width", (int)_width, 100, 200);
-        _depth = EditorGUILayout.IntSlider("Depth", (int)_depth, 100, 200);
+        _width = EditorGUILayout.IntSlider("Width", (int)_width, 20, 200);
+        _depth = EditorGUILayout.IntSlider("Depth", (int)_depth, 20, 200);
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Global settings");

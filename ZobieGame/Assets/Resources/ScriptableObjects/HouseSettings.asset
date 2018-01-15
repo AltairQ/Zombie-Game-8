@@ -14,8 +14,8 @@ MonoBehaviour:
   MinHouseEdge: 10
   MaxHouseEdge: 20
   Height: 3
-  MinRoomEdge: 4
-  MinRoomArea: 16
+  MinRoomEdge: 4.5
+  MinRoomArea: 20
   MaxRoomArea: 36
   DoorSize: 1.5
   WindowSize: 1
