@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -40,7 +41,7 @@ public class PlayerScript : MonoBehaviour
         _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
         _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
         _health = 100;
-        _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(0).GetComponent<Text>();
+        _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(1).GetComponent<Text>();
     }
 
     public void Damage(float damage)
@@ -142,7 +143,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         if (_health <= 0)
-            this.gameObject.active = false;
+            Die();
 
         _healthBar.rectTransform.sizeDelta = new Vector2(_health, 10);
         _healthBarBG.rectTransform.sizeDelta = new Vector2(_health + 4, 14);
@@ -192,6 +193,11 @@ public class PlayerScript : MonoBehaviour
             if (_primarySelected == true)
                 SwitchWeapons();
         }
+    }
+
+    void Die()
+    {
+        SceneManager.LoadScene(0);
     }
 
     void SwitchWeapons()

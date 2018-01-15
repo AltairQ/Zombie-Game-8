@@ -45,7 +45,7 @@ public class WeaponScript : MonoBehaviour
             GameObject newBullet = Instantiate(_bulletImage, GameSystem.Get().MainCanvas.transform.GetChild(0));
             newBullet.transform.Translate(i * 8, 0, 0);
             if (i >= _bulletsLeft)
-                newBullet.active = false;
+                newBullet.SetActive(false);
         }
 
         GameObject bulletIndicator = Instantiate(_bulletImage, GameSystem.Get().MainCanvas.transform.GetChild(2));
@@ -78,7 +78,7 @@ public class WeaponScript : MonoBehaviour
             _bulletsLeft--;
             _currentCooldown = _cooldown;
             _casings++;
-            GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.active = false;
+            GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.SetActive(false);
         }
     }
 
@@ -112,7 +112,7 @@ public class WeaponScript : MonoBehaviour
                 for (int i = 0; i < _casings; i++)
                 {
                     GameObject new_casing = Instantiate(_casing, transform.position, transform.rotation);
-                    new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(100 + _rnd.Next(-50, 50), 25 + _rnd.Next(50), _rnd.Next(-25, 25)));
+                    new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3((100 + _rnd.Next(-50, 50)) / 10, (25 + _rnd.Next(50)) / 10, _rnd.Next(-25, 25) / 10));
                     new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
                 }
 
@@ -144,8 +144,8 @@ public class WeaponScript : MonoBehaviour
         if (_currentReload > 0)
         {
             _currentReload -= Time.deltaTime;
-            if((1 - _currentReload / _reloadSpeed) * _magazineSize <= _bulletsLeft)
-                GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(Mathf.Min((int)((1 - (_currentReload / _reloadSpeed)) * _magazineSize), _magazineSize - 1)).gameObject.active = true;
+            if ((1 - _currentReload / _reloadSpeed) * _magazineSize <= _bulletsLeft)
+                GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(Mathf.Min((int)((1 - (_currentReload / _reloadSpeed)) * _magazineSize), _magazineSize - 1)).gameObject.SetActive(true);
         }
         if (_currentCooldown > 0)
             _currentCooldown -= Time.deltaTime;

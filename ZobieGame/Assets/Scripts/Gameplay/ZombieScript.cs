@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class ZombieScript : MonoBehaviour
+public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 {
+    int _ID;
     float _health;
     float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 2.0f, _timeLeft = 5.0f;
     GameObject _player;
@@ -12,30 +14,69 @@ public class ZombieScript : MonoBehaviour
     bool _dead = false;
 
     public bool Dead { get { return _dead; } }
+    public int ID { get { return _ID; } set { _ID = value; } }
+
+    public int GetID()
+    {
+        return _ID;
+    }
+
+    public float CurrentHealth()
+    {
+        return _health;
+    }
+
+    public bool IsAlive()
+    {
+        return !_dead;
+    }
+
+    public float EuclidDistanceToPlayer()
+    {
+        return Vector3.Distance(transform.position, _player.transform.position);
+    }
+
+    public bool MeleeReady()
+    {
+        return _currentAttackCooldown <= 0 ? true : false;
+    }
+
+    public bool PlayerInMeleeRange()
+    {
+        return EuclidDistanceToPlayer() <= _attackRange ? true : false;
+    }
 
     public void Damage(float damage)
     {
         _health -= damage;
     }
 
-	// Use this for initialization
-	void Start ()
+    public bool GoToPlayer()
+    {
+        return GetComponent<NavMeshAgent>().SetDestination(GameSystem.Get().Player.transform.position);
+    }
+
+    public bool AttackMeleePlayer()
+    {
+        if (MeleeReady() && PlayerInMeleeRange())
+        {
+            _playerScript.Damage(_attack);
+            _currentAttackCooldown = _attackCooldown;
+            _anim.Play("Attack 1", 0, 0f);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    // Use this for initialization
+    void Start ()
     {
         _health = 100;
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
         _player = GameSystem.Get().Player;
         _anim = transform.GetChild(0).GetComponent<Animator>();
         _anim.Play("Walk");
-    }
-
-    void Attack()
-    {
-        if(_currentAttackCooldown <= 0 && Vector3.Distance(transform.position, _player.transform.position) <= _attackRange)
-        {
-            _playerScript.Damage(_attack);
-            _currentAttackCooldown = _attackCooldown;
-            _anim.Play("Attack 1", 0, 0f);
-        }
     }
 	
     void Die()
@@ -55,7 +96,10 @@ public class ZombieScript : MonoBehaviour
         _currentAttackCooldown -= Time.deltaTime;
 
         if(!_dead)
-            Attack();
+        {
+            AttackMeleePlayer();
+            GoToPlayer();
+        }
 
         if (_health <= 0)
         {
