@@ -24,7 +24,7 @@ public class House : MapObject
         GenerateRooms(Rect);
         ConnectRooms();
 
-        GenerateDoor();
+        GenerateDoors();
         GenerateWindows();
     }
 
@@ -182,17 +182,31 @@ public class House : MapObject
         }
     }
 
-    private void GenerateDoor()
+    private void GenerateDoors()
     {
-        int wallIdx = Random.Range(0, 4);
-        Wall doorWall = _walls[wallIdx];
+        List<int> idxs = new List<int>();
+        idxs.Add(Random.Range(0, 4));
+        int other = Random.Range(0, 4);
+        if(other == idxs[0])
+        {
+            other = (other + Random.Range(1, 4)) % 4;    
+        }
+        if(Random.Range(0f, 1f) <= _settings.SecondDoorChance)
+        {
+            idxs.Add(other);
+        }
+        
+        foreach(int idx in idxs)
+        {
+            Wall doorWall = _walls[idx];
 
-        var rooms = OverlapppingRooms(doorWall);
-        int roomIdx = Random.Range(0, rooms.Count);
-        Room doorRoom = rooms[roomIdx];
+            var rooms = OverlapppingRooms(doorWall);
+            int roomIdx = Random.Range(0, rooms.Count);
+            Room doorRoom = rooms[roomIdx];
 
-        var points = PointsInWall(doorWall, doorRoom);
-        AddDoor(doorWall, points[0], points[1]);
+            var points = PointsInWall(doorWall, doorRoom);
+            AddDoor(doorWall, points[0], points[1]);
+        }
     }
 
     private void AddDoor(Wall wall, Vector2 p1, Vector2 p2)

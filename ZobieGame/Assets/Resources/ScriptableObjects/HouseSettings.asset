@@ -20,5 +20,7 @@ MonoBehaviour:
   DoorSize: 1.5
   WindowSize: 1
   SpaceBetweenWindows: 1.25
+  SecondDoorChance: 0.8
   RoomSpawnChance: 0.33
+  RoomCycleChance: 0.2
   Combine: 1
