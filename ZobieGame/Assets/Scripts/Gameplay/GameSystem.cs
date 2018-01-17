@@ -49,7 +49,7 @@ public class GameSystem : MonoBehaviour
 
     public void StartGame()
     { 
-        Vector3 startPos = Vector3.up;
+        Vector3 startPos = Vector3.up + new Vector3(0.01f, 0f, 0.01f); // to avoid map generation bug
         _player = Instantiate(_playerPrefab, startPos, Quaternion.identity);
         _player.GetComponent<PlayerScript>()._camera = _mainCamera;
         

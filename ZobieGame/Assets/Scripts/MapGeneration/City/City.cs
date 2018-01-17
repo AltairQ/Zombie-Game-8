@@ -6,6 +6,7 @@ public class City : MapObject
     private List<Street> _streets = new List<Street>();
     private List<Estate> _estates = new List<Estate>();
     private List<Vector2> _initStreetPoints = new List<Vector2>();
+    public List<Vector2> InitStreetPoints { get { return _initStreetPoints; } }
 
     private CitySettings _settings;
     public City(Rect rect) : base(rect)
@@ -14,15 +15,37 @@ public class City : MapObject
     }
 
     private float _firstShiftX = 0.0f;
-    public void SetFirstVerticalStreet(float shiftX)
-    {
-        _firstShiftX = shiftX;
-    }
-
     private float _firstShiftY = 0.0f;
-    public void SetFirstHorizontalStreet(float shiftY)
+    public void SetInitStreet(Vector2 edgePoint)
     {
-        _firstShiftY = shiftY;
+        if (!Rect.ContainsOnEdge(edgePoint))
+        {
+            Debug.LogError("City.SetInitStreet() point not on edge!");
+            return;
+        }
+
+        var points = Rect.AllPoints();
+
+        Vector2 p1 = Vector2.zero, p2 = Vector2.zero;
+        for (int i = 0; i < 4; i++)
+        {
+            if (Utils.Contains(points[i], points[i + 1], edgePoint))
+            {
+                p1 = points[i];
+                p2 = points[i+1];
+                break;
+            }
+        }
+
+        Utils.OrderSwap(ref p1, ref p2);
+        if(Utils.TheSame(p1.x, p2.x))
+        {
+            _firstShiftY = edgePoint.y;
+        }
+        if(Utils.TheSame(p1.y, p2.y))
+        {
+            _firstShiftX = edgePoint.x;
+        }
     }
 
     public override void Generate()

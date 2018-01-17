@@ -5,6 +5,9 @@ using UnityEngine;
 public class Forest : MapObject {
     private List<Tree> _trees = new List<Tree>();
     private Street street = null;
+    private List<Vector2> _initStreetPoints = new List<Vector2>();
+    public List<Vector2> InitStreetPoints { get { return _initStreetPoints; } }
+
     public Forest(Rect rect) : base(rect)
     {
     }
@@ -61,6 +64,10 @@ public class Forest : MapObject {
                 break;
             }
         }
+
+        _initStreetPoints.Clear();
+        _initStreetPoints.Add(p1);
+        _initStreetPoints.Add(p2);
 
         Rect streetRect = Utils.SegmentToRect(p1, p2, GeneratorAssets.Get().CitySettings.StreetSize);
         street = new Street(streetRect);
