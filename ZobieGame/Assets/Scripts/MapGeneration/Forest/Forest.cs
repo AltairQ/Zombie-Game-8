@@ -12,29 +12,13 @@ public class Forest : MapObject {
     public override void Generate()
     {
         _trees.Clear();
-        if(street == null)
-        {
-            Generate(Rect);
-        }
-        else
-        {
-            
-        }
-        
-    }
+        //SetStreet(new Vector2(Rect.xMin, Rect.yMax - Rect.height / 2));
 
-    public void SetStreet(Vector2 edgePoint)
-    {
-
-    }
-
-    private void Generate(Rect rect)
-    {
         float treeRectSize = 4;
         float perlinOff = Random.Range(0f, 666f);
-        for (float y = rect.yMin; y + treeRectSize < rect.yMax; y += treeRectSize)
+        for (float y = Rect.yMin; y + treeRectSize < Rect.yMax; y += treeRectSize)
         {
-            for (float x = rect.xMin; x + treeRectSize < rect.xMax; x += treeRectSize)
+            for (float x = Rect.xMin; x + treeRectSize < Rect.xMax; x += treeRectSize)
             {
                 float val = Mathf.PerlinNoise(x + perlinOff, y + perlinOff);
                 float randVal = Random.Range(0f, 1f);
@@ -46,9 +30,50 @@ public class Forest : MapObject {
         }
     }
 
+    public void SetStreet(Vector2 edgePoint)
+    {
+        if(!Rect.ContainsOnEdge(edgePoint))
+        {
+            Debug.LogError("Forest.SetStreet() point not on edge!");
+            return;
+        }
+
+        var points = Rect.AllPoints();
+        Vector2[] p1Shift = new Vector2[]
+        {
+            Vector2.zero, new Vector2(-Rect.width, 0),
+            new Vector2(0, -Rect.height), Vector2.zero,
+
+        };
+        Vector2[] p2Shift = new Vector2[]
+        {
+            new Vector2(0, Rect.height), Vector2.zero,
+            Vector2.zero, new Vector2(Rect.width, 0),
+        };
+
+        Vector2 p1 = Vector2.zero, p2 = Vector2.zero;
+        for (int i = 0; i < 4; i++)
+        {
+            if(Utils.Contains(points[i], points[i+1], edgePoint))
+            {
+                p1 = edgePoint + p1Shift[i];
+                p2 = edgePoint + p2Shift[i];
+                break;
+            }
+        }
+
+        Rect streetRect = Utils.SegmentToRect(p1, p2, GeneratorAssets.Get().CitySettings.StreetSize);
+        street = new Street(streetRect);
+    }
+
     private void AddTree(float x, float y, float treeRectSize)
     {
         Rect treeRect = new Rect(x, y, treeRectSize, treeRectSize);
+        if(street != null && street.Rect.Overlaps(treeRect))
+        {
+            return;
+        }
+
         Tree tree = new Tree(treeRect);
         tree.Generate();
 
@@ -62,6 +87,11 @@ public class Forest : MapObject {
         {
             var treeGO = tree.Make();
             treeGO.SetParent(go);
+        }
+
+        if(street != null)
+        {
+            street.Make().SetParent(go);
         }
 
         return go;
