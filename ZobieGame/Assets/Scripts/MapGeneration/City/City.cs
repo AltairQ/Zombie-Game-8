@@ -5,6 +5,7 @@ public class City : MapObject
 {   
     private List<Street> _streets = new List<Street>();
     private List<Estate> _estates = new List<Estate>();
+    private List<Vector2> _initStreetPoints = new List<Vector2>();
 
     private CitySettings _settings;
     public City(Rect rect) : base(rect)
@@ -12,17 +13,100 @@ public class City : MapObject
         _settings = GeneratorAssets.Get().CitySettings;
     }
 
+    private float _firstShiftX = 0.0f;
+    public void SetFirstVerticalStreet(float shiftX)
+    {
+        _firstShiftX = shiftX;
+    }
+
+    private float _firstShiftY = 0.0f;
+    public void SetFirstHorizontalStreet(float shiftY)
+    {
+        _firstShiftY = shiftY;
+    }
+
     public override void Generate()
     {
         _streets.Clear();
         _estates.Clear();
+        _initStreetPoints.Clear();
 
-        GenerateEstates(Rect);
+        List<Rect> rects = new List<Rect> {
+            Rect
+        };
+        rects = AddFirstStreet(rects, false);
+        rects = AddFirstStreet(rects, true);
+
+        if (rects.Count == 1)
+        {
+            GenerateEstates(rects[0], 0);
+        }
+        else
+        {
+            foreach(var rect in rects)
+            {
+                GenerateEstates(rect, 1);
+            }
+        }
     }
 
-    private void AddStreet(Vector2 p1, Vector2 p2)
+    private List<Rect> AddFirstStreet(List<Rect> rects, bool vertical)
     {
-        _streets.Add(new Street(p1, p2, _settings.StreetSize));
+        float shift = vertical ? _firstShiftX : _firstShiftY;
+        if(Utils.TheSame(shift, 0f))
+        {
+            return rects;
+        }
+
+        List<Rect> ans = new List<Rect>();
+        foreach (var rect in rects)
+        {
+            var twoRects = NormalSplit(rect, vertical, 0, shift);
+            ans.Add(twoRects[0]);
+            ans.Add(twoRects[1]);
+        }
+        return ans;
+    }
+
+    private void AddStreet(Vector2 p1, Vector2 p2, int deep)
+    {
+        Utils.OrderSwap(ref p1, ref p2);
+        Vector2 shift = (p2 - p1).normalized;
+        if (IsOnCityEdge(p1))
+        {
+            p1 += StreetCut(deep) * shift;
+        }
+        if (IsOnCityEdge(p2))
+        {
+            p2 -= StreetCut(deep) * shift;
+        }
+
+        if(deep == 0)
+        {
+            AddInitPoint(p1);
+            AddInitPoint(p2);
+        }
+
+        Rect streetRect = Utils.SegmentToRect(p1, p2, _settings.StreetSize);
+        _streets.Add(new Street(streetRect));
+    }
+
+    private void AddInitPoint(Vector2 p)
+    {
+        if (IsOnCityEdge(p))
+        {
+            _initStreetPoints.Add(p);
+        }        
+    }
+
+    private float StreetCut(int deep)
+    {
+        if(deep == 0)
+        {
+            return 0f;
+        }
+
+        return _settings.MinEstateEdge / 2;
     }
 
     private void AddEstate(Rect rect)
@@ -41,7 +125,7 @@ public class City : MapObject
         return rect.height > _settings.MinEstateEdge * 2;
     }
 
-    private void GenerateEstates(Rect rect)
+    private void GenerateEstates(Rect rect, int deep)
     {
         if (!CanBeSplitVertically(rect) && !CanBeSplitHorizontally(rect)) // we cannot split given rect
         {
@@ -65,30 +149,30 @@ public class City : MapObject
         Rect[] newRects;
         if(crossroad)
         {
-            newRects = CrossroadSplit(rect);
+            newRects = CrossroadSplit(rect, deep);
         }
         else
         {
-            newRects = NormalSplit(rect, splitVertical);
+            newRects = NormalSplit(rect, splitVertical, deep);
         }   
         
         foreach(var newRect in newRects)
         {
-            GenerateEstates(newRect);
+            GenerateEstates(newRect, deep+1);
         }
     }
 
-    private Rect[] CrossroadSplit(Rect rect)
+    private Rect[] CrossroadSplit(Rect rect, int deep)
     {
-        var vertSplit = NormalSplit(rect, true);
-        var leftSplit = NormalSplit(vertSplit[0], false);
+        var vertSplit = NormalSplit(rect, true, deep);
+        var leftSplit = NormalSplit(vertSplit[0], false, deep);
 
         float shift = Mathf.Min(leftSplit[0].yMax, leftSplit[1].yMax);
-        var rightSplit = NormalSplit(vertSplit[1], false, shift);
+        var rightSplit = NormalSplit(vertSplit[1], false, deep, shift);
         return new Rect[] { leftSplit[0], leftSplit[1], rightSplit[0], rightSplit[1] };
     }
 
-    private Rect[] NormalSplit(Rect rect, bool splitVertical, float shift = float.PositiveInfinity)
+    private Rect[] NormalSplit(Rect rect, bool splitVertical, int deep, float shift = float.PositiveInfinity)
     {
         Vector2 p1, p2;
         float minEdge = _settings.MinEstateEdge;
@@ -116,7 +200,7 @@ public class City : MapObject
             p2 = p1 + new Vector2(rect.width, 0);
         }
 
-        AddStreet(p1, p2);
+        AddStreet(p1, p2, deep);
         return rect.Split(p1, p2);
     }
 
@@ -131,6 +215,11 @@ public class City : MapObject
         float minArea = _settings.MinEstateEdge * _settings.MinEstateEdge; 
         float createEstate = Random.Range(0, area / minArea); // the bigger area the lower chance
         return createEstate < 1.0f;
+    }
+
+    private bool IsOnCityEdge(Vector2 p)
+    {
+        return Rect.ContainsOnEdge(p);
     }
 
     public override GameObject Make()

@@ -36,7 +36,7 @@ public class House : MapObject
         {
             AddWall(points[i], points[(i + 1) % 4]);
             AddCorner(points[i] - cornerOff, points[i] + cornerOff); //creates corners
-            //_walls[i].ShadowsEnabled = true; // it looks bad, should be done better
+            _walls[i].ShadowsEnabled = true; // it looks bad, should be done better
         }
     }
 
@@ -252,7 +252,9 @@ public class House : MapObject
         {
             go.Combine(floor);
             go.Combine(walls);
-            go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            var mr = go.GetComponent<MeshRenderer>();
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            mr.receiveShadows = false;
         }
        
         return go;

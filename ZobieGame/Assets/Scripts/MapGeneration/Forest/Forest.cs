@@ -3,24 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Forest : MapObject {
-    private List<Tree> _trees;
+    private List<Tree> _trees = new List<Tree>();
+    private Street street = null;
     public Forest(Rect rect) : base(rect)
     {
     }
 
     public override void Generate()
     {
-        _trees = new List<Tree>();
+        _trees.Clear();
+        if(street == null)
+        {
+            Generate(Rect);
+        }
+        else
+        {
+            
+        }
+        
+    }
 
+    public void SetStreet(Vector2 edgePoint)
+    {
+
+    }
+
+    private void Generate(Rect rect)
+    {
         float treeRectSize = 4;
         float perlinOff = Random.Range(0f, 666f);
-        for(float y = Rect.yMin; y + treeRectSize < Rect.yMax; y += treeRectSize)
+        for (float y = rect.yMin; y + treeRectSize < rect.yMax; y += treeRectSize)
         {
-            for (float x = Rect.xMin; x + treeRectSize < Rect.xMax; x += treeRectSize)
+            for (float x = rect.xMin; x + treeRectSize < rect.xMax; x += treeRectSize)
             {
-                float val = Mathf.PerlinNoise(x+perlinOff, y+perlinOff);
+                float val = Mathf.PerlinNoise(x + perlinOff, y + perlinOff);
                 float randVal = Random.Range(0f, 1f);
-                if(randVal > val)
+                if (randVal > val)
                 {
                     AddTree(x, y, treeRectSize);
                 }
