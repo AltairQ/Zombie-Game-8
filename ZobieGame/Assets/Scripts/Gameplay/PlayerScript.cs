@@ -33,6 +33,8 @@ public class PlayerScript : MonoBehaviour
     private float _health;
     private Text _ammoLeft;
 
+    public int[] Ammo { get { return _ammo; } }
+
     // Use this for initialization
     void Start ()
     {
@@ -51,7 +53,7 @@ public class PlayerScript : MonoBehaviour
 
     private void PickUpWeapon(GameObject weapon, bool primary)
     {
-        weapon.GetComponent<BoxCollider>().enabled = false;
+        weapon.GetComponent<CapsuleCollider>().enabled = false;
         weapon.GetComponent<WeaponScript>().Held = true;
         weapon.transform.SetParent(transform);
         weapon.transform.rotation = transform.rotation;
@@ -90,7 +92,7 @@ public class PlayerScript : MonoBehaviour
     {
         if(primary)
         {
-            _weaponPrimary.GetComponent<BoxCollider>().enabled = true;
+            _weaponPrimary.GetComponent<CapsuleCollider>().enabled = true;
             _weaponPrimary.transform.SetParent(null);
             _weaponPrimary.GetComponent<WeaponScript>().Held = false;
             _weaponPrimary.transform.rotation = transform.rotation;
@@ -99,7 +101,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            _weaponSecondary.GetComponent<BoxCollider>().enabled = true;
+            _weaponSecondary.GetComponent<CapsuleCollider>().enabled = true;
             _weaponSecondary.transform.SetParent(null);
             _weaponSecondary.GetComponent<WeaponScript>().Held = false;
             _weaponSecondary.transform.rotation = transform.rotation;

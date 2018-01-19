@@ -700,6 +700,8 @@ MonoBehaviour:
     type: 2}
   _zombiePrefab: {fileID: 1934540905506868, guid: c3737819d794fdb49a662447124b8334,
     type: 2}
+  _muzzleFlash: {fileID: 1617539582073274, guid: de56e3d5048af0848bf73ef584c22be4,
+    type: 2}
 --- !u!114 &1351320425
 MonoBehaviour:
   m_ObjectHideFlags: 0
