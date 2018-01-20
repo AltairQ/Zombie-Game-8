@@ -14,6 +14,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     bool _dead = false;
 
     public bool Dead { get { return _dead; } }
+    public float Attack { get { return _attack; } }
     public int ID { get { return _ID; } set { _ID = value; } }
 
     public int GetID()

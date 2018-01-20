@@ -41,6 +41,7 @@ public class GameSystem : MonoBehaviour
     public GameObject Player { get { return _player; } }
     public Vector3 GunPos { get { return _gunPos; } }
     public Canvas MainCanvas { get { return _mainCanvas; } }
+    public Camera MainCamera { get { return _mainCamera; } }
     public GameObject MuzzleFlash { get { return _muzzleFlash; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
