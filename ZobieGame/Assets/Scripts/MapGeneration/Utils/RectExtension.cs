@@ -65,23 +65,7 @@ public static class RectExtension
             return true;
         }
 
-        var points = rect.AllPoints();
-        bool onEdge = false;
-        for (int i=0;i<4;i++)
-        {
-            Vector2 p1 = points[i], p2 = points[i+1];
-            
-            if(Utils.TheSame(p1.x, p.x) && Utils.TheSame(p2.x, p.x))
-            {
-                onEdge = onEdge || Mathf.Min(p1.y, p2.y) <= p.y && Mathf.Max(p1.y, p2.y) >= p.y; 
-            }
-            if (Utils.TheSame(p1.y, p.y) && Utils.TheSame(p2.y, p.y))
-            {
-                onEdge = onEdge || Mathf.Min(p1.x, p2.x) <= p.x && Mathf.Max(p1.x, p2.x) >= p.x;
-            }
-        }
-
-        return onEdge;
+        return rect.ContainsOnEdge(p);
     }
 
     public static GameObject ToTerrainQuad(this Rect rect, string name, float height)
@@ -93,6 +77,19 @@ public static class RectExtension
         go.transform.Rotate(new Vector3(90, 0, 0));
 
         return go;
+    }
+
+    public static bool ContainsOnEdge(this Rect rect, Vector2 p)
+    {
+        var points = rect.AllPoints();
+        for (int i = 0; i < 4; i++)
+        {
+            if (Utils.Contains(points[i], points[i + 1], p))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

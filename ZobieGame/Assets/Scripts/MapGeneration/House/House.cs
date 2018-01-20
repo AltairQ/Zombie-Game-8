@@ -24,7 +24,7 @@ public class House : MapObject
         GenerateRooms(Rect);
         ConnectRooms();
 
-        GenerateDoor();
+        GenerateDoors();
         GenerateWindows();
     }
 
@@ -36,7 +36,7 @@ public class House : MapObject
         {
             AddWall(points[i], points[(i + 1) % 4]);
             AddCorner(points[i] - cornerOff, points[i] + cornerOff); //creates corners
-            //_walls[i].ShadowsEnabled = true; // it looks bad, should be done better
+            _walls[i].ShadowsEnabled = true; // it looks bad, should be done better
         }
     }
 
@@ -182,17 +182,37 @@ public class House : MapObject
         }
     }
 
-    private void GenerateDoor()
+    private void GenerateDoors()
     {
-        int wallIdx = Random.Range(0, 4);
-        Wall doorWall = _walls[wallIdx];
+        List<int> idxs = new List<int>();
+        idxs.Add(Random.Range(0, 4));
+        int other = Random.Range(0, 4);
+        if(other == idxs[0])
+        {
+            other = (other + Random.Range(1, 4)) % 4;    
+        }
+        if(Random.Range(0f, 1f) <= _settings.SecondDoorChance)
+        {
+            idxs.Add(other);
+        }
+        
+        foreach(int idx in idxs)
+        {
+            Wall doorWall = _walls[idx];
 
-        var rooms = OverlapppingRooms(doorWall);
-        int roomIdx = Random.Range(0, rooms.Count);
-        Room doorRoom = rooms[roomIdx];
+            var rooms = OverlapppingRooms(doorWall);
+            int roomIdx = Random.Range(0, rooms.Count);
+            Room doorRoom = rooms[roomIdx];
 
-        var points = PointsInWall(doorWall, doorRoom);
-        AddDoor(doorWall, points[0], points[1]);
+            var points = PointsInWall(doorWall, doorRoom);
+            if(points == null)
+            {
+                Debug.LogWarning("GenerateDoors() null door points");
+                continue;
+            }
+
+            AddDoor(doorWall, points[0], points[1]);
+        }
     }
 
     private void AddDoor(Wall wall, Vector2 p1, Vector2 p2)
@@ -232,7 +252,9 @@ public class House : MapObject
         {
             go.Combine(floor);
             go.Combine(walls);
-            go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            var mr = go.GetComponent<MeshRenderer>();
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            mr.receiveShadows = false;
         }
        
         return go;

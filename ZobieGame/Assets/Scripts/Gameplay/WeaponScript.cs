@@ -5,15 +5,13 @@ using UnityEngine;
 public class WeaponScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _bullet, _bulletImage, _barrelEnd, _casing;
+    private GameObject _bullet, _bulletImage, _barrelEnd, _casing, _slide, _ejectionPort, _mag;
     [SerializeField]
     private float _cooldown, _reloadSpeed, _damage, _offset;
     [SerializeField]
     private int _spread, _bulletCount, _magazineSize, _bulletsLeft, _ammoType;
     [SerializeField]
-    private bool _primary, _dropOnReload, _held = false;
-    public bool Primary{ get { return _primary; } }
-    public float Offset{ get { return _offset; } }
+    private bool _primary, _dropOnReload, _held = false, _moveSlide;
     System.Random _rnd = new System.Random();
 
     public float CurrentReload { get { return _currentReload; } }
@@ -21,8 +19,10 @@ public class WeaponScript : MonoBehaviour
     public int BulletsLeft { get { return _bulletsLeft; } }
     public int AmmoType { get { return _ammoType; } set { _ammoType = value; } }
     public bool Held { get { return _held; } set { _held = value; } }
-    private float _currentReload;
-    private float _currentCooldown;
+    public bool Primary { get { return _primary; } }
+    public float Offset { get { return _offset; } }
+
+    private float _currentReload, _currentCooldown, _slidePos, _slideRec = 0.075f;
     private int _casings;
 
     public static void ClearUI()
@@ -45,7 +45,7 @@ public class WeaponScript : MonoBehaviour
             GameObject newBullet = Instantiate(_bulletImage, GameSystem.Get().MainCanvas.transform.GetChild(0));
             newBullet.transform.Translate(i * 8, 0, 0);
             if (i >= _bulletsLeft)
-                newBullet.active = false;
+                newBullet.SetActive(false);
         }
 
         GameObject bulletIndicator = Instantiate(_bulletImage, GameSystem.Get().MainCanvas.transform.GetChild(2));
@@ -56,6 +56,12 @@ public class WeaponScript : MonoBehaviour
 	void Start ()
     {
         _held = false;
+
+        if (_moveSlide)
+        {
+//            _slide = transform.GetChild(1).GetChild(1).gameObject;
+            _slidePos = _slide.transform.localPosition.z;
+        }
     }
 
     void R_Shoot()
@@ -70,15 +76,20 @@ public class WeaponScript : MonoBehaviour
 
             if (!_dropOnReload)
             {
-                GameObject new_casing = Instantiate(_casing, transform.position, transform.rotation);
+                GameObject new_casing = Instantiate(_casing, _ejectionPort.transform.position, transform.rotation);
                 new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3((100 + _rnd.Next(-50, 50)) / 10, (25 + _rnd.Next(50)) / 10, _rnd.Next(-25, 25) / 10));
                 new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
             }
 
+            Instantiate(GameSystem.Get().MuzzleFlash, _barrelEnd.transform.position, Quaternion.Euler(0, transform.rotation.eulerAngles.y + 90, 0));
+
             _bulletsLeft--;
             _currentCooldown = _cooldown;
             _casings++;
-            GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.active = false;
+            GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.SetActive(false);
+
+//            if (_moveSlide)
+//                _slide.transform.Translate(0, 0, -0.75f);
         }
     }
 
@@ -105,18 +116,25 @@ public class WeaponScript : MonoBehaviour
 
     public void Reload(int ammo)
     {
-        if(_currentReload <= 0 && _bulletsLeft < _magazineSize)
+        if(_currentReload <= 0 && _bulletsLeft < _magazineSize && GameSystem.Get().Player.GetComponent<PlayerScript>().Ammo[AmmoType] > 0)
         {
             if (_dropOnReload)
             {
                 for (int i = 0; i < _casings; i++)
                 {
-                    GameObject new_casing = Instantiate(_casing, transform.position, transform.rotation);
-                    new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(100 + _rnd.Next(-50, 50), 25 + _rnd.Next(50), _rnd.Next(-25, 25)));
+                    GameObject new_casing = Instantiate(_casing, _ejectionPort.transform.position, transform.rotation);
+                    new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3((100 + _rnd.Next(-50, 50)) / 10, (25 + _rnd.Next(50)) / 10, _rnd.Next(-25, 25) / 10));
                     new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
                 }
 
                 _casings = 0;
+            }
+            else
+            {
+                GameObject NewMag = Instantiate(_mag, _mag.transform.position, _mag.transform.rotation);
+                NewMag.GetComponent<Collider>().enabled = true;
+                NewMag.GetComponent<Rigidbody>().isKinematic = false;
+                NewMag.GetComponent<CasingScript>().enabled = true;
             }
             /*
                         foreach(Transform child in GameSystem.Get().MainCanvas.transform.GetChild(0).transform)
@@ -133,6 +151,11 @@ public class WeaponScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        if(!_held && _bulletsLeft == 0)
+        {
+            Destroy(this.gameObject);
+        }
+
         if (_held == true)
             transform.GetChild(0).gameObject.SetActive(false);
         else
@@ -144,10 +167,23 @@ public class WeaponScript : MonoBehaviour
         if (_currentReload > 0)
         {
             _currentReload -= Time.deltaTime;
-            if((1 - _currentReload / _reloadSpeed) * _magazineSize <= _bulletsLeft)
-                GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(Mathf.Min((int)((1 - (_currentReload / _reloadSpeed)) * _magazineSize), _magazineSize - 1)).gameObject.active = true;
+
+            if ((1 - _currentReload / _reloadSpeed) * _magazineSize <= _bulletsLeft)
+                GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(Mathf.Min((int)((1 - (_currentReload / _reloadSpeed)) * _magazineSize), _magazineSize - 1)).gameObject.SetActive(true);
+
+            if(!_dropOnReload)
+                _mag.SetActive(false);
         }
+        else
+            if (!_dropOnReload)
+                _mag.SetActive(true);
+
         if (_currentCooldown > 0)
+        {
             _currentCooldown -= Time.deltaTime;
+        }
+
+        if (_moveSlide)
+            _slide.transform.localPosition = new Vector3(_slide.transform.localPosition.x, _slide.transform.localPosition.y, _slidePos - _slideRec * (_bulletsLeft > 0 && _currentReload <= 0 ? (_currentCooldown / _cooldown) : 1));
     }
 }

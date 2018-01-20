@@ -12,9 +12,10 @@ public class MapSystem : MonoBehaviour
 
     [SerializeField]
     private float _partSize = 100;
+    public float PartSize { get { return _partSize; } }
 
     private GameObject _player;
-    private Dictionary<string, GameObject> _map = new Dictionary<string, GameObject>();
+    private Dictionary<string, MapPart> _map = new Dictionary<string, MapPart>();
     private void Awake()
     {
         _instance = this;
@@ -41,8 +42,8 @@ public class MapSystem : MonoBehaviour
     private void UpdateMapForPlayer()
     {
         Vector2 pos = _player.Get2dPos();
-        int mappedX = MapCoordinate(pos.x);
-        int mappedY = MapCoordinate(pos.y);
+        int mappedX = MapFloatCoord(pos.x);
+        int mappedY = MapFloatCoord(pos.y);
         if(_lastX != mappedX || _lastY != mappedY)
         {
             UpdateMapAround(_lastX, _lastY, DisableMap);
@@ -53,7 +54,7 @@ public class MapSystem : MonoBehaviour
         UpdateMapAround(mappedX, mappedY, EnableMap);
     }
 
-    private int MapCoordinate(float coord)
+    public int MapFloatCoord(float coord)
     {
         if(coord < 0)
         {
@@ -62,21 +63,25 @@ public class MapSystem : MonoBehaviour
         return (int)(coord / _partSize);
     }
 
+    public float MapIntCoord(int coord)
+    {
+        return coord * _partSize;
+    }
+
     private bool _navMeshRebuild = false;
-    private void UpdateMapAround(int x, int y, Action<GameObject, int, int> action)
+    private int[] _dx = new int[] { 0, -1, 1, 0, 0, 1, -1, 1, -1 }; // order matters
+    private int[] _dy = new int[] { 0, 0, 0, -1, 1, 1, 1, -1, -1 };
+    private void UpdateMapAround(int x, int y, Action<MapPart, int, int> action)
     {
         if (_navMeshRebuild)
         {
             BuildNavMesh();
             _navMeshRebuild = false;
         }
-
-        for (int dx = -1; dx <= 1; dx++)
+    
+        for (int k = 0; k < 9; k++)
         {
-            for(int dy = -1; dy <= 1; dy++)
-            {
-                UpdateMapAt(x + dx, y + dy, action);
-            }
+            UpdateMapAt(x + _dx[k], y + _dy[k], action);
         }
     }
 
@@ -84,12 +89,12 @@ public class MapSystem : MonoBehaviour
     {
         foreach(var go in _map)
         {
-            go.Value.SetActive(true);
+            go.Value.SetVisible(true);
         }
         GameSystem.Get().BuildNavMesh();
         foreach(var go in _map)
         {
-            go.Value.SetActive(false);
+            go.Value.SetVisible(false);
         }
     }
 
@@ -98,49 +103,57 @@ public class MapSystem : MonoBehaviour
         return x + "|" + y;
     }
 
-    private void UpdateMapAt(int x, int y, Action<GameObject, int, int> action)
+    public MapPart PartAt(int x, int y)
     {
-        GameObject res;
-        _map.TryGetValue(GetKey(x,y), out res);
-        action(res, x, y);
+        MapPart res;
+        _map.TryGetValue(GetKey(x, y), out res);
+        return res;
     }
 
-    private void EnableMap(GameObject go, int x, int y)
+    public List<MapPart> ValidPartsAround(int x, int y)
     {
-        if(go == null)
+        List<MapPart> validParts = new List<MapPart>();
+        for (int dx = -1; dx <= 1; dx++)
         {
-            go = GenerateMap(x * _partSize, y * _partSize);
-            go.SetParent(gameObject);
-            _map.Add(GetKey(x,y), go);
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if(dx == 0 && dy == 0)
+                {
+                    continue;
+                }
+
+                var part = PartAt(x + dx, y + dy);
+                if(part != null)
+                {
+                    validParts.Add(part);
+                }
+            }
+        }
+
+        return validParts;
+    }
+
+    private void UpdateMapAt(int x, int y, Action<MapPart, int, int> action)
+    {
+        action(PartAt(x,y), x, y);
+    }
+
+    private void EnableMap(MapPart part, int x, int y)
+    {
+        if(part == null)
+        {
+            part = new MapPart(this, x, y);
+            _map.Add(GetKey(x,y), part);
             _navMeshRebuild = true;
         }
-        go.SetActive(true);
-    }
-    private void DisableMap(GameObject go, int x, int y)
-    {
-        if (go != null)
-        {
-            go.SetActive(false);
-        }
+        part.SetVisible(true);
     }
 
-    private GameObject GenerateMap(float x, float y)
+    private void DisableMap(MapPart part, int x, int y)
     {
-        //Debug.Log("gen x: " + x + " ,y: " + y);
-        Rect rect = new Rect(x, y, _partSize, _partSize);
-        MapObject mapObject;
-        if(UnityEngine.Random.Range(0,2) == 0)
+        if (part != null)
         {
-            mapObject = new Forest(rect);
+            part.SetVisible(false);
         }
-        else
-        {
-            mapObject = new City(rect);
-        }
-
-        mapObject.Generate();
-        GameObject go = mapObject.Make();
-        Utils.CreateGround(rect, go);
-        return go;
     }
 }

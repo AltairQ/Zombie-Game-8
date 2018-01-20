@@ -104,6 +104,7 @@ public class RoomConnecting
     }
     private static List<Edge> MstFilter(List<Edge> edges, int N)
     {
+        var settings = GeneratorAssets.Get().HouseSettings;
         InitUnionFind(N);
         edges.Sort((e1, e2) => e2.cost.CompareTo(e1.cost));
         List<Edge> mstEdges = new List<Edge>();
@@ -113,6 +114,13 @@ public class RoomConnecting
             if(Union(edge))
             {
                 mstEdges.Add(edge);
+            }
+            else
+            {
+                if(Random.Range(0f, 1f)  <= settings.RoomCycleChance)
+                {
+                    mstEdges.Add(edge);
+                }
             }
         }
 

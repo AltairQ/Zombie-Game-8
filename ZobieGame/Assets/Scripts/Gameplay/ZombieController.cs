@@ -22,8 +22,6 @@ public class ZombieController : MonoBehaviour
     {
         if (_zs.Dead)
             _nv.enabled = false;
-        else
-            _nv.SetDestination(GameSystem.Get().Player.transform.position);
     }
 
     void FixedUpdate()

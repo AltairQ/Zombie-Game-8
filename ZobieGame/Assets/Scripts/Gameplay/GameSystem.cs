@@ -32,6 +32,8 @@ public class GameSystem : MonoBehaviour
     private GameObject _playerPrefab;
     [SerializeField]
     private GameObject _zombiePrefab;
+    [SerializeField]
+    private GameObject _muzzleFlash;
 
     private GameObject _player = null;
     private Vector3 _gunPos = new Vector3(0.1f, 0.3f, 0.75f);
@@ -39,6 +41,8 @@ public class GameSystem : MonoBehaviour
     public GameObject Player { get { return _player; } }
     public Vector3 GunPos { get { return _gunPos; } }
     public Canvas MainCanvas { get { return _mainCanvas; } }
+    public Camera MainCamera { get { return _mainCamera; } }
+    public GameObject MuzzleFlash { get { return _muzzleFlash; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
     public void BuildNavMesh()
@@ -49,7 +53,7 @@ public class GameSystem : MonoBehaviour
 
     public void StartGame()
     { 
-        Vector3 startPos = Vector3.up;
+        Vector3 startPos = Vector3.up + new Vector3(0.01f, 0f, 0.01f); // to avoid map generation bug
         _player = Instantiate(_playerPrefab, startPos, Quaternion.identity);
         _player.GetComponent<PlayerScript>()._camera = _mainCamera;
         

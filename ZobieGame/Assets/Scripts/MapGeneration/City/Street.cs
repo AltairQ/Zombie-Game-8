@@ -2,21 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Street
+public class Street : MapObject
 {
-    private Rect _rect;
-    public Street(Vector2 p1, Vector2 p2, float streetSize)
+    public Street(Rect rect) : base(rect)
     {
-        _rect = Utils.SegmentToRect(p1, p2, streetSize);
+
     }
 
-    public GameObject Make()
+    public override void Generate()
     {
-        var street =  _rect.ToTerrainQuad("Street", ObjectHeight.Floor);
+    }
+
+    public override GameObject Make()
+    {
+        var street =  Rect.ToTerrainQuad("Street", ObjectHeight.Floor);
         street.SetMaterial(GeneratorAssets.Get().StreetMaterial);
         street.GetComponent<Collider>().enabled = false;
 
         return street;
     }
-
 }

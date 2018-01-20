@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -31,7 +32,12 @@ public class PlayerScript : MonoBehaviour
     private Image _healthBarBG;
     private float _health;
     private Text _ammoLeft;
+    private GameObject _grabbedObject, _grabIndicator;
 
+    public int[] Ammo { get { return _ammo; } }
+    public GameObject GrabbedObject { get { return _grabbedObject; } set { _grabbedObject = value; } }
+
+    Rigidbody _rb;
     // Use this for initialization
     void Start ()
     {
@@ -40,7 +46,9 @@ public class PlayerScript : MonoBehaviour
         _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
         _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
         _health = 100;
-        _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(0).GetComponent<Text>();
+        _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(1).GetComponent<Text>();
+        _grabIndicator = GameSystem.Get().MainCanvas.transform.GetChild(3).gameObject;
+        _rb = GetComponent<Rigidbody>();
     }
 
     public void Damage(float damage)
@@ -50,7 +58,7 @@ public class PlayerScript : MonoBehaviour
 
     private void PickUpWeapon(GameObject weapon, bool primary)
     {
-        weapon.GetComponent<BoxCollider>().enabled = false;
+        weapon.GetComponent<CapsuleCollider>().enabled = false;
         weapon.GetComponent<WeaponScript>().Held = true;
         weapon.transform.SetParent(transform);
         weapon.transform.rotation = transform.rotation;
@@ -89,7 +97,7 @@ public class PlayerScript : MonoBehaviour
     {
         if(primary)
         {
-            _weaponPrimary.GetComponent<BoxCollider>().enabled = true;
+            _weaponPrimary.GetComponent<CapsuleCollider>().enabled = true;
             _weaponPrimary.transform.SetParent(null);
             _weaponPrimary.GetComponent<WeaponScript>().Held = false;
             _weaponPrimary.transform.rotation = transform.rotation;
@@ -98,7 +106,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            _weaponSecondary.GetComponent<BoxCollider>().enabled = true;
+            _weaponSecondary.GetComponent<CapsuleCollider>().enabled = true;
             _weaponSecondary.transform.SetParent(null);
             _weaponSecondary.GetComponent<WeaponScript>().Held = false;
             _weaponSecondary.transform.rotation = transform.rotation;
@@ -133,6 +141,20 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        if(GrabbedObject != null)
+        {
+            _grabIndicator.SetActive(true);
+            Vector3 view_pos = GameSystem.Get().MainCamera.WorldToViewportPoint(GrabbedObject.transform.position);
+            view_pos = new Vector3(Mathf.Clamp(view_pos.x, 0, 1) * Screen.width, Mathf.Clamp(view_pos.y, 0, 1) * Screen.height, view_pos.z);
+            _grabIndicator.transform.position = view_pos;
+            _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionY;
+        }
+        else
+        {
+            _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+            _grabIndicator.SetActive(false);
+        }
+
         if ((_primarySelected && _weaponPrimary == null) || (!_primarySelected && _weaponSecondary == null))
             _ammoLeft.gameObject.SetActive(false);
         else
@@ -142,7 +164,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         if (_health <= 0)
-            this.gameObject.active = false;
+            Die();
 
         _healthBar.rectTransform.sizeDelta = new Vector2(_health, 10);
         _healthBarBG.rectTransform.sizeDelta = new Vector2(_health + 4, 14);
@@ -192,6 +214,11 @@ public class PlayerScript : MonoBehaviour
             if (_primarySelected == true)
                 SwitchWeapons();
         }
+    }
+
+    void Die()
+    {
+        SceneManager.LoadScene(0);
     }
 
     void SwitchWeapons()

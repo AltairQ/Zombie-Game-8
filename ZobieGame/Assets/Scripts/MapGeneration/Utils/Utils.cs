@@ -104,4 +104,22 @@ public class Utils
     {
         return Mathf.Abs(a - b) < 1e-6;
     }
+
+    public static bool Contains(Vector2 p1, Vector2 p2, Vector2 v)
+    {
+        OrderSwap(ref p1, ref p2);
+        bool sameX = TheSame(p1.x, p2.x);
+        bool sameY = TheSame(p1.y, p2.y);
+        if(sameX)
+        {
+            return TheSame(p1.x, v.x) && p1.y <= v.y && v.y <= p2.y;
+        }
+        if(sameY)
+        {
+            return TheSame(p1.y, v.y) && p1.x <= v.x && v.x <= p2.x;
+        }
+
+        Debug.LogError("Utils.Contains() neither x and y are the same!");
+        return false;
+    }
 }

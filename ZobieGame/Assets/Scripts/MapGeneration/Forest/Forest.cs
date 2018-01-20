@@ -3,24 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Forest : MapObject {
-    private List<Tree> _trees;
+    private List<Tree> _trees = new List<Tree>();
+    private Street street = null;
+    private List<Vector2> _initStreetPoints = new List<Vector2>();
+    public List<Vector2> InitStreetPoints { get { return _initStreetPoints; } }
+
     public Forest(Rect rect) : base(rect)
     {
     }
 
     public override void Generate()
     {
-        _trees = new List<Tree>();
+        _trees.Clear();
+        //SetStreet(new Vector2(Rect.xMin, Rect.yMax - Rect.height / 2));
 
         float treeRectSize = 4;
         float perlinOff = Random.Range(0f, 666f);
-        for(float y = Rect.yMin; y + treeRectSize < Rect.yMax; y += treeRectSize)
+        for (float y = Rect.yMin; y + treeRectSize < Rect.yMax; y += treeRectSize)
         {
             for (float x = Rect.xMin; x + treeRectSize < Rect.xMax; x += treeRectSize)
             {
-                float val = Mathf.PerlinNoise(x+perlinOff, y+perlinOff);
+                float val = Mathf.PerlinNoise(x + perlinOff, y + perlinOff);
                 float randVal = Random.Range(0f, 1f);
-                if(randVal > val)
+                if (randVal > val)
                 {
                     AddTree(x, y, treeRectSize);
                 }
@@ -28,9 +33,54 @@ public class Forest : MapObject {
         }
     }
 
+    public void SetStreet(Vector2 edgePoint)
+    {
+        if(!Rect.ContainsOnEdge(edgePoint))
+        {
+            Debug.LogError("Forest.SetStreet() point not on edge!");
+            return;
+        }
+
+        var points = Rect.AllPoints();
+        Vector2[] p1Shift = new Vector2[]
+        {
+            Vector2.zero, new Vector2(-Rect.width, 0),
+            new Vector2(0, -Rect.height), Vector2.zero,
+
+        };
+        Vector2[] p2Shift = new Vector2[]
+        {
+            new Vector2(0, Rect.height), Vector2.zero,
+            Vector2.zero, new Vector2(Rect.width, 0),
+        };
+
+        Vector2 p1 = Vector2.zero, p2 = Vector2.zero;
+        for (int i = 0; i < 4; i++)
+        {
+            if(Utils.Contains(points[i], points[i+1], edgePoint))
+            {
+                p1 = edgePoint + p1Shift[i];
+                p2 = edgePoint + p2Shift[i];
+                break;
+            }
+        }
+
+        _initStreetPoints.Clear();
+        _initStreetPoints.Add(p1);
+        _initStreetPoints.Add(p2);
+
+        Rect streetRect = Utils.SegmentToRect(p1, p2, GeneratorAssets.Get().CitySettings.StreetSize);
+        street = new Street(streetRect);
+    }
+
     private void AddTree(float x, float y, float treeRectSize)
     {
         Rect treeRect = new Rect(x, y, treeRectSize, treeRectSize);
+        if(street != null && street.Rect.Overlaps(treeRect))
+        {
+            return;
+        }
+
         Tree tree = new Tree(treeRect);
         tree.Generate();
 
@@ -44,6 +94,11 @@ public class Forest : MapObject {
         {
             var treeGO = tree.Make();
             treeGO.SetParent(go);
+        }
+
+        if(street != null)
+        {
+            street.Make().SetParent(go);
         }
 
         return go;
