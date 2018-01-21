@@ -11,11 +11,23 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     GameObject _player;
     PlayerScript _playerScript;
     Animator _anim;
+    NavMeshAgent _nv;
     bool _dead = false;
+    float _speed;
 
     public bool Dead { get { return _dead; } }
     public float Attack { get { return _attack; } }
     public int ID { get { return _ID; } set { _ID = value; } }
+
+    public void SetGenes(Genes genes)
+    {
+        _ID = genes.Id;
+        _health = genes.G_health;
+        _attack = genes.G_strength;
+        _attackRange = genes.G_melee_range;
+        _speed = genes.G_speed;
+        _nv.speed = _speed;
+    }
 
     public int GetID()
     {
@@ -73,6 +85,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Use this for initialization
     void Start ()
     {
+        _nv = GetComponent<NavMeshAgent>();
         _health = 100;
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
         _player = GameSystem.Get().Player;
