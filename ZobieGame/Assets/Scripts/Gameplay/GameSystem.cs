@@ -53,6 +53,8 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     private GameDirector _GD = new GameDirector();
 
+    public GameDirector GD { get { return _GD; } }
+
     public void BuildNavMesh()
     {
         NavMeshSurface surface = GetComponent<NavMeshSurface>();
