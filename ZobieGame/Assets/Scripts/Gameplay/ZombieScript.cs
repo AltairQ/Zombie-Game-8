@@ -7,13 +7,13 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 {
     int _ID;
     float _health;
-    float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 2.0f, _timeLeft = 5.0f;
+    float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 2.0f, _timeLeft = 5.0f, _armor;
     GameObject _player;
     PlayerScript _playerScript;
     Animator _anim;
     NavMeshAgent _nv;
     bool _dead = false;
-    float _speed;
+    float _speed, _attackScore = 0;
 
     public bool Dead { get { return _dead; } }
     public float Attack { get { return _attack; } }
@@ -26,6 +26,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         _attack = genes.G_strength;
         _attackRange = genes.G_melee_range;
         _speed = genes.G_speed;
+        _armor = genes.G_armor;
         _nv.speed = _speed;
     }
 
@@ -61,7 +62,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public void Damage(float damage)
     {
-        _health -= damage;
+        _health -= Mathf.Max(0, damage - _armor);
     }
 
     public bool GoToPlayer()
@@ -74,6 +75,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         if (MeleeReady() && PlayerInMeleeRange())
         {
             _playerScript.Damage(_attack);
+            _attackScore += _attack;
             _currentAttackCooldown = _attackCooldown;
             _anim.Play("Attack 1", 0, 0f);
             return true;
@@ -95,6 +97,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 	
     void Die()
     {
+        GameSystem.Get().GD.EnemyDead(_ID, _attackScore, EuclidDistanceToPlayer());
         Destroy(this.gameObject);
     }
 

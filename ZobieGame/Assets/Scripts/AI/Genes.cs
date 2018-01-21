@@ -17,6 +17,13 @@ public class Genes{
     // Melee attack range
     public float G_melee_range;
 
+    public float G_armor;
+
+    public float GetPhysArmor()
+    {
+        return G_armor;
+    }
+
     public float GetPhysSize()
     {
         return G_health;
