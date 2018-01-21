@@ -85,7 +85,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     }
 
     // Use this for initialization
-    void Start ()
+    // Fixed Start -> Awake
+    void Awake ()
     {
         _nv = GetComponent<NavMeshAgent>();
         _health = 100;

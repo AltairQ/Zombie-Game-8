@@ -120,8 +120,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     {
         var newZombie = Instantiate(_zombiePrefab, position, _zombiePrefab.transform.rotation);
 
-        // to be added after merge (tm)
-        // newZombie.GetComponent<ZombieScript>().SetGenes(genes);
+        newZombie.GetComponent<ZombieScript>().SetGenes(genes);
         _zombies.Add(newZombie);
     }
 }
