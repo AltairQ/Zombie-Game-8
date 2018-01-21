@@ -21,11 +21,12 @@ public class House : MapObject
 
         InitWalls();    
 
-        GenerateRooms(Rect);
+        CreateRooms(Rect);
         ConnectRooms();
 
         GenerateDoors();
         GenerateWindows();
+        GenerateRooms(); // rooms need doors and windows to be properly generated
     }
 
     private void InitWalls()
@@ -36,7 +37,15 @@ public class House : MapObject
         {
             AddWall(points[i], points[(i + 1) % 4]);
             AddCorner(points[i] - cornerOff, points[i] + cornerOff); //creates corners
-            _walls[i].ShadowsEnabled = true; // it looks bad, should be done better
+            _walls[i].ShadowsEnabled = true;
+        }
+    }
+
+    private void GenerateRooms()
+    {
+        foreach(var room in _rooms)
+        {
+            room.Generate();
         }
     }
 
@@ -59,7 +68,7 @@ public class House : MapObject
         return rect.height > _settings.MinRoomEdge * 2;
     }
 
-    private void GenerateRooms(Rect rect)
+    private void CreateRooms(Rect rect)
     {
         if(!CanBeSplitVertically(rect) && !CanBeSplitHorizontally(rect)) // we cannot split given rect
         { 
@@ -97,14 +106,13 @@ public class House : MapObject
 
         AddWall(p1, p2);
         var newRects = rect.Split(p1, p2);
-        GenerateRooms(newRects[0]);
-        GenerateRooms(newRects[1]);
+        CreateRooms(newRects[0]);
+        CreateRooms(newRects[1]);
     }
     
     private void AddRoom(Rect rect)
     {
         Room room = new Room(rect);
-        room.Generate();
         _rooms.Add(room);
     }
 

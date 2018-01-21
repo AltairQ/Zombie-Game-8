@@ -34,8 +34,8 @@ public class Utils
     {
         OrderSwap(ref p1, ref p2);
         OrderSwap(ref v1, ref v2);
-        bool sameX = IsTrue(new Vector2[]{ p1,p2,v1,v2}, v => Utils.TheSame(v.x, p1.x));
-        bool sameY = IsTrue(new Vector2[] { p1, p2, v1, v2 }, v => Utils.TheSame(v.y, p1.y));
+        bool sameX = IsTrue(new Vector2[] { p1, p2, v1, v2 }, v => TheSame(v.x, p1.x));
+        bool sameY = IsTrue(new Vector2[] { p1, p2, v1, v2 }, v => TheSame(v.y, p1.y));
 
         if(!sameX && !sameY)
         {
