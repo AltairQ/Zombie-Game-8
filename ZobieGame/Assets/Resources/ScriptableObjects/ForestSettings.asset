@@ -9,9 +9,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 933e3a35b5d8dbf4db259ad119b0d2c6, type: 3}
-  m_Name: TreeSettings
+  m_Name: ForestSettings
   m_EditorClassIdentifier: 
-  MinLowerHeight: 2
-  MaxLowerHeight: 4
-  MinUpperHeight: 1
-  MaxUpperHeight: 3
+  MinTreeBottomHeight: 2
+  MaxTreeBottomHeight: 3
+  MinTreeTopHeight: 2
+  MaxTreeTopHeight: 3
+  MinRockBottomHeight: 0.25
+  MaxRockBottomHeight: 0.5
+  MinRockTopHeight: 0.2
+  MaxRockTopHeight: 0.3
+  MinBushBottomHeight: 0.5
+  MaxBushBottomHeight: 1
+  MinBushTopHeight: 0.5
+  MaxBushTopHeight: 1

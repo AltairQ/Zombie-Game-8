@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Forest : MapObject {
-    private List<Tree> _trees = new List<Tree>();
+    private List<MapObject> _naturalObjects = new List<MapObject>();
     private Street street = null;
     private List<Vector2> _initStreetPoints = new List<Vector2>();
     public List<Vector2> InitStreetPoints { get { return _initStreetPoints; } }
@@ -14,7 +14,7 @@ public class Forest : MapObject {
 
     public override void Generate()
     {
-        _trees.Clear();
+        _naturalObjects.Clear();
         //SetStreet(new Vector2(Rect.xMin, Rect.yMax - Rect.height / 2));
 
         float treeRectSize = 4;
@@ -27,7 +27,7 @@ public class Forest : MapObject {
                 float randVal = Random.Range(0f, 1f);
                 if (randVal > val)
                 {
-                    AddTree(x, y, treeRectSize);
+                    AddNaturalObject(x, y, treeRectSize);
                 }
             }
         }
@@ -73,27 +73,41 @@ public class Forest : MapObject {
         street = new Street(streetRect);
     }
 
-    private void AddTree(float x, float y, float treeRectSize)
+    private void AddNaturalObject(float x, float y, float treeRectSize)
     {
-        Rect treeRect = new Rect(x, y, treeRectSize, treeRectSize);
-        if(street != null && street.Rect.Overlaps(treeRect))
+        Rect rect = new Rect(x, y, treeRectSize, treeRectSize);
+        if(street != null && street.Rect.Overlaps(rect))
         {
             return;
         }
 
-        Tree tree = new Tree(treeRect);
-        tree.Generate();
+        MapObject naturalObject = RandomNaturalObject(rect);
+        naturalObject.Generate();
 
-        _trees.Add(tree);
+        _naturalObjects.Add(naturalObject);
+    }
+
+    private MapObject RandomNaturalObject(Rect rect)
+    {
+        int randVal = Random.Range(0, 4);
+        if (randVal == 0)
+        {
+            return new Bush(rect);
+        }
+        else if (randVal == 1)
+        {
+            return new Rock(rect);
+        }
+        return new Tree(rect);
     }
 
     public override GameObject Make()
     {
         GameObject go = Utils.TerrainObject("Forest");
-        foreach (var tree in _trees)
+        foreach (var naturalObject in _naturalObjects)
         {
-            var treeGO = tree.Make();
-            treeGO.SetParent(go);
+            var naturalGO = naturalObject.Make();
+            naturalGO.SetParent(go);
         }
 
         if(street != null)

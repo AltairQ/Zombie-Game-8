@@ -7,11 +7,13 @@ public class GeneratorAssets : MonoBehaviour
     public Material FloorMaterial { get; private set; }
     public Material WallMaterial { get; private set; }
     public Material GroundMaterial { get; private set; }
-    public Material UpperTreeMaterial { get; private set; }
-    public Material LowerTreeMaterial { get; private set; }
+    public Material TreeTopMaterial { get; private set; }
+    public Material TreeBottomMaterial { get; private set; }
+    public Material RockMaterial { get; private set; }
+
     public HouseSettings HouseSettings { get; private set; }
     public CitySettings CitySettings { get; private set; }
-    public TreeSettings TreeSettings { get; private set; }
+    public ForestSettings ForestSettings { get; private set; }
     public LootSettings LootSettings { get; private set; }
     public FurnitureSettings FurnitureSettings { get; private set; }
 
@@ -41,12 +43,13 @@ public class GeneratorAssets : MonoBehaviour
         FloorMaterial = Resources.Load("Materials/FloorMaterial", typeof(Material)) as Material;
         WallMaterial = Resources.Load("Materials/WallMaterial", typeof(Material)) as Material;
         GroundMaterial = Resources.Load("Materials/GroundMaterial", typeof(Material)) as Material;
-        UpperTreeMaterial = Resources.Load("Materials/UpperTreeMaterial", typeof(Material)) as Material;
-        LowerTreeMaterial = Resources.Load("Materials/LowerTreeMaterial", typeof(Material)) as Material;
+        TreeTopMaterial = Resources.Load("Materials/TreeTopMaterial", typeof(Material)) as Material;
+        TreeBottomMaterial = Resources.Load("Materials/TreeBottomMaterial", typeof(Material)) as Material;
+        RockMaterial = Resources.Load("Materials/RockMaterial", typeof(Material)) as Material;
 
         HouseSettings = Resources.Load("ScriptableObjects/HouseSettings", typeof(HouseSettings)) as HouseSettings;
         CitySettings = Resources.Load("ScriptableObjects/CitySettings", typeof(CitySettings)) as CitySettings;
-        TreeSettings = Resources.Load("ScriptableObjects/TreeSettings", typeof(TreeSettings)) as TreeSettings;
+        ForestSettings = Resources.Load("ScriptableObjects/ForestSettings", typeof(ForestSettings)) as ForestSettings;
         LootSettings = Resources.Load("ScriptableObjects/LootSettings", typeof(LootSettings)) as LootSettings;
         FurnitureSettings = Resources.Load("ScriptableObjects/FurnitureSettings", typeof(FurnitureSettings)) as FurnitureSettings;
 
