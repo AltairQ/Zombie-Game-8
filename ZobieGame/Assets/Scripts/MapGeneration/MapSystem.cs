@@ -39,19 +39,25 @@ public class MapSystem : MonoBehaviour
 
     private int _lastX = 0;
     private int _lastY = 0;
+    private int _lastSubX = 0;
+    private int _lastSubY = 0;
     private void UpdateMapForPlayer()
     {
         Vector2 pos = _player.Get2dPos();
         int mappedX = MapFloatCoord(pos.x);
         int mappedY = MapFloatCoord(pos.y);
-        if(_lastX != mappedX || _lastY != mappedY)
+        int subX = SubMapFloatCoord(pos.x);
+        int subY = SubMapFloatCoord(pos.y);
+        if (_lastX != mappedX || _lastY != mappedY || _lastSubX != subX || _lastSubY != subY)
         {
-            UpdateMapAround(_lastX, _lastY, DisableMap);
+            UpdateMapAround(_lastX, _lastY, _lastSubX, _lastSubY, DisableMap);
             _lastX = mappedX;
             _lastY = mappedY;
+            _lastSubX = subX;
+            _lastSubY = subY;
         }
 
-        UpdateMapAround(mappedX, mappedY, EnableMap);
+        UpdateMapAround(mappedX, mappedY, subX, subY, EnableMap);
     }
 
     public int MapFloatCoord(float coord)
@@ -63,25 +69,41 @@ public class MapSystem : MonoBehaviour
         return (int)(coord / _partSize);
     }
 
+    public int SubMapFloatCoord(float coord)
+    {
+        int mappedCoord = MapFloatCoord(coord);
+        float begPart = _partSize * mappedCoord;
+        if(coord < begPart + _partSize/3 )
+        {
+            return -1;
+        }
+        if (coord > begPart + _partSize *2/ 3)
+        {
+            return 1;
+        }
+        return 0;
+    }
+    
+
     public float MapIntCoord(int coord)
     {
         return coord * _partSize;
     }
 
     private bool _navMeshRebuild = false;
-    private int[] _dx = new int[] { 0, -1, 1, 0, 0, 1, -1, 1, -1 }; // order matters
-    private int[] _dy = new int[] { 0, 0, 0, -1, 1, 1, 1, -1, -1 };
-    private void UpdateMapAround(int x, int y, Action<MapPart, int, int> action)
+    private void UpdateMapAround(int x, int y, int subX, int subY, Action<MapPart, int, int> action)
     {
         if (_navMeshRebuild)
         {
             BuildNavMesh();
             _navMeshRebuild = false;
         }
-    
-        for (int k = 0; k < 9; k++)
+
+        int[] dx = new int[] { 0, subX, 0, subX};
+        int[] dy = new int[] { 0, 0, subY, subY};
+        for (int k = 0; k < 4; k++)
         {
-            UpdateMapAt(x + _dx[k], y + _dy[k], action);
+            UpdateMapAt(x + dx[k], y + dy[k], action);
         }
     }
 
