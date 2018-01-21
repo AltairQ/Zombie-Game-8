@@ -70,7 +70,8 @@ public class GameDirector{
             G_health = 100.0f,
             G_melee_range = 2.0f,
             G_speed = 1.0f,
-            G_strength = 10.0f
+            G_strength = 10.0f,
+            G_armor = 0.0f
         };
 
         Memes newmemes = new Memes
