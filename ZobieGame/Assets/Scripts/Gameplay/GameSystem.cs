@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class GameSystem : MonoBehaviour
+public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 {
     private static GameSystem _instance = null;
     public static GameSystem Get()
@@ -45,6 +45,14 @@ public class GameSystem : MonoBehaviour
     public GameObject MuzzleFlash { get { return _muzzleFlash; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
+    // (in seconds) next time to execute GameDirector routine (update)
+    private float _nextDirectorTime;
+
+    // interval between calls to GameDirector.
+    private float _directorInterval = 5.0F;
+
+    private GameDirector _GD = new GameDirector();
+
     public void BuildNavMesh()
     {
         NavMeshSurface surface = GetComponent<NavMeshSurface>();
@@ -60,6 +68,8 @@ public class GameSystem : MonoBehaviour
         _mainCanvas.transform.GetChild(0).transform.position = new Vector3(20, Screen.height - 20, 0);
         _mainCanvas.transform.GetChild(1).transform.position = new Vector3(10, Screen.height - 50, 0);
         _mainCanvas.transform.GetChild(2).transform.position = new Vector3(Screen.width - 70, Screen.height - 20, 0);
+
+        _nextDirectorTime = Time.time + _directorInterval; 
     }
 
     public void EndGame()
@@ -72,20 +82,44 @@ public class GameSystem : MonoBehaviour
         _zombies.Clear();
     }
 
+    public void SpawnEnemy(Genes genes)
+    {
+        SpawnRandomZombie(genes, 30.0F);
+    }
+
+    private void SpawnRandomZombie(Genes genes, float radius = 30.0F)
+    {
+
+        Vector2 randomShift = new Vector2(Mathf.Sin(Random.Range(-Mathf.PI, Mathf.PI)) * radius, Mathf.Cos(Random.Range(-Mathf.PI, Mathf.PI)) * radius);
+        Vector3 shiftPos = new Vector3(randomShift.x, 1, randomShift.y);
+        SpawnZombie(_player.transform.position + shiftPos, genes);
+    }
+
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Z))
         {
-//            Vector2 randomShift = Random.insideUnitCircle * 3;
-            Vector2 randomShift = new Vector2(Mathf.Sin(Random.Range(-Mathf.PI, Mathf.PI)) * 5, Mathf.Cos(Random.Range(-Mathf.PI, Mathf.PI)) * 5);
-            Vector3 shiftPos = new Vector3(randomShift.x, 1, randomShift.y);
-            SpawnZombie(_player.transform.position + shiftPos);
+            //            Vector2 randomShift = Random.insideUnitCircle * 3;
+            SpawnRandomZombie(_GD.NewEnemy());            
         }
+
+        if(Time.time >= _nextDirectorTime)
+        {
+            // GAMEDIRECTOR UPDATE LOL
+
+            _nextDirectorTime = Time.time + _directorInterval;
+
+            _GD.WorldTick(this);
+        }
+
     }
 
-    public void SpawnZombie(Vector3 position)
+    public void SpawnZombie(Vector3 position, Genes genes)
     {
         var newZombie = Instantiate(_zombiePrefab, position, _zombiePrefab.transform.rotation);
+
+        // to be added after merge (tm)
+        // newZombie.GetComponent<ZombieScript>().SetGenes(genes);
         _zombies.Add(newZombie);
     }
 }

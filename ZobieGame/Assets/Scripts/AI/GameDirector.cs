@@ -21,10 +21,10 @@ public class GameDirector{
     }
 
     // Internal storage
-    private Dictionary<int, ActorInfo> _database;
+    private Dictionary<int, ActorInfo> _database = new Dictionary<int, ActorInfo>();
 
     private int _max_candidates;
-    private List<int> _candidates;
+    private List<int> _candidates = new List<int>();
 
     // Last assigned Id
     private int _lastId = 0;
@@ -95,16 +95,13 @@ public class GameDirector{
         _candidates.Add(eid);
     }
 
-    // To be executed every X frames
+    // To be executed every now and then
     public void WorldTick<T>(T warudo)
         where T : IAIEnvActions, IAIEnvState
     {
         _tick_count++;
 
-        if (_tick_count % 10000 == 0)
-        {
-            warudo.SpawnEnemy(this.NewEnemy());
-        }
+        warudo.SpawnEnemy(this.NewEnemy());
     }
 
 }
