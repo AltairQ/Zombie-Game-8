@@ -20,7 +20,7 @@ MonoBehaviour:
     yShift: -0.5
   - gameObject: {fileID: 1961642031582358, guid: 2a98b1096f319824d8a8b605d61dd58c,
       type: 2}
-    yShift: 0
+    yShift: -0.9
   - gameObject: {fileID: 1356590145716094, guid: ba2eae64a03092b4a8d8b149cb50514c,
       type: 2}
     yShift: -0.5

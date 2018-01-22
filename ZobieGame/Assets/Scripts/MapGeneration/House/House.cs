@@ -121,11 +121,16 @@ public class House : MapObject
         var edges = RoomConnecting.GenerateConnections(_rooms, _settings.DoorSize);
         foreach(var edge in edges)
         {
-            var doorPoints = RoomConnecting.Connection(_rooms[edge.v], _rooms[edge.w], _settings.DoorSize);
+            var room1 = _rooms[edge.v];
+            var room2 = _rooms[edge.w];
+            var doorPoints = RoomConnecting.Connection(room1, room2, _settings.DoorSize);
             var wall = _walls.Find(w => w.ContainsInPart(doorPoints[0], doorPoints[1]));
             if(wall != null)
             {
                 AddDoor(wall, doorPoints[0], doorPoints[1]);
+                Vector2 doorCenter = (doorPoints[0] + doorPoints[1]) / 2;
+                room1.AddDoorCenter(doorCenter);
+                room2.AddDoorCenter(doorCenter);
             }
         }
     }

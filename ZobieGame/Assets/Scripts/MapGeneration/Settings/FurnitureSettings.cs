@@ -9,6 +9,7 @@ public class FurnitureSettings : ScriptableObject
     {
         public GameObject gameObject = null;
         public float yShift;
+
         public FurnitureSetting Clone()
         {
             var clone = new FurnitureSetting {
