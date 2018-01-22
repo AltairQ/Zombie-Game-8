@@ -37,6 +37,8 @@ public class PlayerScript : MonoBehaviour
     public int[] Ammo { get { return _ammo; } }
     public GameObject GrabbedObject { get { return _grabbedObject; } set { _grabbedObject = value; } }
 
+    Animator _torso;
+
     Rigidbody _rb;
     // Use this for initialization
     void Start ()
@@ -49,6 +51,8 @@ public class PlayerScript : MonoBehaviour
         _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(1).GetComponent<Text>();
         _grabIndicator = GameSystem.Get().MainCanvas.transform.GetChild(3).gameObject;
         _rb = GetComponent<Rigidbody>();
+
+        _torso = transform.GetChild(1).GetComponent<Animator>();
     }
 
     public void Damage(float damage)
@@ -58,13 +62,14 @@ public class PlayerScript : MonoBehaviour
 
     private void PickUpWeapon(GameObject weapon, bool primary)
     {
+        Vector3 _gunOffset = weapon.GetComponent<WeaponScript>().GunOffset;
         weapon.GetComponent<CapsuleCollider>().enabled = false;
         weapon.GetComponent<WeaponScript>().Held = true;
         weapon.transform.SetParent(transform);
         weapon.transform.rotation = transform.rotation;
         weapon.transform.position = transform.position;
 //        print(_gunPos + " " + (_gunPos + new Vector3(0, 0, weapon.GetComponent<WeaponScript>().Offset)));
-        weapon.transform.Translate(_gunPos + new Vector3(0, 0, weapon.GetComponent<WeaponScript>().Offset));
+        weapon.transform.Translate(_gunPos + _gunOffset);
 //        weapon.transform.Translate(_gunPos);
 
         weapon.GetComponent<WeaponScript>().InitUI();
@@ -141,7 +146,36 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
-        if(GrabbedObject != null)
+        if(_primarySelected && _weapon != null)
+        {
+            _torso.SetBool("Primary", true);
+            _torso.SetBool("Secondary", false);
+            _torso.Play("PrimaryWalk", 0, 0);
+        }
+        else if(_weapon != null)
+        {
+            _torso.SetBool("Primary", false);
+            _torso.SetBool("Secondary", true);
+            _torso.Play("SecondaryWalk", 0, 0);
+        }
+        if (_weapon == null)
+        {
+            _torso.SetBool("Primary", false);
+            _torso.SetBool("Secondary", false);
+        }
+        else
+        {
+            if(_weapon.GetComponent<WeaponScript>().CurrentReload > 0)
+            {
+                _torso.SetBool("Reload", true);
+            }
+            else
+            {
+                _torso.SetBool("Reload", false);
+            }
+        }
+
+        if (GrabbedObject != null)
         {
             _grabIndicator.SetActive(true);
             Vector3 view_pos = GameSystem.Get().MainCamera.WorldToViewportPoint(GrabbedObject.transform.position);
@@ -237,7 +271,7 @@ public class PlayerScript : MonoBehaviour
                 {
                     _weapon.GetComponent<WeaponScript>().InitUI();
                     _weapon.transform.position = transform.position;
-                    _weapon.transform.Translate(_gunPos + new Vector3(0, 0, _weapon.GetComponent<WeaponScript>().Offset));
+                    _weapon.transform.Translate(_gunPos + _weapon.GetComponent<WeaponScript>().GunOffset);
                 }
             }
             if (_primarySelected)
@@ -252,7 +286,7 @@ public class PlayerScript : MonoBehaviour
                 {
                     _weapon.GetComponent<WeaponScript>().InitUI();
                     _weapon.transform.position = transform.position;
-                    _weapon.transform.Translate(_gunPos + new Vector3(0, 0, _weapon.GetComponent<WeaponScript>().Offset));
+                    _weapon.transform.Translate(_gunPos + _weapon.GetComponent<WeaponScript>().GunOffset);
                 }
             }
 

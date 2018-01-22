@@ -408,6 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8646b6ef2ddfdd141b7b8d38633e5f38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gunOffset: {x: -0.09, y: -0.18, z: -0.23}
   _bullet: {fileID: 1441994529942288, guid: 23e559e6991132345be0692939d60f84, type: 2}
   _bulletImage: {fileID: 1754290454144132, guid: 7120627838d5a0448873c6620b19b884,
     type: 2}
@@ -418,7 +419,7 @@ MonoBehaviour:
   _mag: {fileID: 1598991125102492}
   _cooldown: 0.1
   _reloadSpeed: 3
-  _damage: 10
+  _damage: 15
   _offset: 0
   _spread: 4
   _bulletCount: 1

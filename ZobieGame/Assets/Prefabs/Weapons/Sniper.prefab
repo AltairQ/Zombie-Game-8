@@ -409,6 +409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8646b6ef2ddfdd141b7b8d38633e5f38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gunOffset: {x: 0, y: -0.3, z: -0.58}
   _bullet: {fileID: 1441994529942288, guid: 23e559e6991132345be0692939d60f84, type: 2}
   _bulletImage: {fileID: 1754290454144132, guid: 37b3e4f0402a3bc4880af10917934371,
     type: 2}

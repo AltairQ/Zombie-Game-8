@@ -5,6 +5,8 @@ using UnityEngine;
 public class WeaponScript : MonoBehaviour
 {
     [SerializeField]
+    private Vector3 _gunOffset;
+    [SerializeField]
     private GameObject _bullet, _bulletImage, _barrelEnd, _casing, _slide, _ejectionPort, _mag;
     [SerializeField]
     private float _cooldown, _reloadSpeed, _damage, _offset;
@@ -21,6 +23,7 @@ public class WeaponScript : MonoBehaviour
     public bool Held { get { return _held; } set { _held = value; } }
     public bool Primary { get { return _primary; } }
     public float Offset { get { return _offset; } }
+    public Vector3 GunOffset { get { return _gunOffset; } }
 
     private float _currentReload, _currentCooldown, _slidePos, _slideRec = 0.075f;
     private int _casings;

@@ -77,7 +77,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
             _playerScript.Damage(_attack);
             _attackScore += _attack;
             _currentAttackCooldown = _attackCooldown;
-            _anim.Play("Attack 1", 0, 0f);
+            _anim.SetBool("Attack", true);
             return true;
         }
         else
@@ -93,7 +93,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
         _player = GameSystem.Get().Player;
         _anim = transform.GetChild(0).GetComponent<Animator>();
-        _anim.Play("Walk");
+//        _anim.Play("Walk");
     }
 	
     void Die()
@@ -105,11 +105,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 	// Update is called once per frame
 	void Update ()
     {
-        if((_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack 1") && _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1))
-        {
-            _anim.Play("Walk");
-//            _anim.Play("Idle 1");
-        }
+        if ((_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack 1")))
+            _anim.SetBool("Attack", false);
 
         _currentAttackCooldown -= Time.deltaTime;
 

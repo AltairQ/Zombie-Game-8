@@ -17,14 +17,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private KeyCode _RightKey = KeyCode.D;
 
+    Animator _legs;
+
     // Use this for initialization
     void Start ()
     {
         rb = GetComponent<Rigidbody>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
+        _legs = transform.GetChild(0).GetComponent<Animator>();
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
         _movement = new Vector3(0, 0, 0);
         int MX = 0, MZ = 0;
@@ -48,6 +51,14 @@ public class PlayerController : MonoBehaviour
                 if (MX != 0 || MZ != 0)
                     movement = new Vector3(Mathf.Sin(Mathf.Deg2Rad * new_rotation) * movement_speed, 0.0f, Mathf.Cos(Mathf.Deg2Rad * new_rotation) * movement_speed);
         */
+
+        if (MX != 0 || MZ != 0)
+            _legs.SetBool("Walking", true);
+        else
+        {
+            _legs.SetBool("Walking", false);
+            _legs.Play("Stand", 0, 0);
+        }
 
         _movement = new Vector3(-MX * _movementSpeed, 0.0f, MZ * _movementSpeed);
     }
