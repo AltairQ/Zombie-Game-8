@@ -60,48 +60,43 @@ public class Room : MapObject
 
     public override GameObject Make()
     {
-        GameObject go = null;
-        if(_hasLoot)
-        {
-            go = MakeLootItem();    
-        }
-        else
-        {
-            go = MakeFurnitures();
-        }
-        return go;
-    }
-
-    private GameObject MakeLootItem()
-    {
-        var item = GeneratorAssets.Get().LootSettings.GetRandomItem();
-        item.transform.position = Rect.Center(ObjectHeight.Floor) + new Vector3(0, item.transform.lossyScale.y, 0);
-        return item;
-    }
-
-    private GameObject MakeFurnitures()
-    {
-        GameObject furnitures = null; // will be initialised if necessary in  MakeFurniture 
+        GameObject items = null; // will be initialised if necessary in  MakeFurniture 
         var settings = GeneratorAssets.Get().FurnitureSettings;
 
-        if (_centralRect.Area() > (_settings.MinRoomArea + _settings.MaxRoomArea) /2 )
+        if(_hasLoot)
         {
-            MakeFurniture(settings.GetRandomCentralFurniture(), ref furnitures, _centralRect);
+            MakeLootItem(ref items);
+        }
+        else if (_centralRect.Area() > (_settings.MinRoomArea + _settings.MaxRoomArea) / 2)
+        {
+            MakeFurniture(settings.GetRandomCentralFurniture(), ref items, _centralRect);
         }
 
-        foreach(var wallRect in _wallRects)
+        foreach (var wallRect in _wallRects)
         {
-            MakeFurniture(settings.GetRandomWallFurniture(), ref furnitures, wallRect);
+            MakeFurniture(settings.GetRandomWallFurniture(), ref items, wallRect);
         }
 
-        return furnitures;
+        return items;
+    }
+
+    private void MakeLootItem(ref GameObject parent)
+    {
+        if (parent == null)
+        {
+            parent = Utils.TerrainObject("Items");
+        }
+
+        var item = GeneratorAssets.Get().LootSettings.GetRandomItem();
+        item.transform.position = Rect.Center(ObjectHeight.Floor) + new Vector3(0, item.transform.lossyScale.y, 0);
+        item.SetParent(parent);
     }
 
     private void MakeFurniture(FurnitureSettings.FurnitureSetting setting, ref GameObject parent, Rect rect)
     {
-        if(parent == null)
+        if (parent == null)
         {
-            parent = Utils.TerrainObject("Furnitures");
+            parent = Utils.TerrainObject("Items");
         }
 
         var item = setting.gameObject;
