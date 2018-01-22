@@ -34,12 +34,17 @@ public class PlayerScript : MonoBehaviour
     private Text _ammoLeft;
     private GameObject _grabbedObject, _grabIndicator;
 
+    int _score;
+
+    public int Score { get { return _score; } set { _score = value; } }
+
     public int[] Ammo { get { return _ammo; } }
     public GameObject GrabbedObject { get { return _grabbedObject; } set { _grabbedObject = value; } }
 
     Animator _torso;
-
     Rigidbody _rb;
+    Text _scoreText;
+
     // Use this for initialization
     void Start ()
     {
@@ -51,6 +56,8 @@ public class PlayerScript : MonoBehaviour
         _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(1).GetComponent<Text>();
         _grabIndicator = GameSystem.Get().MainCanvas.transform.GetChild(3).gameObject;
         _rb = GetComponent<Rigidbody>();
+
+        _scoreText = GameSystem.Get().MainCanvas.transform.GetChild(4).gameObject.GetComponent<Text>();
 
         _torso = transform.GetChild(1).GetComponent<Animator>();
     }
@@ -146,6 +153,8 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        _scoreText.text = _score.ToString();
+
         if(_primarySelected && _weapon != null)
         {
             _torso.SetBool("Primary", true);

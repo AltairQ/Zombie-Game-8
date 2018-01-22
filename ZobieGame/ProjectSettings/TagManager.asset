@@ -8,6 +8,7 @@ TagManager:
   - Weapon
   - Terrain
   - Bullet
+  - Light
   layers:
   - Default
   - TransparentFX

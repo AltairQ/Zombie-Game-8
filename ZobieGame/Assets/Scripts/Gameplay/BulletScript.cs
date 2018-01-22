@@ -13,6 +13,7 @@ public class BulletScript : MonoBehaviour
         this._angleY = angle_y;
         this._damage = damage;
         transform.rotation = Quaternion.Euler(0, this._angleY, 0);
+        transform.Translate(0, 0.2f, 0);
     }
 
     // Use this for initialization

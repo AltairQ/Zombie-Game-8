@@ -14,6 +14,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     NavMeshAgent _nv;
     bool _dead = false;
     float _speed, _attackScore = 0;
+    int _level;
 
     public bool Dead { get { return _dead; } }
     public float Attack { get { return _attack; } }
@@ -21,6 +22,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public void SetGenes(Genes genes)
     {
+        _level = genes.level;
         _ID = genes.Id;
         _health = genes.G_health;
         _attack = genes.G_strength;
@@ -98,6 +100,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 	
     void Die()
     {
+        GameSystem.Get().Player.GetComponent<PlayerScript>().Score += 100 + _level * 10;
         GameSystem.Get().GD.EnemyDead(_ID, _attackScore, EuclidDistanceToPlayer());
         Destroy(this.gameObject);
     }

@@ -25,6 +25,8 @@ public class WeaponScript : MonoBehaviour
     public float Offset { get { return _offset; } }
     public Vector3 GunOffset { get { return _gunOffset; } }
 
+    AudioSource _shoot, _reload;
+
     private float _currentReload, _currentCooldown, _slidePos, _slideRec = 0.075f;
     private int _casings;
 
@@ -65,6 +67,9 @@ public class WeaponScript : MonoBehaviour
 //            _slide = transform.GetChild(1).GetChild(1).gameObject;
             _slidePos = _slide.transform.localPosition.z;
         }
+
+        _reload = GetComponents<AudioSource>()[0];
+        _shoot = GetComponents<AudioSource>()[1];
     }
 
     void R_Shoot()
@@ -84,6 +89,7 @@ public class WeaponScript : MonoBehaviour
                 new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
             }
 
+            _shoot.Play();
             Instantiate(GameSystem.Get().MuzzleFlash, _barrelEnd.transform.position, Quaternion.Euler(0, transform.rotation.eulerAngles.y + 90, 0));
 
             _bulletsLeft--;
@@ -99,7 +105,7 @@ public class WeaponScript : MonoBehaviour
     public void Shoot()
     {
         RaycastHit hit;
-        var rayDirection = _barrelEnd.transform.position - (GameSystem.Get().Player.transform.position + Vector3.Scale(GameSystem.Get().GunPos, new Vector3(0, 1, 0)));
+        var rayDirection = new Vector3(0, 0.2f, 0) + _barrelEnd.transform.position - (GameSystem.Get().Player.transform.position + Vector3.Scale(GameSystem.Get().GunPos, new Vector3(0, 1, 0)));
         rayDirection = Vector3.Scale(rayDirection, new Vector3(1, 0, 1));
 
         GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = false;
@@ -145,6 +151,8 @@ public class WeaponScript : MonoBehaviour
                             child.gameObject.active = true;
                         }
             */
+
+            _reload.Play();
 
             _currentReload = ((float)(_magazineSize - _bulletsLeft) / _magazineSize) * _reloadSpeed;
             _bulletsLeft = Mathf.Min(_magazineSize, _bulletsLeft + ammo);
