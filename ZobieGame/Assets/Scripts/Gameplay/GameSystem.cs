@@ -38,6 +38,9 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     private GameObject _player = null;
     private Vector3 _gunPos = new Vector3(0.1f, 0.3f, 0.75f);
 
+    [SerializeField]
+    private Light _light;
+
     public GameObject Player { get { return _player; } }
     public Vector3 GunPos { get { return _gunPos; } }
     public Canvas MainCanvas { get { return _mainCanvas; } }
@@ -70,6 +73,9 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
         _mainCanvas.transform.GetChild(0).transform.position = new Vector3(20, Screen.height - 20, 0);
         _mainCanvas.transform.GetChild(1).transform.position = new Vector3(10, Screen.height - 50, 0);
         _mainCanvas.transform.GetChild(2).transform.position = new Vector3(Screen.width - 70, Screen.height - 20, 0);
+        _mainCanvas.transform.GetChild(4).transform.position = new Vector3(Screen.width / 2, Screen.height - 48, 0);
+
+        _light = GameObject.FindWithTag("Light").GetComponent<Light>();
 
         _nextDirectorTime = Time.time + _directorInterval; 
     }
@@ -86,6 +92,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     public void SpawnEnemy(Genes genes)
     {
+        print(genes);
         SpawnRandomZombie(genes, 30.0F);
     }
 
@@ -99,11 +106,15 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Z))
-        {
-            //            Vector2 randomShift = Random.insideUnitCircle * 3;
-            SpawnRandomZombie(_GD.NewEnemy());            
-        }
+        /*        
+                if(Input.GetKeyDown(KeyCode.Z))
+                {
+                    //            Vector2 randomShift = Random.insideUnitCircle * 3;
+                    SpawnRandomZombie(_GD.NewEnemy());            
+                }
+        */
+
+//        _light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time), 0, 1) * 0.9f;
 
         if(Time.time >= _nextDirectorTime)
         {
