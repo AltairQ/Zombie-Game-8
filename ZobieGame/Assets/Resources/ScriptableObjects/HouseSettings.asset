@@ -14,13 +14,13 @@ MonoBehaviour:
   MinHouseEdge: 10
   MaxHouseEdge: 20
   Height: 3
-  MinRoomEdge: 6.73
+  MinRoomEdge: 5.73
   MinRoomArea: 20
   MaxRoomArea: 36
   DoorSize: 1.5
   WindowSize: 1
   SpaceBetweenWindows: 1.25
   SecondDoorChance: 0.8
-  RoomSpawnChance: 1
+  RoomSpawnChance: 0.2
   RoomCycleChance: 0.2
   Combine: 1

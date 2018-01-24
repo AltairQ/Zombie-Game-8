@@ -11,6 +11,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
         return _instance;
     }
 
+    public bool _gameDirectorOn = true;
 	private void Awake ()
     {
         _instance = this;
@@ -121,8 +122,11 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
             // GAMEDIRECTOR UPDATE LOL
 
             _nextDirectorTime = Time.time + _directorInterval;
-
-            _GD.WorldTick(this);
+            if(_gameDirectorOn)
+            {
+                _GD.WorldTick(this);
+            }
+            
         }
 
     }

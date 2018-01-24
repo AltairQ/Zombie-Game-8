@@ -16,6 +16,7 @@ public class GeneratorAssets : MonoBehaviour
     public ForestSettings ForestSettings { get; private set; }
     public LootSettings LootSettings { get; private set; }
     public FurnitureSettings FurnitureSettings { get; private set; }
+    public Object3DSetting BushSetting { get; private set; }
 
     private static GeneratorAssets _instance = null;
     private void Awake()
@@ -52,6 +53,7 @@ public class GeneratorAssets : MonoBehaviour
         ForestSettings = Resources.Load("ScriptableObjects/ForestSettings", typeof(ForestSettings)) as ForestSettings;
         LootSettings = Resources.Load("ScriptableObjects/LootSettings", typeof(LootSettings)) as LootSettings;
         FurnitureSettings = Resources.Load("ScriptableObjects/FurnitureSettings", typeof(FurnitureSettings)) as FurnitureSettings;
+        BushSetting = Resources.Load("ScriptableObjects/Nature/BushSetting", typeof(Object3DSetting)) as Object3DSetting;
 
         Debug.Log("GeneratorAssets loaded");
     }

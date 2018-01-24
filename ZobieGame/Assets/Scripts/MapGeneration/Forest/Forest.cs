@@ -89,16 +89,17 @@ public class Forest : MapObject {
 
     private MapObject RandomNaturalObject(Rect rect)
     {
-        int randVal = Random.Range(0, 4);
-        if (randVal == 0)
-        {
-            return new Bush(rect);
-        }
-        else if (randVal == 1)
-        {
-            return new Rock(rect);
-        }
-        return new Tree(rect);
+        return new MapObject3D("Bush", GeneratorAssets.Get().BushSetting, rect);
+        //int randVal = Random.Range(0, 4);
+        //if (randVal == 0)
+        //{
+        //    return new Bush(rect);
+        //}
+        //else if (randVal == 1)
+        //{
+        //    return new Rock(rect);
+        //}
+        //return new Tree(rect);
     }
 
     public override GameObject Make()

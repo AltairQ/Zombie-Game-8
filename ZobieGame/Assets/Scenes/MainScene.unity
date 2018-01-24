@@ -860,6 +860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e166d67c2be99a14db60a6d64e1bbe40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameDirectorOn: 1
   _mainCamera: {fileID: 781803181}
   _mainCanvas: {fileID: 951521778}
   _playerPrefab: {fileID: 1828477134610050, guid: 494a249908f6fbf448878aca2f5645f0,
