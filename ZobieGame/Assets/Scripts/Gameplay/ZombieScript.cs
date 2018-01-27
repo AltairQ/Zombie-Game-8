@@ -22,7 +22,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public void SetGenes(Genes genes)
     {
-        _level = genes.level;
+        //_level = genes.level;
         _ID = genes.Id;
         _health = genes.G_health;
         _attack = genes.G_strength;

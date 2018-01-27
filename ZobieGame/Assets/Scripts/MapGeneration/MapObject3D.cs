@@ -35,6 +35,7 @@ public class MapObject3D : MapObject
         {
             var partGO = MakePart(i);
             partGO.SetParent(go);
+            go.Combine(partGO);
         }
         return go;
     }
@@ -69,7 +70,7 @@ public class MapObject3D : MapObject
         var segment = Utils.TerrainObject(PrimitiveType.Cube, "Segment");
         Vector2 rectSize = Rect.size * sizeScale;
         segment.transform.localScale = new Vector3(rectSize.x, height, rectSize.y);
-        segment.transform.position = Rect.Center(yOff);
+        segment.transform.position = Rect.Center(yOff + height/2);
 
         return segment;
     }

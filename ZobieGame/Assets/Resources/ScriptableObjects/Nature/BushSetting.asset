@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: BushSetting
   m_EditorClassIdentifier: 
   Name: Bush
-  SegmentsNumber: 20
+  SegmentsNumber: 10
   MinHeight: 0.75
   MaxHeight: 1.5
   Shape:
@@ -20,19 +20,31 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 2
       time: 0.008350372
-      value: 0.35172653
+      value: 0.34030533
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.5042389
-      value: 0.46543884
+      time: 0.22815786
+      value: 0.4304132
+      inSlope: 0.32573938
+      outSlope: 0.32573938
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.64059144
+      value: 0.47000504
       inSlope: 0
       outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.8996229
+      value: 0.27266738
+      inSlope: -1.5694648
+      outSlope: -1.5694648
       tangentMode: 0
     - serializedVersion: 2
       time: 1
-      value: 0.1
+      value: 0.0885788
       inSlope: 0
       outSlope: 0
       tangentMode: 0
