@@ -92,7 +92,8 @@ public class WeaponScript : MonoBehaviour
             _shoot.Play();
             Instantiate(GameSystem.Get().MuzzleFlash, _barrelEnd.transform.position, Quaternion.Euler(0, transform.rotation.eulerAngles.y + 90, 0));
 
-            _bulletsLeft--;
+            // TMP HACK
+            //_bulletsLeft--;
             _currentCooldown = _cooldown;
             _casings++;
             GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.SetActive(false);

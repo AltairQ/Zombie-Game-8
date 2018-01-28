@@ -52,7 +52,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     private float _nextDirectorTime;
 
     // interval between calls to GameDirector.
-    private float _directorInterval = 5.0F;
+    private float _directorInterval = 2.0F;
 
     private GameDirector _GD = new GameDirector();
 

@@ -10,4 +10,10 @@ public class Genotype
 
     // AI parameters
     public Memes memes;
+
+    public Genotype(Genes g, Memes m)
+    {
+        this.genes = g;
+        this.memes = m;
+    }
 }
