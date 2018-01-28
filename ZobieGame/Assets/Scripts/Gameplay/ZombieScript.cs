@@ -101,7 +101,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     void Die()
     {
         GameSystem.Get().Player.GetComponent<PlayerScript>().Score += 100 + _level * 10;
-        GameSystem.Get().GD.EnemyDead(_ID, _attackScore, EuclidDistanceToPlayer());
+        GameSystem.Get().GD.EnemyDead(_ID, _attackScore, 100.0F / (5.0F + EuclidDistanceToPlayer()) );
         Destroy(this.gameObject);
     }
 

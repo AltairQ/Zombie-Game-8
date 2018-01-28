@@ -94,13 +94,14 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     public void SpawnEnemy(Genes genes)
     {
         print(genes);
-        SpawnRandomZombie(genes, 30.0F);
+        SpawnRandomZombie(genes, 40.0F);
     }
 
     private void SpawnRandomZombie(Genes genes, float radius = 30.0F)
     {
-
-        Vector2 randomShift = new Vector2(Mathf.Sin(Random.Range(-Mathf.PI, Mathf.PI)) * radius, Mathf.Cos(Random.Range(-Mathf.PI, Mathf.PI)) * radius);
+        Vector2 randomShift = new Vector2(
+            Mathf.Sin(Random.Range(-Mathf.PI, Mathf.PI)) * radius,
+            Mathf.Cos(Random.Range(-Mathf.PI, Mathf.PI)) * radius);
         Vector3 shiftPos = new Vector3(randomShift.x, 1, randomShift.y);
         SpawnZombie(_player.transform.position + shiftPos, genes);
     }

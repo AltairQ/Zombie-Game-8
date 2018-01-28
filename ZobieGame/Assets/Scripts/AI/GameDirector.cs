@@ -167,8 +167,8 @@ public class GameDirector{
         // k-th candidate is killed if we draw from [n^2, (n+1)^2)
         // the "max" parameter of Random.Next is exclusive.
 
-        // Kill off the population until we reach half of the original size
-        while( kill_list.Count < n/2 )
+        // Kill off the population until we are left with 10 representatives
+        while(n - kill_list.Count > 10 )
             kill_list.Add( this.NonuniformRandomHigh(n) );
         
 
@@ -199,7 +199,7 @@ public class GameDirector{
             G_health      = UMChoice(d1.genes.G_health,      d2.genes.G_health     ),
             G_speed       = UMChoice(d1.genes.G_speed,       d2.genes.G_speed      ),
             G_strength    = UMChoice(d1.genes.G_strength,    d2.genes.G_strength   ),
-            G_melee_range = UMChoice(d1.genes.G_melee_range, d2.genes.G_melee_range),
+            G_melee_range =  2, //  UMChoice(d1.genes.G_melee_range, d2.genes.G_melee_range),
             G_armor       = UMChoice(d1.genes.G_armor,       d2.genes.G_armor      )
         };
 
