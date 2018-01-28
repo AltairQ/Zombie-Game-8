@@ -14,7 +14,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     NavMeshAgent _nv;
     bool _dead = false;
     float _speed, _attackScore = 0;
-    int _level;
+    int _level = 1;
 
     public bool Dead { get { return _dead; } }
     public float Attack { get { return _attack; } }

@@ -1,6 +1,7 @@
 ﻿
 // Bundle containing physical parameters and also ID
-public class Genes{
+public class Genes
+{
 
     // Unique enemy ID (used by Game Director)
     public int Id;
@@ -42,5 +43,10 @@ public class Genes{
     public float GetPhysMeleeRange()
     {
         return G_melee_range;
+    }
+
+    public override string ToString()
+    {
+        return string.Format("ID:{0}, HP:{1}, SP:{2}, STR:{3}, RNG:{4}", Id, G_health, G_speed, G_strength, G_melee_range);
     }
 }
