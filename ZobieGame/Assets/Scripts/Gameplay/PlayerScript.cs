@@ -26,19 +26,32 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     private int[] _ammoMax = new int[6];
 
+    private int _mines;
+
     private Vector3 _gunPos;
     private bool _primarySelected = false;
     private Image _healthBar;
     private Image _healthBarBG;
+    private Image _staminaBar;
+    private Image _staminaBarBG;
     private float _health;
+    private float _stamina;
     private Text _ammoLeft;
     private GameObject _grabbedObject, _grabIndicator;
+
+    AudioSource _audioInjured;
+
+    [SerializeField]
+    private Light _flashlight;
 
     int _score;
 
     public int Score { get { return _score; } set { _score = value; } }
 
+    public float Stamina { get { return _stamina; } set { _stamina = value; } }
+
     public int[] Ammo { get { return _ammo; } }
+    public int Mines { get { return _mines; } set { _mines = value; } }
     public GameObject GrabbedObject { get { return _grabbedObject; } set { _grabbedObject = value; } }
 
     Animator _torso;
@@ -52,6 +65,8 @@ public class PlayerScript : MonoBehaviour
         _controller = GetComponent<PlayerController>();
         _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
         _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
+        _staminaBar = GameSystem.Get().MainCanvas.transform.GetChild(5).transform.GetChild(1).GetComponent<Image>();
+        _staminaBarBG = GameSystem.Get().MainCanvas.transform.GetChild(5).transform.GetChild(0).GetComponent<Image>();
         _health = 100;
         _ammoLeft = GameSystem.Get().MainCanvas.transform.GetChild(2).GetChild(1).GetComponent<Text>();
         _grabIndicator = GameSystem.Get().MainCanvas.transform.GetChild(3).gameObject;
@@ -59,16 +74,21 @@ public class PlayerScript : MonoBehaviour
 
         _scoreText = GameSystem.Get().MainCanvas.transform.GetChild(4).gameObject.GetComponent<Text>();
 
+        _audioInjured = GetComponents<AudioSource>()[0];
+
         _torso = transform.GetChild(1).GetComponent<Animator>();
     }
 
     public void Damage(float damage)
     {
+        _audioInjured.Play();
         _health -= damage;
     }
 
     private void PickUpWeapon(GameObject weapon, bool primary)
     {
+        weapon.GetComponents<AudioSource>()[2].Play();
+
         Vector3 _gunOffset = weapon.GetComponent<WeaponScript>().GunOffset;
         weapon.GetComponent<CapsuleCollider>().enabled = false;
         weapon.GetComponent<WeaponScript>().Held = true;
@@ -153,6 +173,16 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        _stamina += Time.deltaTime * 10;
+
+        if (_stamina > 100)
+            _stamina = 100;
+
+        if (GameSystem.Get().Sunlight.intensity < 0.4f)
+            _flashlight.enabled = true;
+        else
+            _flashlight.enabled = false;
+
         _scoreText.text = _score.ToString();
 
         if(_primarySelected && _weapon != null)
@@ -211,6 +241,8 @@ public class PlayerScript : MonoBehaviour
 
         _healthBar.rectTransform.sizeDelta = new Vector2(_health, 10);
         _healthBarBG.rectTransform.sizeDelta = new Vector2(_health + 4, 14);
+        _staminaBar.rectTransform.sizeDelta = new Vector2(_stamina, 10);
+        _staminaBarBG.rectTransform.sizeDelta = new Vector2(_stamina + 4, 14);
 
         RaycastHit hit;
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
@@ -246,6 +278,14 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             SwitchWeapons();
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if(_mines > 0)
+            {
+                _mines -= 1;
+                Instantiate(GameSystem.Get().Mine, transform.position - new Vector3(0, 1, 0), GameSystem.Get().Mine.transform.rotation);
+            }
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {

@@ -7,3 +7,4 @@ ZobieGame/ZobieGame.sln
 ZobieGame/ZobieGame.Editor.csproj
 ZobieGame/ZobieGame.userprefs
 .gitattributes
+ZobieGame/Assets/PostProcessing/

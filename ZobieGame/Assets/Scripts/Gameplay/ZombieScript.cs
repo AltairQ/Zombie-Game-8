@@ -13,8 +13,13 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     Animator _anim;
     NavMeshAgent _nv;
     bool _dead = false;
+    bool _sent = false;
     float _speed, _attackScore = 0;
     int _level = 1;
+
+    AudioSource _audioAttack;
+    AudioSource _audioInjured;
+    AudioSource _audioDead;
 
     public bool Dead { get { return _dead; } }
     public float Attack { get { return _attack; } }
@@ -64,6 +69,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public void Damage(float damage)
     {
+        _audioInjured.Play();
         _health -= Mathf.Max(0, damage - _armor);
     }
 
@@ -76,6 +82,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     {
         if (MeleeReady() && PlayerInMeleeRange())
         {
+            _audioAttack.Play();
             _playerScript.Damage(_attack);
             _attackScore += _attack;
             _currentAttackCooldown = _attackCooldown;
@@ -88,32 +95,36 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     // Use this for initialization
     // Fixed Start -> Awake
-    void Awake ()
+    void Awake()
     {
         _nv = GetComponent<NavMeshAgent>();
         _health = 100;
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
         _player = GameSystem.Get().Player;
         _anim = transform.GetChild(0).GetComponent<Animator>();
-//        _anim.Play("Walk");
+
+        AudioSource[] audioSources = GetComponents<AudioSource>();
+        _audioAttack = audioSources[0];
+        _audioInjured = audioSources[1];
+        _audioDead = audioSources[2];
+
+        //        _anim.Play("Walk");
     }
-	
+
     void Die()
     {
-        GameSystem.Get().Player.GetComponent<PlayerScript>().Score += 100 + _level * 10;
-        GameSystem.Get().GD.EnemyDead(_ID, _attackScore, 100.0F / (5.0F + EuclidDistanceToPlayer()) );
         Destroy(this.gameObject);
     }
 
-	// Update is called once per frame
-	void Update ()
+    // Update is called once per frame
+    void Update()
     {
         if ((_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack 1")))
             _anim.SetBool("Attack", false);
 
         _currentAttackCooldown -= Time.deltaTime;
 
-        if(!_dead)
+        if (!_dead)
         {
             AttackMeleePlayer();
             GoToPlayer();
@@ -131,6 +142,14 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
                 {
                     collider.enabled = false;
                 }
+
+                if (!_sent)
+                {
+                    _audioDead.Play();
+                    GameSystem.Get().Player.GetComponent<PlayerScript>().Score += 10 + _ID;
+                    GameSystem.Get().GD.EnemyDead(_ID, _attackScore, EuclidDistanceToPlayer());
+                    _sent = true;
+                }
             }
 
             _timeLeft -= Time.deltaTime;
@@ -138,5 +157,5 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
         if (_timeLeft <= 0)
             Die();
-	}
+    }
 }

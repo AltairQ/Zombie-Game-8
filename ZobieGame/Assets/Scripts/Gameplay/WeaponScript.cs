@@ -93,7 +93,7 @@ public class WeaponScript : MonoBehaviour
             Instantiate(GameSystem.Get().MuzzleFlash, _barrelEnd.transform.position, Quaternion.Euler(0, transform.rotation.eulerAngles.y + 90, 0));
 
             // TMP HACK
-            //_bulletsLeft--;
+            _bulletsLeft--;
             _currentCooldown = _cooldown;
             _casings++;
             GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(_bulletsLeft).gameObject.SetActive(false);
@@ -106,7 +106,7 @@ public class WeaponScript : MonoBehaviour
     public void Shoot()
     {
         RaycastHit hit;
-        var rayDirection = new Vector3(0, 0.2f, 0) + _barrelEnd.transform.position - (GameSystem.Get().Player.transform.position + Vector3.Scale(GameSystem.Get().GunPos, new Vector3(0, 1, 0)));
+        var rayDirection = new Vector3(0, 0.3f, 0) + _barrelEnd.transform.position - (GameSystem.Get().Player.transform.position + Vector3.Scale(GameSystem.Get().GunPos, new Vector3(0, 1, 0)));
         rayDirection = Vector3.Scale(rayDirection, new Vector3(1, 0, 1));
 
         GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = false;

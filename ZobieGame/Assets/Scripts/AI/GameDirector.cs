@@ -48,7 +48,7 @@ public class GameDirector{
         Genes g = new Genes
         {
             Id = _lastId++,
-            G_health = UMChoice(100, 100),
+            G_health = UMChoice(50, 50),
             G_speed = UMChoice(1, 1),
             G_strength = UMChoice(20, 20),
             G_melee_range = UMChoice(2, 2),

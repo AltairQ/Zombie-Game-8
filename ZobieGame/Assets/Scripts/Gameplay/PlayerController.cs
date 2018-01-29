@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    float _movementSpeed = 1.0f;
+    float _movementSpeed = 0.9f;
     Rigidbody rb;
     Vector3 _movement = new Vector3();
 
@@ -65,6 +65,12 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.MovePosition(transform.position + _movement * 0.1f);
+        if(GetComponent<PlayerScript>().GrabbedObject != null && Vector3.Distance(_movement, Vector3.zero) != 0)
+            GetComponent<PlayerScript>().Stamina -= 0.3f;
+
+        if (Input.GetKey(KeyCode.LeftShift) && GetComponent<PlayerScript>().Stamina > 0)
+            GetComponent<PlayerScript>().Stamina -= 0.4f;
+
+        rb.MovePosition(transform.position + _movement * 0.1f * (Input.GetKey(KeyCode.LeftShift) && GetComponent<PlayerScript>().Stamina > 0 ? 1.5f : 1.0f));
     }
 }

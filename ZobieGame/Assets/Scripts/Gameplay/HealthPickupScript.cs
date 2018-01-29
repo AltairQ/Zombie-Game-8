@@ -20,6 +20,10 @@ public class HealthPickupScript : MonoBehaviour
     { 
         if(other.CompareTag("Player"))
         {
+            GameObject audio = Instantiate(GameSystem.Get().AudioItemPickup, transform.position, transform.rotation);
+            audio.GetComponent<AudioSource>().Play();
+            Destroy(audio, audio.GetComponent<AudioSource>().clip.length * 10);
+
             other.GetComponent<PlayerScript>().Damage(-25);
             Destroy(this.gameObject);
         }

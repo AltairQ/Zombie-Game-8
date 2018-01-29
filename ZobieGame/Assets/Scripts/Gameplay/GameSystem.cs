@@ -35,6 +35,10 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     private GameObject _zombiePrefab;
     [SerializeField]
     private GameObject _muzzleFlash;
+    [SerializeField]
+    private GameObject _explosion;
+    [SerializeField]
+    private GameObject _mine;
 
     private GameObject _player = null;
     private Vector3 _gunPos = new Vector3(0.1f, 0.3f, 0.75f);
@@ -42,11 +46,18 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     [SerializeField]
     private Light _light;
 
+    [SerializeField]
+    private GameObject _audioItemPickup;
+
+    public GameObject AudioItemPickup { get { return _audioItemPickup; } }
     public GameObject Player { get { return _player; } }
     public Vector3 GunPos { get { return _gunPos; } }
     public Canvas MainCanvas { get { return _mainCanvas; } }
     public Camera MainCamera { get { return _mainCamera; } }
     public GameObject MuzzleFlash { get { return _muzzleFlash; } }
+    public GameObject Explosion { get { return _explosion; } }
+    public GameObject Mine { get { return _mine; } }
+    public Light Sunlight { get { return _light; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
     // (in seconds) next time to execute GameDirector routine (update)
@@ -75,6 +86,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
         _mainCanvas.transform.GetChild(1).transform.position = new Vector3(10, Screen.height - 50, 0);
         _mainCanvas.transform.GetChild(2).transform.position = new Vector3(Screen.width - 70, Screen.height - 20, 0);
         _mainCanvas.transform.GetChild(4).transform.position = new Vector3(Screen.width / 2, Screen.height - 48, 0);
+        _mainCanvas.transform.GetChild(5).transform.position = new Vector3(10, Screen.height - 65, 0);
 
         _light = GameObject.FindWithTag("Light").GetComponent<Light>();
 
@@ -116,9 +128,10 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
                 }
         */
 
-//        _light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time), 0, 1) * 0.9f;
+        _light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time * 0.1f) + 0.5f, 0, 1) * 0.9f;
+        _light.shadowStrength = _light.intensity;
 
-        if(Time.time >= _nextDirectorTime)
+        if (Time.time >= _nextDirectorTime)
         {
             // GAMEDIRECTOR UPDATE LOL
 
