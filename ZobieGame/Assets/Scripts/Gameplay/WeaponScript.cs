@@ -113,7 +113,7 @@ public class WeaponScript : MonoBehaviour
 
         if (Physics.Raycast(transform.position - Vector3.Normalize(rayDirection), rayDirection, out hit))
         {
-            if (hit.distance > 2.0f || hit.transform.gameObject.CompareTag("Zombie"))
+            if (hit.distance > 2.0f || hit.transform.gameObject.CompareTag("Zombie") || hit.transform.gameObject.CompareTag("Furniture"))
             {
                 R_Shoot();
             }

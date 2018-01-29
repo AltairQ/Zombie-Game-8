@@ -35,7 +35,7 @@ public class BulletScript : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if(!col.gameObject.CompareTag("Bullet"))
+        if(!col.gameObject.CompareTag("Bullet") && !col.gameObject.CompareTag("Furniture"))
             Destroy(this.gameObject);
     }
 

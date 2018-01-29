@@ -1,6 +1,5 @@
-﻿#if (UNITY_EDITOR)
+﻿
 using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 using System;
 using System.ComponentModel;
@@ -71,4 +70,3 @@ public class LootSettings : ScriptableObject
         return null;
     }
 }
-#endif

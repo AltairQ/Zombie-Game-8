@@ -9,6 +9,7 @@ TagManager:
   - Terrain
   - Bullet
   - Light
+  - Furniture
   layers:
   - Default
   - TransparentFX

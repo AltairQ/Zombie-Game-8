@@ -25,10 +25,10 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.50416565
-      value: 0.39447212
-      inSlope: 0
-      outSlope: 0
+      time: 0.4620644
+      value: 0.37129325
+      inSlope: 0.17088635
+      outSlope: 0.17088635
       tangentMode: 0
     - serializedVersion: 2
       time: 0.8849944

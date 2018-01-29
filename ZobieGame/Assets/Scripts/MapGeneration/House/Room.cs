@@ -88,7 +88,7 @@ public class Room : MapObject
         }
 
         var item = GeneratorAssets.Get().LootSettings.GetRandomItem();
-        item.transform.position = Rect.Center(ObjectHeight.Floor) + new Vector3(0, item.transform.lossyScale.y, 0);
+        item.transform.position = Rect.Center(ObjectHeight.Floor) + new Vector3(0, item.transform.position.y, 0);
         item.SetParent(parent);
     }
 
