@@ -6,6 +6,8 @@ public class Genes
     // Unique enemy ID (used by Game Director)
     public int Id;
 
+    public int Lvl;
+
     // Total (max) HP
     public float G_health;
 
@@ -18,7 +20,13 @@ public class Genes
     // Melee attack range
     public float G_melee_range;
 
+    // Armour (blocks a fraction of damage)
     public float G_armor;
+
+    public int GetLvl()
+    {
+        return Lvl;
+    }
 
     public float GetPhysArmor()
     {
@@ -43,6 +51,11 @@ public class Genes
     public float GetPhysMeleeRange()
     {
         return G_melee_range;
+    }
+
+    public float GetArmor()
+    {
+        return G_armor;
     }
 
     public override string ToString()

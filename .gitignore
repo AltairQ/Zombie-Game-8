@@ -9,3 +9,5 @@ ZobieGame/ZobieGame.userprefs
 .gitattributes
 ZobieGame/Assets/PostProcessing/
 ZobieGame/Assets/PostProcessing.meta
+*.csproj
+ZobieGame/Assets/Standard Assets/DebugConsole.cs.meta

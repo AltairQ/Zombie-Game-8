@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using System.Linq;
 
 public class GameDirector{
 
@@ -31,6 +32,8 @@ public class GameDirector{
 
     private int _max_candidates;
     private List<int> _candidates = new List<int>();
+
+    private HashSet<int> _population = new HashSet<int>();
 
     // Next ID to be used
     // TODO maybe rename..?
@@ -84,8 +87,7 @@ public class GameDirector{
         if (!actor.IsAlive())
             return;
 
-        // if (actor.EuclidDistanceToPlayer() < InfoFromActor(actor).genes.G_melee_range)
-        if (actor.EuclidDistanceToPlayer() < 2.0f)
+        if (actor.PlayerInMeleeRange())
             actor.AttackMeleePlayer();
 
         actor.GoToPlayer();
@@ -199,6 +201,7 @@ public class GameDirector{
             G_health      = UMChoice(d1.genes.G_health,      d2.genes.G_health     ),
             G_speed       = UMChoice(d1.genes.G_speed,       d2.genes.G_speed      ),
             G_strength    = UMChoice(d1.genes.G_strength,    d2.genes.G_strength   ),
+            // this was so strong I had to nerf it
             G_melee_range =  2, //  UMChoice(d1.genes.G_melee_range, d2.genes.G_melee_range),
             G_armor       = UMChoice(d1.genes.G_armor,       d2.genes.G_armor      )
         };
@@ -215,15 +218,17 @@ public class GameDirector{
     }
     
 
-
     public Genes NewEnemy()
     {
-        this.DarwinInAction();       
+        this.DarwinInAction();
 
         Genotype newdna = this.SelectAndBreed();
 
+        _population.Add(_lastId);
         newdna.genes.Id = _lastId++;
         _database.Add(newdna.genes.Id, new ActorInfo(newdna));
+
+        this.ShowPopulationStats();
 
         return newdna.genes;
     }
@@ -237,7 +242,42 @@ public class GameDirector{
     {
         _database[eid].att_score = att_score;
         _database[eid].dist_score = dist_score;
+        _population.Remove(eid);
         _candidates.Add(eid);
+    }
+
+    public void ShowPopulationStats()
+    {
+        DebugConsole.Clear();
+
+        DebugConsole.Log(
+            string.Format("MIN HP:{0} SP:{1} STR:{2} AP:{3}",
+                _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+                _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+                _population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+                _population.Min(x => InfoFromId(x).DNA.genes.GetArmor())
+                )
+            );
+
+        DebugConsole.Log(
+    string.Format("AVG HP:{0} SP:{1} STR:{2} AP:{3}",
+        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        _population.Average(x => InfoFromId(x).DNA.genes.GetArmor())
+        )
+    );
+
+        DebugConsole.Log(
+    string.Format("MAX HP:{0} SP:{1} STR:{2} AP:{3}",
+        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        _population.Max(x => InfoFromId(x).DNA.genes.GetArmor())
+        )
+    );
+
+
     }
 
     // To be executed every now and then
@@ -246,7 +286,9 @@ public class GameDirector{
     {
         _tick_count++;
 
-        warudo.SpawnEnemy(this.NewEnemy());
+        //a little bit of quick rate limiting
+        if(_tick_count % 20 == 0)
+            warudo.SpawnEnemy(this.NewEnemy());
     }
 
 }

@@ -105,7 +105,6 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     public void SpawnEnemy(Genes genes)
     {
-        print(genes);
         SpawnRandomZombie(genes, 40.0F);
     }
 
@@ -120,13 +119,12 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     private void Update()
     {
-        /*        
-                if(Input.GetKeyDown(KeyCode.Z))
-                {
-                    //            Vector2 randomShift = Random.insideUnitCircle * 3;
-                    SpawnRandomZombie(_GD.NewEnemy());            
-                }
-        */
+        // HAX
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            SpawnRandomZombie(_GD.NewEnemy());
+            _player.GetComponent<PlayerScript>().HAXRefill();
+        }
 
         _light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time * 0.05f) + 0.5f, 0, 1) * 0.9f;
         _light.shadowStrength = _light.intensity;
@@ -147,6 +145,10 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     public void SpawnZombie(Vector3 position, Genes genes)
     {
+        //DebugConsole.Log(genes.ToString());
+
+        print(genes);
+
         var newZombie = Instantiate(_zombiePrefab, position, _zombiePrefab.transform.rotation);
 
         newZombie.GetComponent<ZombieScript>().SetGenes(genes);

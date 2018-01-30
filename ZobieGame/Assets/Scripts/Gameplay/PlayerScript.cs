@@ -58,11 +58,18 @@ public class PlayerScript : MonoBehaviour
     Rigidbody _rb;
     Text _scoreText;
 
+    public void HAXRefill()
+    {
+        _weapon.GetComponent<WeaponScript>().HAXRefillAmmo();
+    }
+
     // Use this for initialization
     void Start ()
     {
         _gunPos = GameSystem.Get().GunPos;
         _controller = GetComponent<PlayerController>();
+
+        // ale szmrut
         _healthBar = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(1).GetComponent<Image>();
         _healthBarBG = GameSystem.Get().MainCanvas.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
         _staminaBar = GameSystem.Get().MainCanvas.transform.GetChild(5).transform.GetChild(1).GetComponent<Image>();

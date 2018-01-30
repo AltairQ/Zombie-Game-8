@@ -72,6 +72,12 @@ public class WeaponScript : MonoBehaviour
         _shoot = GetComponents<AudioSource>()[1];
     }
 
+    // You know I had to commit it to em
+    public void HAXRefillAmmo()
+    {
+        GameSystem.Get().Player.GetComponent<PlayerScript>().Ammo[AmmoType] += 100;
+    }
+
     void R_Shoot()
     {
         if (_currentCooldown <= 0 && _bulletsLeft > 0 && _currentReload <= 0)

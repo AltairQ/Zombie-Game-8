@@ -11,6 +11,12 @@ public interface IAIActions
     // true  - player is reachable
     // false - player is unreachable
     bool GoToPlayer();
+
+
+    /*
+    // Kill yourself :(
+    void Suicide();
+    */
 }
 
 // Interface to query the state of an individual enemy
