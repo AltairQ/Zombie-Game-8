@@ -33,10 +33,10 @@ public class MapObject3D : MapObject
         GameObject go = Utils.TerrainObject(_name);
         for(int i=0; i<_partSettings.Length; i++)
         {
-            var partGO = MakePart(i);
+            var partGO = MakePart2(i);
             partGO.SetParent(go);
-            go.Combine(partGO);
-            partGO.Clear(GameObject.DestroyImmediate);
+            //go.Combine(partGO);
+            //partGO.Clear(GameObject.DestroyImmediate);
         }
         return go;
     }
@@ -81,5 +81,39 @@ public class MapObject3D : MapObject
         segment.transform.position = new Vector3(0f, yOff + height/2, 0f);
 
         return segment;
+    }
+
+    private GameObject MakePart2(int k)
+    {
+        float partYOff = 0;
+        for (int i = 0; i < k; i++)
+        {
+            partYOff += _partHeights[i];
+        }
+
+        var setting = _partSettings[k];
+        float height = _partHeights[k];
+        var go = Utils.TerrainObject(setting.Name);
+        int maxN = setting.SegmentsNumber - 1;
+        float segmentHeight = height / maxN;
+        float maxScale = 0f;
+        var pattern = PatternGenerator.GeneratePattern(1);
+        SegmentMeshGenerator meshGen = new SegmentMeshGenerator(pattern);
+        for (int i = 0; i <= maxN; i++)
+        {
+            float sizeScale = setting.Shape.Evaluate((float)i / maxN);
+            maxScale = Mathf.Max(sizeScale, maxScale);
+            meshGen.AddSegment(Rect.width * sizeScale, segmentHeight * i + partYOff);
+        }
+
+        go.transform.position = Rect.Center(0f);
+        var box = go.AddComponent<BoxCollider>();
+        box.size = new Vector3(Rect.width * maxScale, height, Rect.height * maxScale);
+        box.center = new Vector3(0f, partYOff + height / 2, 0f);
+
+        go.AddComponent<MeshRenderer>().material = setting.Material;
+        go.AddComponent<MeshFilter>().mesh = meshGen.GenerateMesh();
+
+        return go;
     }
 }

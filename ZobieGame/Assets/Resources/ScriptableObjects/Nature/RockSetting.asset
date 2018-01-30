@@ -13,70 +13,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Rock
   SegmentsNumber: 10
-  MinHeight: 0.6
-  MaxHeight: 1
+  MinHeight: 1
+  MaxHeight: 1.5
   Shape:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
       time: 0.0011100769
-      value: 0.35025024
+      value: 0.35180664
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.09274214
-      value: 0.39350057
-      inSlope: 0.07003546
-      outSlope: 0.07003546
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.17510374
-      value: 0.37016308
-      inSlope: 0.63180923
-      outSlope: 0.63180923
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.23642258
-      value: 0.46148098
+      time: 0.23073107
+      value: 0.52171886
       inSlope: 0.21159649
       outSlope: 0.21159649
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.4224737
-      value: 0.4021358
+      time: 0.4215651
+      value: 0.4156029
       inSlope: -0.26106834
       outSlope: -0.26106834
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.5130595
-      value: 0.47224808
-      inSlope: 0
-      outSlope: 0
+      time: 0.74659526
+      value: 0.4407997
+      inSlope: 0.037398275
+      outSlope: 0.037398275
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.62693125
-      value: 0.43608636
-      inSlope: 0.11950731
-      outSlope: 0.11950731
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.7444721
-      value: 0.47933507
-      inSlope: -0.20354986
-      outSlope: -0.20354986
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.9208703
-      value: 0.44074517
+      time: 1.0518215
+      value: 0.30743217
       inSlope: -0.3489852
       outSlope: -0.3489852
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.9922016
-      value: 0.37329125
-      inSlope: 0
-      outSlope: 0
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
