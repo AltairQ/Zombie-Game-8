@@ -46,3 +46,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 0
   Material: {fileID: 2100000, guid: 2b77dc532b1ab4c439ebcb3f78aa71cb, type: 2}
+  Axiom: F+F+F+F
+  FMove: F+F-F-FF+F+F-F
+  Iterations: 1

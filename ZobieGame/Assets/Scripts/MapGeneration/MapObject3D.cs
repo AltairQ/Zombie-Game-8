@@ -97,7 +97,7 @@ public class MapObject3D : MapObject
         int maxN = setting.SegmentsNumber - 1;
         float segmentHeight = height / maxN;
         float maxScale = 0f;
-        var pattern = PatternGenerator.GeneratePattern(1);
+        var pattern = setting.GetPattern();
         SegmentMeshGenerator meshGen = new SegmentMeshGenerator(pattern);
         for (int i = 0; i <= maxN; i++)
         {

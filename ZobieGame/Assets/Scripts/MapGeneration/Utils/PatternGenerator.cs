@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public class PatternGenerator
 {
     private static Vector2[] _dir = new[] { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
-    public static List<Vector2> GeneratePattern(int iterations)
+    public static List<Vector2> GeneratePattern(string axiom, string fMove, int iterations)
     {
-        string word = GenerateWord("F+F+F+F", "F+F-F-FF+F+F-F", iterations);
+        string word = GenerateWord(axiom, fMove, iterations);
 
         int dirIdx = 0;
         List<Vector2> points = new List<Vector2>();
@@ -29,6 +29,13 @@ public class PatternGenerator
             {
                 changeDir(-1);
             }
+        }
+
+        var last = points[points.Count - 1];
+        if(!Utils.TheSame(last.x, 0f) || !Utils.TheSame(last.y, 0f))
+        {
+            Debug.Log("Pattern is not closed! Adding Vector2.zero");
+            points.Add(Vector2.zero);
         }
 
         return Normalize(points);
