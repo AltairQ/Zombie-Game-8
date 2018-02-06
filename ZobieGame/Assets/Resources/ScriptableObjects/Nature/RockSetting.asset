@@ -15,43 +15,105 @@ MonoBehaviour:
   SegmentsNumber: 10
   MinHeight: 1
   MaxHeight: 1.5
-  Shape:
-    serializedVersion: 2
+  Material: {fileID: 2100000, guid: afb2ab591e02dc34dbac7aa33bcb645f, type: 2}
+  Shapes:
+  - serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.0011100769
-      value: 0.35180664
+      time: 0.0041656494
+      value: 0.13124847
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.23073107
-      value: 0.52171886
-      inSlope: 0.21159649
-      outSlope: 0.21159649
+      time: 0.13175517
+      value: 0.3533243
+      inSlope: 0.63724816
+      outSlope: 0.63724816
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.4215651
-      value: 0.4156029
-      inSlope: -0.26106834
-      outSlope: -0.26106834
+      time: 0.3144866
+      value: 0.48843253
+      inSlope: 0.9647012
+      outSlope: 0.9647012
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.74659526
-      value: 0.4407997
-      inSlope: 0.037398275
-      outSlope: 0.037398275
+      time: 0.49049002
+      value: 0.42639187
+      inSlope: 0.59786993
+      outSlope: 0.59786993
       tangentMode: 0
     - serializedVersion: 2
-      time: 1.0518215
-      value: 0.30743217
-      inSlope: -0.3489852
-      outSlope: -0.3489852
+      time: 0.7375985
+      value: 0.42493278
+      inSlope: 2.808869
+      outSlope: 2.808869
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.86988443
+      value: 0.36280742
+      inSlope: -2.5482476
+      outSlope: -2.5482476
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0.24374771
+      inSlope: -6.8571806
+      outSlope: -6.8571806
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  Material: {fileID: 2100000, guid: afb2ab591e02dc34dbac7aa33bcb645f, type: 2}
-  Axiom: F+F+F+F
-  FMove: F-F+F+F-F
-  Iterations: 1
+  - serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0.12500763
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.7083262
+      value: 0.43125153
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1.0083618
+      value: 0.15625763
+      inSlope: -1.6402172
+      outSlope: -1.6402172
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  - serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: -0.0083351135
+      value: 0.07500076
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.5083323
+      value: 0.45624697
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1.0041809
+      value: 0.11249924
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  Patterns:
+  - Axiom: 'F+F+F+F '
+    FMove: 'F-F+F+F-F '
+    Iterations: 1
+  - Axiom: 'F+F+F+F '
+    FMove: 
+    Iterations: 0

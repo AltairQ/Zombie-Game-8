@@ -15,25 +15,26 @@ MonoBehaviour:
   SegmentsNumber: 5
   MinHeight: 2
   MaxHeight: 3
-  Shape:
-    serializedVersion: 2
+  Material: {fileID: 2100000, guid: 5fe3a96acceccff42bb0653747a32cd7, type: 2}
+  Shapes:
+  - serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.000015258789
-      value: 0.20158768
+      time: -0.0011825562
+      value: 0.21867752
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.9958191
-      value: 0.13660812
+      time: 1.0137634
+      value: 0.13400269
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  Material: {fileID: 2100000, guid: 5fe3a96acceccff42bb0653747a32cd7, type: 2}
-  Axiom: F+F+F+F
-  FMove: 
-  Iterations: 0
+  Patterns:
+  - Axiom: F+F+F+F
+    FMove: 
+    Iterations: 0

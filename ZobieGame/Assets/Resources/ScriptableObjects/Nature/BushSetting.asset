@@ -15,37 +15,70 @@ MonoBehaviour:
   SegmentsNumber: 10
   MinHeight: 0.75
   MaxHeight: 1.5
-  Shape:
-    serializedVersion: 2
+  Material: {fileID: 2100000, guid: 2b77dc532b1ab4c439ebcb3f78aa71cb, type: 2}
+  Shapes:
+  - serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.008350372
-      value: 0.23228264
+      time: -0.00002670288
+      value: 0.2132492
+      inSlope: -2.37174
+      outSlope: -2.37174
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.50419515
+      value: 0.3494339
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
-      time: 0.3055935
-      value: 0.31362656
-      inSlope: 0.47773123
-      outSlope: 0.47773123
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.9654188
-      value: 0.25379416
-      inSlope: -1.5694648
-      outSlope: -1.5694648
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1.0062888
-      value: 0.033899747
-      inSlope: -2.8117669
-      outSlope: -2.8117669
+      time: 0.9958496
+      value: 0.106651306
+      inSlope: -2.087784
+      outSlope: -2.087784
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  Material: {fileID: 2100000, guid: 2b77dc532b1ab4c439ebcb3f78aa71cb, type: 2}
-  Axiom: F+F+F+F
-  FMove: F+F-F-FF+F+F-F
-  Iterations: 1
+  - serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: -0.0041656494
+      value: 0.09375
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.18548974
+      value: 0.29117423
+      inSlope: 0.54985285
+      outSlope: 0.54985285
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.39582723
+      value: 0.21250153
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.5328703
+      value: 0.21388188
+      inSlope: 1.7091632
+      outSlope: 1.7091632
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1.0041809
+      value: 0.07500076
+      inSlope: -1.7246963
+      outSlope: -1.7246963
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  Patterns:
+  - Axiom: 'F+F+F+F '
+    FMove: 'F+F-F-FF+F+F-F '
+    Iterations: 1
+  - Axiom: 'F+F+F+F '
+    FMove: 
+    Iterations: 0
