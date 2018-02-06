@@ -40,12 +40,4 @@ public class Triangle
 
         this.v2 = temp;
     }
-
-    public void ChangeToClockwise()
-    {
-        if(!Triangulation.IsTriangleOrientedClockwise(v1.GetPos2D_XZ(), v2.GetPos2D_XZ(), v3.GetPos2D_XZ()))
-        {
-            ChangeOrientation();
-        }
-    }
 }

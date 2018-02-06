@@ -23,18 +23,13 @@ class Triangulation
         return index;
     }
 
-    public static bool IsTriangleOrientedClockwise(Vector2 p1, Vector2 p2, Vector2 p3)
+    public static bool TurnsLeft(Vector2 p1, Vector2 p2, Vector2 p3)
     {
-        bool isClockWise = true;
+        p2 -= p1;
+        p3 -= p1;
 
-        float determinant = p1.x * p2.y + p3.x * p1.y + p2.x * p3.y - p1.x * p3.y - p3.x * p2.y - p2.x * p1.y;
-
-        if (determinant > 0f)
-        {
-            isClockWise = false;
-        }
-
-        return isClockWise;
+        float determinant = p2.x * p3.y - p2.y * p3.x;
+        return determinant > 0;
     }
 
     //p is the testpoint, and the other points are corners in the triangle
@@ -297,7 +292,7 @@ class Triangulation
             if (vertices.Count == 3)
             {
                 //The final triangle
-                triangles.Add(new Triangle(vertices[0], vertices[1], vertices[2]));
+                triangles.Add(new Triangle(vertices[0], vertices[1], vertices[2]));              
 
                 break;
             }
@@ -347,7 +342,7 @@ class Triangulation
         Vector2 b = v.GetPos2D_XZ();
         Vector2 c = v.nextVertex.GetPos2D_XZ();
 
-        if (!IsTriangleOrientedClockwise(a, b, c))
+        if (TurnsLeft(a, b, c))
         {
             v.isReflex = true;
         }

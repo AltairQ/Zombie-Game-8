@@ -31,6 +31,6 @@ public class Vertex
     //Get 2d pos of this vertex
     public Vector2 GetPos2D_XZ()
     {
-        return new Vector2(Position.z, Position.z);
+        return new Vector2(Position.x, Position.z);
     }
 }
