@@ -8,6 +8,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     int _ID;
     float _health;
     float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 2.0f, _timeLeft = 5.0f, _armor;
+    float _currentAICooldown = 0;
     GameObject _player;
     PlayerScript _playerScript;
     Animator _anim;
@@ -123,11 +124,15 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
             _anim.SetBool("Attack", false);
 
         _currentAttackCooldown -= Time.deltaTime;
+        _currentAICooldown -= Time.deltaTime;
 
-        if (!_dead)
+        if (!_dead && _currentAICooldown <= 0)
         {
-            AttackMeleePlayer();
-            GoToPlayer();
+            GameSystem.Get().GD.Animate(this);
+            // AttackMeleePlayer();
+            // GoToPlayer();
+
+            _currentAICooldown = 0.1f * EuclidDistanceToPlayer();
         }
 
         if (_health <= 0)
