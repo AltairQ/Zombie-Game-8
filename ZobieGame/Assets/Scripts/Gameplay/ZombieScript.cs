@@ -36,6 +36,16 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         _speed = genes.G_speed;
         _armor = genes.G_armor;
         _nv.speed = _speed;
+
+        _nv.radius = 0.4f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
+        _nv.height = 2.0f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
+        transform.GetChild(0).localScale = new Vector3(Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f), Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f), Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f));
+
+        CapsuleCollider[] colliders = GetComponents<CapsuleCollider>();
+        colliders[0].radius = 0.5f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
+        colliders[0].height = 2.0f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
+        colliders[1].radius = 0.75f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
+        colliders[1].height = 2.0f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
     }
 
     public int GetID()
@@ -115,6 +125,11 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     void Die()
     {
         Destroy(this.gameObject);
+    }
+
+    public void Suicide()
+    {
+        Die();
     }
 
     // Update is called once per frame

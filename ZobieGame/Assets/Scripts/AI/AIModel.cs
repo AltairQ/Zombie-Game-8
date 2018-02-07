@@ -13,10 +13,8 @@ public interface IAIActions
     bool GoToPlayer();
 
 
-    /*
     // Kill yourself :(
     void Suicide();
-    */
 }
 
 // Interface to query the state of an individual enemy
