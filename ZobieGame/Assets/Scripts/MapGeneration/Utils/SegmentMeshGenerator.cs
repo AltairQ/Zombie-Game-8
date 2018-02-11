@@ -34,9 +34,9 @@ public class SegmentMeshGenerator
         _tri.Clear();
 
         GenerateSurface(_segments[0], false);
-        for(int i=0; i < _segments.Count -1; i++)
+        for (int i=0; i < _segments.Count -1; i++)
         {
-            GenerateSide(_segments[i], _segments[i + 1]);
+            GenerateSide(_segments[i], _segments[i + 1], GetNormals(i), GetNormals(i + 1));
         }
         GenerateSurface(_segments[_segments.Count-1], true);
 
@@ -95,34 +95,27 @@ public class SegmentMeshGenerator
         }
     }
 
-    private void GenerateSide(List<Vector3> lower, List<Vector3> upper)
+    private void GenerateSide(List<Vector3> lower, List<Vector3> upper, List<Vector3> lowNorm, List<Vector3> uppNorm)
     {
         int size = lower.Count;
-        for(int i = 0; i < lower.Count; i++)
+        for (int i = 0; i < size; i++)
         {
-            Vector3 lowV1 = lower[i];
-            Vector3 lowV2 = lower[(i+1)%size];
-            Vector3 upV1 = upper[i];
-            Vector3 upV2 = upper[(i + 1) % size];
-
-            _vert.Add(lowV1);
-            _vert.Add(lowV2);
-            _vert.Add(upV1);
-            _vert.Add(upV2);
+            _vert.Add(lower[i]);
+            _vert.Add(lower[(i + 1) % size]);
+            _vert.Add(upper[i]);
+            _vert.Add(upper[(i + 1) % size]);
 
             _uv.Add(new Vector2(0f, 0f));
             _uv.Add(new Vector2(0f, 1f));
             _uv.Add(new Vector2(1f, 0f));
             _uv.Add(new Vector2(1f, 1f));
 
-            var normal = Vector3.Cross(lowV2 - lowV1, upV2 - lowV1);
-            _norm.Add(normal);
-            _norm.Add(normal);
-            _norm.Add(normal);
-            _norm.Add(normal);
+            _norm.Add(lowNorm[i]);
+            _norm.Add(lowNorm[(i + 1) % size]);
+            _norm.Add(uppNorm[i]);
+            _norm.Add(uppNorm[(i + 1) % size]);
 
-
-            int lastIdx = LastTriIdx();   
+            int lastIdx = LastTriIdx();
             _tri.Add(lastIdx + 1);
             _tri.Add(lastIdx + 4);
             _tri.Add(lastIdx + 3);
@@ -131,4 +124,54 @@ public class SegmentMeshGenerator
             _tri.Add(lastIdx + 4);
         }
     }
+
+    private List<Vector3> GetNormals(int k)
+    {
+        List<Vector3> normals = new List<Vector3>();
+        if (k==0)
+        {
+            for (int i = 0; i < _segmentPattern.Count; i++)
+            {
+                normals.Add(Vector3.down);
+            }
+        }
+        else if(k==_segments.Count-1)
+        {
+            for (int i = 0; i < _segmentPattern.Count; i++)
+            {
+                normals.Add(Vector3.up);
+            }
+        }
+        else
+        {
+            var lower = GenerateNormals(_segments[k - 1], _segments[k]);
+            var upper = GenerateNormals(_segments[k], _segments[k + 1]);
+            for (int i = 0; i < lower.Count; i++)
+            {
+                normals.Add((lower[i] + upper[i]) / 2);
+            }
+        }
+        
+        return normals;
+    }
+
+    private List<Vector3> GenerateNormals(List<Vector3> lower, List<Vector3> upper)
+    {
+        List<Vector3> normals = new List<Vector3>();
+
+        int size = lower.Count;
+        for (int i = 0; i < lower.Count; i++)
+        {
+            Vector3 lowV1 = lower[i];
+            Vector3 lowV2 = lower[(i + 1) % size];
+            Vector3 upV1 = upper[i];
+            Vector3 upV2 = upper[(i + 1) % size];
+
+            var normal = Vector3.Cross(lowV2 - lowV1, upV2 - lowV1);
+            normals.Add(normal);
+        }
+
+        return normals;
+    }
 }
+
