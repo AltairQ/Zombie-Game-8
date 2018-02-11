@@ -26,7 +26,8 @@ public class MineScript : MonoBehaviour
 
             foreach(GameObject zombie in zombies)
             {
-                zombie.GetComponent<ZombieScript>().Damage(Mathf.Max(0, (_range - (Vector3.Distance(transform.position, zombie.transform.position))) / _range) * _damage);
+                if(Mathf.Max(0, (_range - (Vector3.Distance(transform.position, zombie.transform.position))) / _range) * _damage > 0)
+                    zombie.GetComponent<ZombieScript>().Damage(Mathf.Max(0, (_range - (Vector3.Distance(transform.position, zombie.transform.position))) / _range) * _damage);
             }
 
             Instantiate(GameSystem.Get().Explosion, transform.position, transform.rotation);
