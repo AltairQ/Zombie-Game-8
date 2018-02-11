@@ -325,6 +325,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _partSize: 75
+  _lazyGeneration: 1
+  _generateBudget: 25
+  _makeBudget: 25
 --- !u!114 &543770996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,7 +550,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  profile: {fileID: 11400000, guid: 2659f1715d4d15642ab9ccb1a0b91713, type: 2}
 --- !u!1 &951521777
 GameObject:
   m_ObjectHideFlags: 0

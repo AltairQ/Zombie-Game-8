@@ -18,7 +18,7 @@ public class MapObject3D : MapObject
     }
 
     private List<float> _partHeights = new List<float>();
-    public override void Generate()
+    protected override void DoGenerate()
     {
         _partHeights.Clear();
         foreach (var setting in _partSettings)
@@ -28,7 +28,7 @@ public class MapObject3D : MapObject
         }
     }
 
-    public override GameObject Make()
+    protected override GameObject DoMake()
     {
         GameObject go = Utils.TerrainObject(_name);
         for(int i=0; i<_partSettings.Length; i++)

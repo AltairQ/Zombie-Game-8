@@ -16,7 +16,7 @@ public class Room : MapObject
         _doorCenters.Add(doorCenter);
     }
 
-    public override void Generate()
+    protected override void DoGenerate()
     {
         _hasLoot = _settings.RoomSpawnChance >= Random.Range(0f, 1f);
         GenerateWallAreas();
@@ -58,7 +58,7 @@ public class Room : MapObject
         }
     }
 
-    public override GameObject Make()
+    protected override GameObject DoMake()
     {
         GameObject items = null; // will be initialised if necessary in  MakeFurniture 
         var settings = GeneratorAssets.Get().FurnitureSettings;

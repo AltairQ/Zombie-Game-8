@@ -12,6 +12,8 @@ public class MapPart
 
     private MapSystem _map;
     private GameObject _go;
+    private GameObject _ground;
+    private Rect _rect;
     private MapObject _mapObject;
 
     public int X { get; private set; }
@@ -25,41 +27,59 @@ public class MapPart
         Y = y;
 
         ChooseType();
-        Create();
+        InitRect();
+        _ground = Utils.CreateGround(_rect, _map.gameObject);
     }
 
-    public void SetVisible(bool val)
-    {
-        _go.SetActive(val);
-    }
-    
     private void ChooseType()
     {
         var around = _map.ValidPartsAround(X, Y);
         PartType = Type.Forest;
-        if (X%2==0 && Y%2==0)
+        if (X % 2 == 0 && Y % 2 == 0)
         {
             PartType = Type.City;
         }
     }
 
-    private void Create()
+    private void InitRect()
     {
-        Rect rect = new Rect(_map.MapIntCoord(X), _map.MapIntCoord(Y), _map.PartSize, _map.PartSize);
+        _rect = new Rect(_map.MapIntCoord(X), _map.MapIntCoord(Y), _map.PartSize, _map.PartSize);
 
         if (PartType == Type.City)
         {
-            _mapObject = CreateCity(rect);
+            _mapObject = CreateCity(_rect);
         }
         else
         {
-            _mapObject = CreateForest(rect);
+            _mapObject = CreateForest(_rect);
         }
 
         _mapObject.Generate();
+    }
+
+    public void SetVisible(bool val)
+    {
+        if(_go != null)
+        {
+            _go.SetActive(val);
+        }
+    } 
+
+    public void TryCreate()
+    {
+        if(IsCreated() || !_mapObject.IsMade())
+        {
+            return;
+        }
+
         _go = _mapObject.Make();
         _go.SetParent(_map.gameObject);
-        Utils.CreateGround(rect, _go);
+        _ground.SetParent(_go);
+    }
+
+    public bool IsCreated()
+    {
+        return _go != null;
     }
 
     private List<Vector2> EdgePoints()

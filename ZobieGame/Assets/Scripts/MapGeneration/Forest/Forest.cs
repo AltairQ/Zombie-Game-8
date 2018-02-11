@@ -12,7 +12,7 @@ public class Forest : MapObject {
     {
     }
 
-    public override void Generate()
+    protected override void DoGenerate()
     {
         _naturalObjects.Clear();
         //SetStreet(new Vector2(Rect.xMin, Rect.yMax - Rect.height / 2));
@@ -71,6 +71,7 @@ public class Forest : MapObject {
 
         Rect streetRect = Utils.SegmentToRect(p1, p2, GeneratorAssets.Get().CitySettings.StreetSize);
         street = new Street(streetRect);
+        street.Generate();
     }
 
     private void AddNaturalObject(float x, float y, float treeRectSize)
@@ -101,7 +102,7 @@ public class Forest : MapObject {
         return new MapObject3D("Tree", new[] { GeneratorAssets.Get().TreeBottomSetting, GeneratorAssets.Get().TreeTopSetting }, rect);
     }
 
-    public override GameObject Make()
+    protected override GameObject DoMake()
     {
         GameObject go = Utils.TerrainObject("Forest");
         foreach (var naturalObject in _naturalObjects)

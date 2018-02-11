@@ -9,11 +9,11 @@ public class Street : MapObject
 
     }
 
-    public override void Generate()
+    protected override void DoGenerate()
     {
     }
 
-    public override GameObject Make()
+    protected override GameObject DoMake()
     {
         var street =  Rect.ToTerrainQuad("Street", ObjectHeight.Floor);
         street.SetMaterial(GeneratorAssets.Get().StreetMaterial);

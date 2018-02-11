@@ -48,7 +48,7 @@ public class City : MapObject
         }
     }
 
-    public override void Generate()
+    protected override void DoGenerate()
     {
         _streets.Clear();
         _estates.Clear();
@@ -111,7 +111,9 @@ public class City : MapObject
         }
 
         Rect streetRect = Utils.SegmentToRect(p1, p2, _settings.StreetSize);
-        _streets.Add(new Street(streetRect));
+        Street street = new Street(streetRect);
+        street.Generate();
+        _streets.Add(street);
     }
 
     private void AddInitPoint(Vector2 p)
@@ -245,7 +247,7 @@ public class City : MapObject
         return Rect.ContainsOnEdge(p);
     }
 
-    public override GameObject Make()
+    protected override GameObject DoMake()
     {
         GameObject go = Utils.TerrainObject("City");
         MakeStreets(go);

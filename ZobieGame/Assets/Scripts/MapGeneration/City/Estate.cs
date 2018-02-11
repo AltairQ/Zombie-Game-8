@@ -13,7 +13,7 @@ public class Estate : MapObject
         _citySettings = GeneratorAssets.Get().CitySettings;
     }
 
-    public override void Generate()
+    protected override void DoGenerate()
     {
         _houses.Clear();
 
@@ -77,7 +77,7 @@ public class Estate : MapObject
         return _citySettings.EstateStreetOffset + _citySettings.StreetSize / 2;
     }
 
-    public override GameObject Make()
+    protected override GameObject DoMake()
     {
         GameObject go = Utils.TerrainObject("Estate");
         foreach (var house in _houses)

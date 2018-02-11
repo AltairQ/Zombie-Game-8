@@ -13,7 +13,7 @@ public class House : MapObject
         _settings = GeneratorAssets.Get().HouseSettings;
     }
 
-    public override void Generate()
+    protected override void DoGenerate()
     {
         _corners.Clear();
         _walls.Clear();
@@ -254,7 +254,7 @@ public class House : MapObject
         return null;
     }
 
-    public override GameObject Make()
+    protected override GameObject DoMake()
     {
         GameObject go = Utils.TerrainObject("House");
         

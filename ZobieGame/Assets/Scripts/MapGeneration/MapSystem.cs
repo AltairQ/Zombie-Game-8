@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-public class MapSystem : MonoBehaviour
+public partial class MapSystem : MonoBehaviour
 {
     private static MapSystem _instance = null;
     public static MapSystem Get()
@@ -24,7 +24,7 @@ public class MapSystem : MonoBehaviour
     public void Init(GameObject player)
     {
         _player = player;
-        UpdateMapForPlayer();
+        UpdateMapForPlayer(true);
     }
 
     private void Update()
@@ -35,29 +35,30 @@ public class MapSystem : MonoBehaviour
         }
 
         UpdateMapForPlayer();
+        ProceedLazyCreation();
     }
 
     private int _lastX = 0;
     private int _lastY = 0;
     private int _lastSubX = 0;
     private int _lastSubY = 0;
-    private void UpdateMapForPlayer()
+    private void UpdateMapForPlayer(bool forceCreate = false)
     {
         Vector2 pos = _player.Get2dPos();
         int mappedX = MapFloatCoord(pos.x);
         int mappedY = MapFloatCoord(pos.y);
-        int subX = SubMapFloatCoord(pos.x);
-        int subY = SubMapFloatCoord(pos.y);
-        if (_lastX != mappedX || _lastY != mappedY || _lastSubX != subX || _lastSubY != subY)
+        //int subX = SubMapFloatCoord(pos.x);
+        //int subY = SubMapFloatCoord(pos.y);
+        if (_lastX != mappedX || _lastY != mappedY)// || _lastSubX != subX || _lastSubY != subY)
         {
-            UpdateMapAround(_lastX, _lastY, _lastSubX, _lastSubY, DisableMap);
+            UpdateMapAround(_lastX, _lastY, DisableMap, false);
             _lastX = mappedX;
             _lastY = mappedY;
-            _lastSubX = subX;
-            _lastSubY = subY;
+            //_lastSubX = subX;
+            //_lastSubY = subY;
         }
 
-        UpdateMapAround(mappedX, mappedY, subX, subY, EnableMap);
+        UpdateMapAround(mappedX, mappedY, EnableMap, forceCreate);
     }
 
     public int MapFloatCoord(float coord)
@@ -91,6 +92,26 @@ public class MapSystem : MonoBehaviour
     }
 
     private bool _navMeshRebuild = false;
+    private int[] _dx = new int[] { 0, -1, 1, 0, 0, 1, -1, 1, -1 }; // order matters
+    private int[] _dy = new int[] { 0, 0, 0, -1, 1, 1, 1, -1, -1 };
+    private void UpdateMapAround(int x, int y, Action<MapPart, int, int> action, bool forceCreate)
+    {
+        if (_navMeshRebuild)
+        {
+            BuildNavMesh();
+            _navMeshRebuild = false;
+        }
+
+        for(int k=0; k<9; k++)
+        { 
+            UpdateMapAt(x + _dx[k], y + _dy[k], action);
+            if(forceCreate)
+            {
+                ProceedLazyCreation(true);
+            }
+        }
+    }
+
     private void UpdateMapAround(int x, int y, int subX, int subY, Action<MapPart, int, int> action)
     {
         if (_navMeshRebuild)
@@ -166,14 +187,24 @@ public class MapSystem : MonoBehaviour
         {
             part = new MapPart(this, x, y);
             _map.Add(GetKey(x,y), part);
+        }
+
+        bool prevState = part.IsCreated();
+        part.TryCreate();
+        if(part.IsCreated())
+        {
+            part.SetVisible(true);
+        }
+        if (prevState != part.IsCreated())
+        {
             _navMeshRebuild = true;
         }
-        part.SetVisible(true);
     }
+    
 
     private void DisableMap(MapPart part, int x, int y)
     {
-        if (part != null)
+        if (part != null && part.IsCreated())
         {
             part.SetVisible(false);
         }
