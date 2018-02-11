@@ -131,8 +131,6 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
         if (Time.time >= _nextDirectorTime)
         {
-            // GAMEDIRECTOR UPDATE LOL
-
             _nextDirectorTime = Time.time + _directorInterval;
             if(_gameDirectorOn)
             {

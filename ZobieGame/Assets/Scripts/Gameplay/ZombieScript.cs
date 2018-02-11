@@ -129,6 +129,9 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public void Suicide()
     {
+        // We lower the score so much that the genes will be eliminated
+        GameSystem.Get().GD.EnemyDead(_ID, -100.0f, EuclidDistanceToPlayer());
+
         Die();
     }
 
@@ -144,8 +147,6 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         if (!_dead && _currentAICooldown <= 0)
         {
             GameSystem.Get().GD.Animate(this);
-            // AttackMeleePlayer();
-            // GoToPlayer();
 
             _currentAICooldown = 0.1f * EuclidDistanceToPlayer();
         }

@@ -10,8 +10,7 @@ public class GameDirector{
     class ActorInfo
     {
         public Genotype DNA;
-        // public Genes genes;
-        // public Memes memes;
+
         public float att_score;
         public float dist_score;
 
@@ -45,6 +44,13 @@ public class GameDirector{
     // Pseudorandomness source
     // Let's hardcode the seed, because why not
     private Random _rnd = new Random(12112014);
+
+    private float killRadius = 50.0f;
+
+    // Manual "debug mode"
+    // set to true to enable logging evolution history
+    private bool _log_enabled = false; 
+    private string _log_path = "ev_history.txt";
 
     public GameDirector()
     {
@@ -86,6 +92,12 @@ public class GameDirector{
     {
         if (!actor.IsAlive())
             return;
+
+        if (actor.EuclidDistanceToPlayer() >= killRadius)
+        {
+            actor.Suicide();
+            return;
+        }
 
         if (actor.PlayerInMeleeRange())
             actor.AttackMeleePlayer();
@@ -250,33 +262,70 @@ public class GameDirector{
     {
         DebugConsole.Clear();
 
-        DebugConsole.Log(
-            string.Format("MIN HP:{0} SP:{1} STR:{2} AP:{3}",
-                _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
-                _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
-                _population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
-                _population.Min(x => InfoFromId(x).DNA.genes.GetArmor())
-                )
-            );
+        string buf =
+      string.Format("MIN HP:{0} SP:{1} STR:{2} AP:{3}",
+      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+      _population.Min(x => InfoFromId(x).DNA.genes.GetArmor())
+      );
 
-        DebugConsole.Log(
-    string.Format("AVG HP:{0} SP:{1} STR:{2} AP:{3}",
+        DebugConsole.Log(buf);
+
+        buf =
+        string.Format("AVG HP:{0} SP:{1} STR:{2} AP:{3}",
         _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
         _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
         _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
         _population.Average(x => InfoFromId(x).DNA.genes.GetArmor())
-        )
-    );
+        );
 
-        DebugConsole.Log(
-    string.Format("MAX HP:{0} SP:{1} STR:{2} AP:{3}",
+        DebugConsole.Log(buf);
+
+        buf =
+        string.Format("MAX HP:{0} SP:{1} STR:{2} AP:{3}",
         _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
         _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
         _population.Max(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
         _population.Max(x => InfoFromId(x).DNA.genes.GetArmor())
-        )
-    );
+        );
 
+        DebugConsole.Log(buf);
+
+        if (!_log_enabled)
+            return;
+
+
+        if (!System.IO.File.Exists(_log_path))
+            System.IO.File.CreateText(_log_path);
+
+        using (System.IO.StreamWriter sw = System.IO.File.AppendText(_log_path))
+        {
+              
+
+            sw.WriteLine(
+                string.Format(
+                    "{0}\t {1}\t {2}\t {3}\t {4}\t {5}\t {6}\t {7}\t {8}\t {9}\t {10}\t {11}\t {12}\t"
+                    ,
+                    _lastId-1,
+                    _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+                    _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+                    _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+
+                    _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+                    _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+                    _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+
+                    _population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+                    _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+                    _population.Max(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+
+                    _population.Min(x => InfoFromId(x).DNA.genes.GetArmor()),
+                    _population.Average(x => InfoFromId(x).DNA.genes.GetArmor()),
+                    _population.Max(x => InfoFromId(x).DNA.genes.GetArmor())
+
+                ));
+        }
 
     }
 
@@ -287,7 +336,7 @@ public class GameDirector{
         _tick_count++;
 
         //a little bit of quick rate limiting
-        if(_tick_count % 20 == 0)
+        if(_tick_count % 2 == 0)
             warudo.SpawnEnemy(this.NewEnemy());
     }
 
