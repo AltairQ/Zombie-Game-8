@@ -142,7 +142,7 @@ public class GameDirector{
     }
 
     // Mutating float so that x differs by +- degree times
-    public float Mutate(float x, float degree = 0.1F )
+    public float Mutate(float x, float degree)
     {
         return x * (1 + degree*(this.UniformRandomFloat() - 0.5F));
     }
@@ -253,7 +253,7 @@ public class GameDirector{
     public void EnemyDead(int eid, float att_score, float dist_score)
     {
         _database[eid].att_score = att_score;
-        _database[eid].dist_score = dist_score;
+        _database[eid].dist_score = 30.0f/(dist_score+2.0f) - 1.0f;
         _population.Remove(eid);
         _candidates.Add(eid);
     }
