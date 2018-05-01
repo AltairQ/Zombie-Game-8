@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class MapPart
 {
@@ -28,7 +29,17 @@ public class MapPart
 
         ChooseType();
         InitRect();
-        _ground = Utils.CreateGround(_rect, _map.gameObject);
+
+        float width = _rect.width;
+        float height = _rect.height;
+        Rect biggerRect = _rect;
+        //float scale = 0.02f;
+        //biggerRect.yMin -= height * scale;
+        //biggerRect.yMax += height * scale;
+        //biggerRect.xMin -= width * scale;
+        //biggerRect.xMax += width * scale;
+
+        _ground = Utils.CreateGround(biggerRect, _map.gameObject);
     }
 
     private void ChooseType()
@@ -75,6 +86,11 @@ public class MapPart
         _go = _mapObject.Make();
         _go.SetParent(_map.gameObject);
         _ground.SetParent(_go);
+
+        var navMesh = _go.AddComponent<NavMeshSurface>();
+        navMesh.collectObjects = CollectObjects.Children;
+        navMesh.layerMask = LayerMask.GetMask("Terrain");
+        navMesh.BuildNavMesh();
     }
 
     public bool IsCreated()

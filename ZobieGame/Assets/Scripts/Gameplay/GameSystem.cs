@@ -70,12 +70,6 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     public GameDirector GD { get { return _GD; } }
 
-    public void BuildNavMesh()
-    {
-        NavMeshSurface surface = GetComponent<NavMeshSurface>();
-        surface.BuildNavMesh();
-    }
-
     public void StartGame()
     { 
         Vector3 startPos = Vector3.up + new Vector3(0.01f, 0f, 0.01f); // to avoid map generation bug
@@ -126,8 +120,8 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
             _player.GetComponent<PlayerScript>().HAXRefill();
         }
 
-        _light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time * 0.05f) + 0.5f, 0, 1) * 0.9f;
-        _light.shadowStrength = _light.intensity;
+        //_light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time * 0.05f) + 0.5f, 0, 1) * 0.9f;
+        //_light.shadowStrength = _light.intensity;
 
         if (Time.time >= _nextDirectorTime)
         {

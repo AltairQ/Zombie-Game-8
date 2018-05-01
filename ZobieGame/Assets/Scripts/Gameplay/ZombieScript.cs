@@ -86,7 +86,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public bool GoToPlayer()
     {
-        return GetComponent<NavMeshAgent>().SetDestination(GameSystem.Get().Player.transform.position);
+        return _nv.SetDestination(GameSystem.Get().Player.transform.position);
     }
 
     public bool AttackMeleePlayer()

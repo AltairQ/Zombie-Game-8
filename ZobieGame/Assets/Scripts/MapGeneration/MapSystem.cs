@@ -134,7 +134,7 @@ public partial class MapSystem : MonoBehaviour
         {
             go.Value.SetVisible(true);
         }
-        GameSystem.Get().BuildNavMesh();
+        //GameSystem.Get().BuildNavMesh();
         foreach(var go in _map)
         {
             go.Value.SetVisible(false);

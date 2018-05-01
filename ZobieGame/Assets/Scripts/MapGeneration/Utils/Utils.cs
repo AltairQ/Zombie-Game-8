@@ -74,10 +74,11 @@ public class Utils
         return new Rect(left, top, width, height);
     }
 
+    public const int TERRAIN_LAYER = 8;
     public static GameObject TerrainObject(string name)
     {
         GameObject go = new GameObject(name);
-        go.layer = 8; // Terrain layer
+        go.layer = TERRAIN_LAYER;
 
         return go;
     }
@@ -86,8 +87,8 @@ public class Utils
     {
         GameObject go = GameObject.CreatePrimitive(type);
         go.name = name;
-        go.layer = 8; // Terrain layer
-        
+        go.layer = TERRAIN_LAYER;
+
         return go;
     }
 

@@ -256,8 +256,7 @@ public class City : MapObject
         {
             var estateGO = estate.Make();
             estateGO.SetParent(go);
-        }
-
+        }        
         return go;
     }
 

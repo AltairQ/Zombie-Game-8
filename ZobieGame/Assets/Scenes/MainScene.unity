@@ -912,7 +912,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1351320423}
   - component: {fileID: 1351320424}
-  - component: {fileID: 1351320425}
   m_Layer: 0
   m_Name: GameSystem
   m_TagString: Untagged
@@ -958,34 +957,6 @@ MonoBehaviour:
   _light: {fileID: 0}
   _audioItemPickup: {fileID: 1685973091786584, guid: b3620450a6a9ad348afb8e6e3d3d9c5e,
     type: 2}
---- !u!114 &1351320425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1351320422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae3ea8bf07e56174d8cfb63680ca249c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.13333334
-  m_BuildHeightMesh: 0
-  m_NavMeshData: {fileID: 0}
 --- !u!1001 &1390122990
 Prefab:
   m_ObjectHideFlags: 0
