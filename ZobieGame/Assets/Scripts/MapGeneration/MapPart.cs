@@ -33,11 +33,11 @@ public class MapPart
         float width = _rect.width;
         float height = _rect.height;
         Rect biggerRect = _rect;
-        //float scale = 0.02f;
-        //biggerRect.yMin -= height * scale;
-        //biggerRect.yMax += height * scale;
-        //biggerRect.xMin -= width * scale;
-        //biggerRect.xMax += width * scale;
+        float scale = 0.02f;
+        biggerRect.yMin -= height * scale;
+        biggerRect.yMax += height * scale;
+        biggerRect.xMin -= width * scale;
+        biggerRect.xMax += width * scale;
 
         _ground = Utils.CreateGround(biggerRect, _map.gameObject);
     }
@@ -91,6 +91,34 @@ public class MapPart
         navMesh.collectObjects = CollectObjects.Children;
         navMesh.layerMask = LayerMask.GetMask("Terrain");
         navMesh.BuildNavMesh();
+
+        int[] dx = new int[] { -1, 1, 0, 0};
+        int[] dy = new int[] { 0, 0, -1, 1 };
+        for (int k = 0; k < 4; k++)
+        {
+            var part = _map.PartAt(X + dx[k], Y + dy[k]);
+            if(part != null && part.IsCreated())
+            {
+                ConnectWith(part);
+            }
+        }
+        
+    }
+
+    private void ConnectWith(MapPart other)
+    {
+        var myPos = _ground.transform.position;
+        var otherPos = other._ground.transform.position;
+        var middle = (myPos + otherPos) / 2;
+
+        GameObject connector = new GameObject("NavMeshConnector");
+        connector.transform.position = middle;
+        connector.SetParent(_map.gameObject);
+
+        var link = connector.AddComponent<NavMeshLink>();
+        link.startPoint = (myPos - middle).normalized/3;
+        link.endPoint = (otherPos - middle).normalized/3;
+        link.width = _map.PartSize;
     }
 
     public bool IsCreated()
