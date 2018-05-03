@@ -258,39 +258,60 @@ public class GameDirector{
         _candidates.Add(eid);
     }
 
+    public void InitGraphs()
+    {
+        var graphs = GameSystem.Get().GraphsManager;
+        graphs.CreateGraph("physSize", UnityEngine.Color.green);
+        graphs.CreateGraph("physSpeed", UnityEngine.Color.yellow);
+        graphs.CreateGraph("physDamage", UnityEngine.Color.red);
+        graphs.CreateGraph("armor", UnityEngine.Color.grey);
+    }
+
     public void ShowPopulationStats()
     {
-        DebugConsole.Clear();
+        var graphs = GameSystem.Get().GraphsManager;
 
-        string buf =
-      string.Format("MIN HP:{0} SP:{1} STR:{2} AP:{3}",
-      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
-      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
-      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
-      _population.Min(x => InfoFromId(x).DNA.genes.GetArmor())
-      );
+        float physSizeValue = _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize());
+        float physSpeedValue = _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed());
+        float physDamageValue = _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage());
+        float armorValue = _population.Average(x => InfoFromId(x).DNA.genes.GetArmor());
 
-        DebugConsole.Log(buf);
+        graphs.AddValue("physSize", physSizeValue);
+        graphs.AddValue("physSpeed", physSpeedValue);
+        graphs.AddValue("physDamage", physDamageValue);
+        graphs.AddValue("armor", armorValue);
 
-        buf =
-        string.Format("AVG HP:{0} SP:{1} STR:{2} AP:{3}",
-        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
-        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
-        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
-        _population.Average(x => InfoFromId(x).DNA.genes.GetArmor())
-        );
+        //  DebugConsole.Clear();
 
-        DebugConsole.Log(buf);
+        //  string buf =
+        //string.Format("MIN HP:{0} SP:{1} STR:{2} AP:{3}",
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetArmor())
+        //);
 
-        buf =
-        string.Format("MAX HP:{0} SP:{1} STR:{2} AP:{3}",
-        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
-        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
-        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
-        _population.Max(x => InfoFromId(x).DNA.genes.GetArmor())
-        );
+        //  DebugConsole.Log(buf);
 
-        DebugConsole.Log(buf);
+        //  buf =
+        //  string.Format("AVG HP:{0} SP:{1} STR:{2} AP:{3}",
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetArmor())
+        //  );
+
+        //  DebugConsole.Log(buf);
+
+        //  buf =
+        //  string.Format("MAX HP:{0} SP:{1} STR:{2} AP:{3}",
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetArmor())
+        //  );
+
+        //  DebugConsole.Log(buf);
 
         if (!_log_enabled)
             return;

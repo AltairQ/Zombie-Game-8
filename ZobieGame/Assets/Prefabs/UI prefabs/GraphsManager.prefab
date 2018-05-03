@@ -41,12 +41,12 @@ GameObject:
   - component: {fileID: 222798603395965072}
   - component: {fileID: 114909546827625178}
   m_Layer: 5
-  m_Name: GraphManager
+  m_Name: GraphsManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1995838362845576
 GameObject:
   m_ObjectHideFlags: 0

@@ -30,6 +30,9 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     private Canvas _mainCanvas;
 
     [SerializeField]
+    private GraphsManager _graphsManager;
+
+    [SerializeField]
     private GameObject _playerPrefab;
     [SerializeField]
     private GameObject _zombiePrefab;
@@ -53,6 +56,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     public GameObject Player { get { return _player; } }
     public Vector3 GunPos { get { return _gunPos; } }
     public Canvas MainCanvas { get { return _mainCanvas; } }
+    public GraphsManager GraphsManager { get { return _graphsManager; } }
     public Camera MainCamera { get { return _mainCamera; } }
     public GameObject MuzzleFlash { get { return _muzzleFlash; } }
     public GameObject Explosion { get { return _explosion; } }
@@ -90,7 +94,9 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
         _light = GameObject.FindWithTag("Light").GetComponent<Light>();
 
-        _nextDirectorTime = Time.time + _directorInterval; 
+        _nextDirectorTime = Time.time + _directorInterval;
+
+        _GD.InitGraphs();
     }
 
     public void EndGame()
@@ -124,6 +130,11 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
         {
             SpawnRandomZombie(_GD.NewEnemy());
             _player.GetComponent<PlayerScript>().HAXRefill();
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            _graphsManager.gameObject.SetActive(!_graphsManager.gameObject.activeSelf);
         }
 
         _light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time * 0.05f) + 0.5f, 0, 1) * 0.9f;

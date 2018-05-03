@@ -69,7 +69,16 @@ public class GraphDrawer : MonoBehaviour
         for(int i = 0; i < values.Count; i++)
         {
             float x = -width / 2 + width * i / (_maxPoints - 1); // use max points not to stretch graph if there are less points
-            float y = (values[i] - min) / (max - min) * height - height/2;
+            float y;
+            if(Mathf.Approximately(min, max))
+            {
+                y = 0;
+            }
+            else
+            {
+                y = (values[i] - min) / (max - min) * height - height / 2;
+            }
+
             points.Add(new Vector2(x, y));
         }
 

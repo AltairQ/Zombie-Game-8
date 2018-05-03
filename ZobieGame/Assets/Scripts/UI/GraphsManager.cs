@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GraphManager : MonoBehaviour
+public class GraphsManager : MonoBehaviour
 {
     [SerializeField]
     private GraphDrawer _graphDrawerPrefab;
@@ -17,16 +17,18 @@ public class GraphManager : MonoBehaviour
 
     private Dictionary<string, GraphDrawer> _graphs = new Dictionary<string, GraphDrawer>();
 
-    private void Start()
-    {
-        var g1 = CreateGraph("graph1", Color.green);
-        var g2 = CreateGraph("graph2", Color.blue);
-        for (int i = 0; i < 5; i++)
-        {
-            g1.AddValue(i);
-            g2.AddValue(i * i);
-        }
-    }
+    //private void Start()
+    //{
+    //    var g1 = CreateGraph("graph1", Color.green);
+    //    var g2 = CreateGraph("graph2", Color.blue);
+    //    var g3 = CreateGraph("graph3", Color.red);
+    //    for (int i = 0; i < 5; i++)
+    //    {
+    //        g1.AddValue(i);
+    //        g2.AddValue(i * i);
+    //        g3.AddValue(1);
+    //    }   
+    //}
 
     public GraphDrawer CreateGraph(string name, Color lineColor)
     {
