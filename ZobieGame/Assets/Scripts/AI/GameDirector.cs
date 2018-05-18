@@ -105,6 +105,13 @@ public class GameDirector{
         actor.GoToPlayer();
     }
 
+    public void ApplyStimuli<T>(T actor, Stimuli st)
+        where T : IAIActions, IAIState
+    {
+        // absolutely nothing
+        return;
+    }
+
     // Draws an int from range [0; n)
     // Higher numbers have a (lot) higher chance of being picked
     public int NonuniformRandomHigh(int n)
