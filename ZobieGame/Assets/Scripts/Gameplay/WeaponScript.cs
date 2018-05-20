@@ -11,7 +11,7 @@ public class WeaponScript : MonoBehaviour
     [SerializeField]
     private float _cooldown, _reloadSpeed, _damage, _offset;
     [SerializeField]
-    private int _spread, _bulletCount, _magazineSize, _bulletsLeft, _ammoType;
+    private int _spread, _bulletCount, _magazineSize, _bulletsLeft, _ammoType, _noise;
     [SerializeField]
     private bool _primary, _dropOnReload, _held = false, _moveSlide;
     System.Random _rnd = new System.Random();
@@ -94,6 +94,9 @@ public class WeaponScript : MonoBehaviour
                 new_casing.GetComponent<Rigidbody>().AddRelativeForce(new Vector3((100 + _rnd.Next(-50, 50)) / 10, (25 + _rnd.Next(50)) / 10, _rnd.Next(-25, 25) / 10));
                 new_casing.transform.rotation = Quaternion.Euler(new Vector3(_rnd.Next(360), _rnd.Next(360), _rnd.Next(360)));
             }
+
+            GameObject soundStimulus = Instantiate(GameSystem.Get().SoundStimulus, transform.position, transform.rotation);
+            soundStimulus.GetComponent<SoundStimulus>().Init(_noise, 0);
 
             _shoot.Play();
             Instantiate(GameSystem.Get().MuzzleFlash, _barrelEnd.transform.position, Quaternion.Euler(0, transform.rotation.eulerAngles.y + 90, 0));

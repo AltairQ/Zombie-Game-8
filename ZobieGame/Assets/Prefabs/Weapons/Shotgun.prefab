@@ -710,6 +710,7 @@ MonoBehaviour:
   _magazineSize: 8
   _bulletsLeft: 8
   _ammoType: 3
+  _noise: 100
   _primary: 1
   _dropOnReload: 0
   _held: 0

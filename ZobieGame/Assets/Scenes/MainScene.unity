@@ -561,6 +561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  profile: {fileID: 0}
 --- !u!1 &951521777
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,6 +969,8 @@ MonoBehaviour:
     type: 2}
   _explosion: {fileID: 1311971032414346, guid: fb223f8f0ec531d4e818b3a6d62765cd, type: 2}
   _mine: {fileID: 1649434458192558, guid: 00fffdec6df5b3742b497db27a76a734, type: 2}
+  _soundStimulus: {fileID: 1393335116520360, guid: 09a40fefa9582aa45bff25db3a3a5b4a,
+    type: 2}
   _light: {fileID: 0}
   _audioItemPickup: {fileID: 1685973091786584, guid: b3620450a6a9ad348afb8e6e3d3d9c5e,
     type: 2}

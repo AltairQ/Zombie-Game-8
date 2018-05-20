@@ -11,10 +11,12 @@ public interface IAIActions
     // true  - player is reachable
     // false - player is unreachable
     bool GoToPlayer();
-
+    bool GoToStimuli();
 
     // Kill yourself :(
     void Suicide();
+
+    void ChangeStimuli(Stimuli stimuli);
 }
 
 // Interface to query the state of an individual enemy
@@ -37,4 +39,7 @@ public interface IAIState
 
     // Is the player close enough to be hit with a melee attack
     bool PlayerInMeleeRange();
+
+    // Current stimulus of the actor
+    Stimuli CurrentStimuli();
 }

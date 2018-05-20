@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 using System.Linq;
 
@@ -43,7 +44,7 @@ public class GameDirector{
 
     // Pseudorandomness source
     // Let's hardcode the seed, because why not
-    private Random _rnd = new Random(12112014);
+    private System.Random _rnd = new System.Random(12112014);
 
     private float killRadius = 50.0f;
 
@@ -88,7 +89,7 @@ public class GameDirector{
 
     // Compute actions for an individual enemy
     public void Animate<T>(T actor)
-        where T : IAIActions, IAIState
+        where T : MonoBehaviour, IAIActions, IAIState
     {
         if (!actor.IsAlive())
             return;
@@ -102,13 +103,19 @@ public class GameDirector{
         if (actor.PlayerInMeleeRange())
             actor.AttackMeleePlayer();
 
-        actor.GoToPlayer();
+        if (actor.CurrentStimuli() != null)
+            actor.GoToStimuli();
+
+        if ((actor.CurrentStimuli() != null) && (Vector3.Distance(actor.transform.position, actor.CurrentStimuli().position) < 1))
+            actor.ChangeStimuli(null);
     }
 
     public void ApplyStimuli<T>(T actor, Stimuli st)
         where T : IAIActions, IAIState
     {
-        // absolutely nothing
+        if((actor.CurrentStimuli() == null) || (st.intensity > actor.CurrentStimuli().intensity))
+            actor.ChangeStimuli(st);
+
         return;
     }
 
