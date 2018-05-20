@@ -113,7 +113,7 @@ public class GameDirector{
     public void ApplyStimuli<T>(T actor, Stimuli st)
         where T : IAIActions, IAIState
     {
-        if((actor.CurrentStimuli() == null) || (st.intensity > actor.CurrentStimuli().intensity))
+        if((actor.CurrentStimuli() == null) || (st.intensity >= actor.CurrentStimuli().intensity))
             actor.ChangeStimuli(st);
 
         return;

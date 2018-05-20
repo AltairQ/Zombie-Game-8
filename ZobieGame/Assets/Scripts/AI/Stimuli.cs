@@ -16,3 +16,10 @@ public class SoundStimuli : Stimuli
     public enum _Type { Gunshot, Player, Battle, Misc};
     public _Type type;
 }
+
+// When an actor sees something interesting
+public class VisualStimuli : Stimuli
+{
+    public enum _Type { Player, Bait, Light, Misc };
+    public _Type type;
+}
