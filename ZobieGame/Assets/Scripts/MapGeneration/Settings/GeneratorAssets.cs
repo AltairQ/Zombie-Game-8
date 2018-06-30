@@ -3,7 +3,7 @@
 [ExecuteInEditMode]
 public class GeneratorAssets : MonoBehaviour
 {
-    public Material StreetMaterial { get; private set; }
+    public Material RoadMaterial { get; private set; }
     public Material FloorMaterial { get; private set; }
     public Material WallMaterial { get; private set; }
     public Material GroundMaterial { get; private set; }
@@ -43,7 +43,7 @@ public class GeneratorAssets : MonoBehaviour
 
     public void Load()
     {
-        StreetMaterial = Resources.Load("Materials/StreetMaterial", typeof(Material)) as Material;
+        RoadMaterial = Resources.Load("Materials/RoadMaterial", typeof(Material)) as Material;
         FloorMaterial = Resources.Load("Materials/FloorMaterial", typeof(Material)) as Material;
         WallMaterial = Resources.Load("Materials/WallMaterial", typeof(Material)) as Material;
         GroundMaterial = Resources.Load("Materials/GroundMaterial", typeof(Material)) as Material;
