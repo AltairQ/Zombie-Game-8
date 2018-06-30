@@ -87,22 +87,29 @@ public class MapPart
         _go.SetParent(_map.gameObject);
         _ground.SetParent(_go);
 
+        if(!_map.GlobalNavMeshgeneration)
+        {
+            GenerateLocalNavMesh();
+        }     
+    }
+
+    private static int[] dx = new int[] { -1, 1, 0, 0 };
+    private static int[] dy = new int[] { 0, 0, -1, 1 };
+    private void GenerateLocalNavMesh()
+    {
         var navMesh = _go.AddComponent<NavMeshSurface>();
         navMesh.collectObjects = CollectObjects.Children;
         navMesh.layerMask = LayerMask.GetMask("Terrain");
         navMesh.BuildNavMesh();
 
-        int[] dx = new int[] { -1, 1, 0, 0};
-        int[] dy = new int[] { 0, 0, -1, 1 };
         for (int k = 0; k < 4; k++)
         {
             var part = _map.PartAt(X + dx[k], Y + dy[k]);
-            if(part != null && part.IsCreated())
+            if (part != null && part.IsCreated())
             {
                 ConnectWith(part);
             }
         }
-        
     }
 
     private void ConnectWith(MapPart other)

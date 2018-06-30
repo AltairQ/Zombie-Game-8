@@ -120,8 +120,8 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
             _player.GetComponent<PlayerScript>().HAXRefill();
         }
 
-        //_light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time * 0.05f) + 0.5f, 0, 1) * 0.9f;
-        //_light.shadowStrength = _light.intensity;
+        _light.intensity = 0.1f + Mathf.Clamp(Mathf.Sin(Time.time * 0.05f) + 0.5f, 0, 1) * 0.9f;
+        _light.shadowStrength = _light.intensity;
 
         if (Time.time >= _nextDirectorTime)
         {

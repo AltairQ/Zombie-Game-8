@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.AI;
 
 public partial class MapSystem : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public partial class MapSystem : MonoBehaviour
     [SerializeField]
     private float _partSize = 100;
     public float PartSize { get { return _partSize; } }
+
+    [SerializeField]
+    private bool _globalNavMeshGeneration = true;
+    public bool GlobalNavMeshgeneration { get { return _globalNavMeshGeneration; } }
 
     private GameObject _player;
     private Dictionary<string, MapPart> _map = new Dictionary<string, MapPart>();
@@ -96,9 +101,9 @@ public partial class MapSystem : MonoBehaviour
     private int[] _dy = new int[] { 0, 0, 0, -1, 1, 1, 1, -1, -1 };
     private void UpdateMapAround(int x, int y, Action<MapPart, int, int> action, bool forceCreate)
     {
-        if (_navMeshRebuild)
+        if (_navMeshRebuild && _globalNavMeshGeneration)
         {
-            BuildNavMesh();
+            RebuildNavMesh();
             _navMeshRebuild = false;
         }
 
@@ -114,9 +119,9 @@ public partial class MapSystem : MonoBehaviour
 
     private void UpdateMapAround(int x, int y, int subX, int subY, Action<MapPart, int, int> action)
     {
-        if (_navMeshRebuild)
+        if (_navMeshRebuild && _globalNavMeshGeneration)
         {
-            BuildNavMesh();
+            RebuildNavMesh();
             _navMeshRebuild = false;
         }
 
@@ -128,13 +133,15 @@ public partial class MapSystem : MonoBehaviour
         }
     }
 
-    private void BuildNavMesh()
+    private void RebuildNavMesh()
     {
         foreach(var go in _map)
         {
             go.Value.SetVisible(true);
         }
-        //GameSystem.Get().BuildNavMesh();
+
+        GetComponent<NavMeshSurface>().BuildNavMesh();
+
         foreach(var go in _map)
         {
             go.Value.SetVisible(false);

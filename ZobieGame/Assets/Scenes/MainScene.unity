@@ -293,6 +293,7 @@ GameObject:
   - component: {fileID: 543770994}
   - component: {fileID: 543770995}
   - component: {fileID: 543770996}
+  - component: {fileID: 543770997}
   m_Layer: 0
   m_Name: MapSystem
   m_TagString: Untagged
@@ -325,6 +326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _partSize: 75
+  _globalNavMeshGeneration: 0
   _lazyGeneration: 1
   _generateBudget: 25
   _makeBudget: 25
@@ -339,6 +341,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c107786f7e126341b87dcbfad867df4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &543770997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 543770993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae3ea8bf07e56174d8cfb63680ca249c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.13333334
+  m_BuildHeightMesh: 0
+  m_NavMeshData: {fileID: 0}
 --- !u!1 &669545675
 GameObject:
   m_ObjectHideFlags: 0
