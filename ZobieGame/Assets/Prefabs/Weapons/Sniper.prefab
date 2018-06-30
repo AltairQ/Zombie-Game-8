@@ -670,6 +670,7 @@ MonoBehaviour:
   _magazineSize: 5
   _bulletsLeft: 5
   _ammoType: 5
+  _noise: 100
   _primary: 1
   _dropOnReload: 0
   _held: 0

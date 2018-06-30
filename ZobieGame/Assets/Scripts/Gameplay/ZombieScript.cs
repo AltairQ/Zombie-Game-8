@@ -18,6 +18,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     float _speed, _attackScore = 0;
     int _level = 1;
 
+    Stimuli _stimuli;
+
     AudioSource _audioAttack;
     AudioSource _audioInjured;
     AudioSource _audioDead;
@@ -46,6 +48,16 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         colliders[0].height = 2.0f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
         colliders[1].radius = 0.75f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
         colliders[1].height = 2.0f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
+    }
+
+    public Stimuli CurrentStimuli()
+    {
+        return _stimuli;
+    }
+
+    public void ChangeStimuli(Stimuli st)
+    {
+        _stimuli = st;
     }
 
     public int GetID()
@@ -87,6 +99,14 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     public bool GoToPlayer()
     {
         return _nv.SetDestination(GameSystem.Get().Player.transform.position);
+    }
+
+    public bool GoToStimuli()
+    {
+        if (_stimuli != null)
+            return GetComponent<NavMeshAgent>().SetDestination(_stimuli.position);
+        else
+            return false;
     }
 
     public bool AttackMeleePlayer()
@@ -138,6 +158,11 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Update is called once per frame
     void Update()
     {
+        if (_stimuli == null)
+            _anim.SetBool("Walking", false);
+        else
+            _anim.SetBool("Walking", true);
+
         if ((_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack 1")))
             _anim.SetBool("Attack", false);
 

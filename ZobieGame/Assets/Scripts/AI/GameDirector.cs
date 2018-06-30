@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 using System.Linq;
 
@@ -43,7 +44,7 @@ public class GameDirector{
 
     // Pseudorandomness source
     // Let's hardcode the seed, because why not
-    private Random _rnd = new Random(12112014);
+    private System.Random _rnd = new System.Random(12112014);
 
     private float killRadius = 50.0f;
 
@@ -88,7 +89,7 @@ public class GameDirector{
 
     // Compute actions for an individual enemy
     public void Animate<T>(T actor)
-        where T : IAIActions, IAIState
+        where T : MonoBehaviour, IAIActions, IAIState
     {
         if (!actor.IsAlive())
             return;
@@ -102,7 +103,20 @@ public class GameDirector{
         if (actor.PlayerInMeleeRange())
             actor.AttackMeleePlayer();
 
-        actor.GoToPlayer();
+        if (actor.CurrentStimuli() != null)
+            actor.GoToStimuli();
+
+        if ((actor.CurrentStimuli() != null) && (Vector3.Distance(actor.transform.position, actor.CurrentStimuli().position) < 1))
+            actor.ChangeStimuli(null);
+    }
+
+    public void ApplyStimuli<T>(T actor, Stimuli st)
+        where T : IAIActions, IAIState
+    {
+        if((actor.CurrentStimuli() == null) || (st.intensity >= actor.CurrentStimuli().intensity))
+            actor.ChangeStimuli(st);
+
+        return;
     }
 
     // Draws an int from range [0; n)
@@ -258,39 +272,60 @@ public class GameDirector{
         _candidates.Add(eid);
     }
 
+    public void InitGraphs()
+    {
+        var graphs = GameSystem.Get().GraphsManager;
+        graphs.CreateGraph("physSize", UnityEngine.Color.green);
+        graphs.CreateGraph("physSpeed", UnityEngine.Color.yellow);
+        graphs.CreateGraph("physDamage", UnityEngine.Color.red);
+        graphs.CreateGraph("armor", UnityEngine.Color.grey);
+    }
+
     public void ShowPopulationStats()
     {
-        DebugConsole.Clear();
+        var graphs = GameSystem.Get().GraphsManager;
 
-        string buf =
-      string.Format("MIN HP:{0} SP:{1} STR:{2} AP:{3}",
-      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
-      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
-      _population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
-      _population.Min(x => InfoFromId(x).DNA.genes.GetArmor())
-      );
+        float physSizeValue = _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize());
+        float physSpeedValue = _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed());
+        float physDamageValue = _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage());
+        float armorValue = _population.Average(x => InfoFromId(x).DNA.genes.GetArmor());
 
-        DebugConsole.Log(buf);
+        graphs.AddValue("physSize", physSizeValue);
+        graphs.AddValue("physSpeed", physSpeedValue);
+        graphs.AddValue("physDamage", physDamageValue);
+        graphs.AddValue("armor", armorValue);
 
-        buf =
-        string.Format("AVG HP:{0} SP:{1} STR:{2} AP:{3}",
-        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
-        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
-        _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
-        _population.Average(x => InfoFromId(x).DNA.genes.GetArmor())
-        );
+        //  DebugConsole.Clear();
 
-        DebugConsole.Log(buf);
+        //  string buf =
+        //string.Format("MIN HP:{0} SP:{1} STR:{2} AP:{3}",
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        //_population.Min(x => InfoFromId(x).DNA.genes.GetArmor())
+        //);
 
-        buf =
-        string.Format("MAX HP:{0} SP:{1} STR:{2} AP:{3}",
-        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
-        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
-        _population.Max(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
-        _population.Max(x => InfoFromId(x).DNA.genes.GetArmor())
-        );
+        //  DebugConsole.Log(buf);
 
-        DebugConsole.Log(buf);
+        //  buf =
+        //  string.Format("AVG HP:{0} SP:{1} STR:{2} AP:{3}",
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        //  _population.Average(x => InfoFromId(x).DNA.genes.GetArmor())
+        //  );
+
+        //  DebugConsole.Log(buf);
+
+        //  buf =
+        //  string.Format("MAX HP:{0} SP:{1} STR:{2} AP:{3}",
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSpeed()),
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetPhysDamage()),
+        //  _population.Max(x => InfoFromId(x).DNA.genes.GetArmor())
+        //  );
+
+        //  DebugConsole.Log(buf);
 
         if (!_log_enabled)
             return;
