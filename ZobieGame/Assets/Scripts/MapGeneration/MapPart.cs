@@ -70,7 +70,7 @@ public class MapPart
 
     public void SetVisible(bool val)
     {
-        if(_go != null)
+        if(_go != null && _go.activeSelf != val)
         {
             _go.SetActive(val);
         }
