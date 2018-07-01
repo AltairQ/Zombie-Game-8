@@ -50,4 +50,9 @@ public class Genes
         return G_armor;
     }
 
+    public override string ToString()
+    {
+        return string.Format("ID:{0}, HP:{1}, SP:{2}, STR:{3}, RNG:{4}", Id, G_health, G_speed, G_strength, G_melee_range);
+    }
+
 }
