@@ -41,13 +41,15 @@ public class GameDirector{
 
     public GameDirector()
     {
+        string pid = "a";
+
         Genes g = new Genes
         {
             G_health = UMChoice(70, 70),
             G_speed = UMChoice(2, 2),
             G_strength = UMChoice(20, 20),
             G_melee_range = UMChoice(2, 2),
-            G_armor = UMChoice(1, 1)
+            G_armor = UMChoice(1, 1),            
         };
 
         Memes m = new Memes
@@ -58,16 +60,16 @@ public class GameDirector{
         var tmpg = new Genotype(g, m)
         {
             Id = _nextId++,
-            species = "a"
+            species = pid
         };
 
         //TODO deduplicate 
         tmpg.genes.Id = tmpg.Id;
 
-        _database.Add(0, new ActorInfo(g, m));
+        _database.Add(tmpg.Id, new ActorInfo(g, m));
 
-        Population ptmp = new Population(this, "a", tmpg.Id);
-        _population_db.Add("a", ptmp);
+        Population ptmp = new Population(this, pid, tmpg.Id);
+        _population_db.Add(ptmp.Id, ptmp);
         _populations.Add(ptmp);
     }
 
@@ -163,7 +165,7 @@ public class GameDirector{
 
         Genotype newdna = cpop.Evolve();
 
-        this.AddEnemy(newdna);
+        cpop.Add(AddEnemy(newdna).Id);
         return newdna.genes;
     }
 
@@ -196,8 +198,10 @@ public class GameDirector{
     {
         _database[eid].att_score = att_score;
         _database[eid].dist_score = 30.0f/(dist_score+2.0f) - 1.0f;
-        _population.Remove(eid);
-        _candidates.Add(eid);
+
+        Genotype tmp = InfoFromId(eid).DNA;
+
+        _population_db[tmp.species].Kill(eid);
     }
 
     public void ShowPopulationStats()

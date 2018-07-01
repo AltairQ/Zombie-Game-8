@@ -31,8 +31,7 @@ public class Population {
         // saving the reference
         _GD = parentgd;
 
-        // generate (randomly) new Id using parent's id as the prefix
-        Id = pid + (char)_GD.UniformInt('a', 'z' + 1);
+        Id = pid;
 
         // seed the population
         _population.Add(progenitor);
@@ -58,6 +57,11 @@ public class Population {
     {
         if(_population.Remove(id))
             _candidates.Add(id);        
+    }
+
+    public void Kill(int id)
+    {
+        Remove(id);
     }
 
     private void DarwinInAction()
@@ -123,7 +127,7 @@ public class Population {
             G_armor = _GD.UMChoice(d1.genes.G_armor, d2.genes.G_armor)
         };
 
-        return new Genotype(g, m);
+        return new Genotype(g, m, this.Id);
     }
 
     private Genotype SelectAndBreed()
