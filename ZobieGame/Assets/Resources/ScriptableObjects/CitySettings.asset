@@ -14,4 +14,8 @@ MonoBehaviour:
   EstateStreetOffset: 2
   MinEstateEdge: 20
   StreetSize: 3
+  RoadPercSize: 0.356
   SpaceBetweenHouses: 4
+  LampPrefab: {fileID: 1802198917164916, guid: 3fca977e118c5ef48938c1054497570e, type: 2}
+  CarPrefab: {fileID: 1807158500739498, guid: 63e731c3c8337774bad3533a32f65e48, type: 2}
+  CarDWProportion: 3

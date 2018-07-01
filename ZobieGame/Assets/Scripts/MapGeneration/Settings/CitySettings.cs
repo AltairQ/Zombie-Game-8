@@ -8,4 +8,8 @@ public class CitySettings : ScriptableObject
     public float StreetSize;
     public float RoadPercSize;
     public float SpaceBetweenHouses;
+
+    public GameObject LampPrefab;
+    public GameObject CarPrefab;
+    public float CarDWProportion; // depth (z) to width (x)
 }
