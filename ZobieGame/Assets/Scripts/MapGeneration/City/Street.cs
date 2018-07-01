@@ -4,6 +4,8 @@ using UnityEngine;
 public class Street : MapObject
 {
     private Rect _road;
+    private bool _roadFlipped;
+
     private List<Rect> _lampPos = new List<Rect>();
     private List<Rect> _carPos = new List<Rect>();
     private CitySettings _settings;
@@ -19,11 +21,13 @@ public class Street : MapObject
         {
             _road.x += _road.width * (1 - _settings.RoadPercSize) / 2;
             _road.width = _road.width * _settings.RoadPercSize;
+            _roadFlipped = false;
         }
         else
         {
             _road.y += _road.height * (1 - _settings.RoadPercSize) / 2;
             _road.height = _road.height * _settings.RoadPercSize;
+            _roadFlipped = true;
         }
 
         GenerateLamps();
@@ -34,11 +38,50 @@ public class Street : MapObject
     private void GenerateLamps()
     {
         _lampPos.Clear();
+
+        float roadSize = _roadFlipped ? _road.height : _road.width;
+        float lampSize = _roadFlipped ? (Rect.height - _road.height) / 2 : (Rect.width - _road.width) / 2;
+        Vector2 dPos = _roadFlipped ? new Vector2(0, 1) : new Vector2(1, 0);
+
+        Rect test1 = new Rect()
+        {
+            width = lampSize,
+            height = lampSize,
+            center = _road.center + dPos * (roadSize / 2 + lampSize / 2)
+        };
+        Rect test2 = new Rect()
+        {
+            width = lampSize,
+            height = lampSize,
+            center = _road.center - dPos * (roadSize / 2 + lampSize / 2)
+        };
+
+        _lampPos.Add(test1);
+        _lampPos.Add(test2);
     }
 
     private void GenerateCars()
     {
         _carPos.Clear();
+
+        float roadSize = _roadFlipped ? _road.height : _road.width;
+        float carWidth = roadSize / 2;
+        float carHeight = carWidth * _settings.CarDWProportion;
+        if(_roadFlipped)
+        {
+            Utils.Swap(ref carWidth, ref carHeight);
+        }
+
+        Vector2 dPos = _roadFlipped ? new Vector2(0, 1) : new Vector2(1, 0);
+
+        Rect test = new Rect()
+        {
+            width = carWidth,
+            height = carHeight,
+            center = _road.center + dPos * roadSize / 4
+        };
+
+        _carPos.Add(test);
     }
 
     protected override GameObject DoMake()
@@ -84,7 +127,7 @@ public class Street : MapObject
             float scale = pos.width;
             if(pos.width > pos.height)
             {
-                car.transform.localEulerAngles = new Vector3(90, 0, 0);
+                car.transform.localEulerAngles = new Vector3(0, 90, 0);
                 scale = pos.height;
             }
             car.transform.localScale = Vector3.one * scale; // cars shoud have proper proportions
