@@ -181,6 +181,7 @@ public class GameDirector{
     public Genotype AddEnemy(Genotype ing)
     {
         ing.Id = _nextId++;
+        ing.genes.Id = ing.Id;
         _database.Add(ing.Id, new ActorInfo(ing));
 
         return ing;
