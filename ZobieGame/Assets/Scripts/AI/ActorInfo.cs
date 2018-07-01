@@ -1,5 +1,6 @@
-﻿// Bundle of info to be stored in the GD's database
-class ActorInfo
+﻿
+// Bundle of info to be stored in the GD's database
+public class ActorInfo
 {
     public Genotype DNA;
 

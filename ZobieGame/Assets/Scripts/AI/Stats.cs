@@ -2,18 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 
-
 // Wrapper class for generic statistics
 // Assuming 'float' as the numeric type
 
 public class Stats {
 
     // lecimy z public a co
-    public float Max;
-    public float Mean;
-    public float Min;
+    public float Max
+    {
+        get;
+        set;
+    }
 
-    // Init to 
+    public float Mean
+    {
+        get
+        {
+            return Mean;
+        }
+
+        // we want the Mean value to be automatic
+        private set
+        {
+            Mean = value;
+        }
+    }
+
+    public float Min
+    {
+        get;
+        set;
+    }
+
+    // Init to NaN
     public Stats()
     {
         Max = float.NaN;

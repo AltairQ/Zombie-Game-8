@@ -9,23 +9,28 @@ using System.Linq;
 public class GameDirector{
 
     // Internal storage
-    private Dictionary<int, ActorInfo> _database = new Dictionary<int, ActorInfo>();
+    public Dictionary<int, ActorInfo> _database = new Dictionary<int, ActorInfo>();
 
-    private int _max_candidates;
+    // Map from Ids to populations
+    private Dictionary<string, Population> _population_db = new Dictionary<string, Population>();
+
+    private List<Population> _populations = new List<Population>();
+
+    private int _max_candidates = 10;
+
     private List<int> _candidates = new List<int>();
 
     private HashSet<int> _population = new HashSet<int>();
 
     // Next ID to be used
-    // TODO maybe rename..?
-    private int _lastId = 0;
+    int _nextId = 0;
 
     // Game tick count
     private int _tick_count = 0;
 
     // Pseudorandomness source
     // Let's hardcode the seed, because why not
-    private Random _rnd = new Random(12112014);
+    private Random _rnd = new Random(unchecked ((int)0xdeadbeef));
 
     private float killRadius = 50.0f;
 
@@ -38,7 +43,6 @@ public class GameDirector{
     {
         Genes g = new Genes
         {
-            Id = _lastId++,
             G_health = UMChoice(70, 70),
             G_speed = UMChoice(2, 2),
             G_strength = UMChoice(20, 20),
@@ -51,19 +55,31 @@ public class GameDirector{
             M_courage = 1.0F
         };
 
+        var tmpg = new Genotype(g, m)
+        {
+            Id = _nextId++,
+            species = "a"
+        };
+
+        //TODO deduplicate 
+        tmpg.genes.Id = tmpg.Id;
+
         _database.Add(0, new ActorInfo(g, m));
-        _candidates.Add(0);
+
+        Population ptmp = new Population(this, "a", tmpg.Id);
+        _population_db.Add("a", ptmp);
+        _populations.Add(ptmp);
     }
 
 
     // TODO ADD VALIDATION
 
-    private ActorInfo InfoFromActor(IAIState actor)
+    public ActorInfo InfoFromActor(IAIState actor)
     {
         return _database[actor.GetID()];
     }
 
-    private ActorInfo InfoFromId(int i)
+    public ActorInfo InfoFromId(int i)
     {
         return _database[i];
     }
@@ -112,7 +128,7 @@ public class GameDirector{
 
     public float UniformChoice(float x, float y)
     {
-        // Throwing exceptions is for weak
+        // Throwing exceptions is for the weak
         if (x > y)
         {
             float c = y;
@@ -121,6 +137,11 @@ public class GameDirector{
         }
 
         return x + (y - x) * this.UniformRandomFloat();
+    }
+
+    public int UniformInt(int a, int b)
+    {
+        return this._rnd.Next(a, b);
     }
 
     // Mutating float so that x differs by +- degree times
@@ -134,97 +155,35 @@ public class GameDirector{
         return Mutate(UniformChoice(x, y), degree);
     }
 
-    // Let's reduce the population
-    // Kills off half of the population using the NonuniformRandom distribution
-
-    private void DarwinInAction()
-    {
-        // Sorting every time is not ideal, but meh for now
-        _candidates.Sort(
-            (a, b) => {
-                float s_a = _database[a].att_score * 10 + _database[a].dist_score;
-                float s_b = _database[b].att_score * 10 + _database[b].dist_score;
-
-                return s_b.CompareTo(s_a);
-            });
-
-
-        int n = _candidates.Count;
-
-        // because why bother
-        if(n < 3)
-            return;
-        
-
-        HashSet<int> kill_list = new HashSet<int>();
-
-        // A simple way to do non-uniform distribution
-        // Every candidate has a different sized window based on its positon
-        // k-th candidate is killed if we draw from [n^2, (n+1)^2)
-        // the "max" parameter of Random.Next is exclusive.
-
-        // Kill off the population until we are left with 10 representatives
-        while(n - kill_list.Count > 10 )
-            kill_list.Add( this.NonuniformRandomHigh(n) );
-        
-
-        List<int> newlist = new List<int>();
-
-        for(int i = 0; i < n; i++)
-        {
-            if (kill_list.Contains(i))
-                continue;
-
-            newlist.Add(_candidates[i]);
-        }
-
-        _candidates = newlist;       
-        
-    }
-
-    private Genotype MateAndMutate(int a, int b)
-    {
-        Genotype d1 = this.InfoFromId(a).DNA;
-        Genotype d2 = this.InfoFromId(b).DNA;
-
-        Memes m = d1.memes;
-
-        // Very ugly block of code       
-        Genes g = new Genes
-        {
-            G_health      = UMChoice(d1.genes.G_health,      d2.genes.G_health     ),
-            G_speed       = UMChoice(d1.genes.G_speed,       d2.genes.G_speed      ),
-            G_strength    = UMChoice(d1.genes.G_strength,    d2.genes.G_strength   ),
-            // this was so strong I had to nerf it
-            G_melee_range =  2, //  UMChoice(d1.genes.G_melee_range, d2.genes.G_melee_range),
-            G_armor       = UMChoice(d1.genes.G_armor,       d2.genes.G_armor      )
-        };
-
-        return new Genotype(g, m);
-    }
-
-    private Genotype SelectAndBreed()
-    {
-        int mom = _candidates[this.NonuniformRandomLow(_candidates.Count)];
-        int dad = _candidates[this.NonuniformRandomLow(_candidates.Count)];
-
-        return MateAndMutate(mom, dad);
-    }
     
 
+    public Genes NewEnemy(string pop_id)
+    {
+        var cpop = _population_db[pop_id];
+
+        Genotype newdna = cpop.Evolve();
+
+        this.AddEnemy(newdna);
+        return newdna.genes;
+    }
+
+    // TODO remove and add proper population choice
     public Genes NewEnemy()
     {
-        this.DarwinInAction();
+        return NewEnemy("a");
+    }
 
-        Genotype newdna = this.SelectAndBreed();
+    /// <summary>
+    /// Add an enemy to database and assign an id. DOES NOT CREATE A UNITY OBJECT!
+    /// </summary>
+    /// <param name="ing">Genotype on which the Enemy will be based</param>
+    /// <returns>The edited Genotype</returns>
+    public Genotype AddEnemy(Genotype ing)
+    {
+        ing.Id = _nextId++;
+        _database.Add(ing.Id, new ActorInfo(ing));
 
-        _population.Add(_lastId);
-        newdna.genes.Id = _lastId++;
-        _database.Add(newdna.genes.Id, new ActorInfo(newdna));
-
-        this.ShowPopulationStats();
-
-        return newdna.genes;
+        return ing;
     }
 
     // QUICK AND DIRTY
@@ -289,7 +248,7 @@ public class GameDirector{
                 string.Format(
                     "{0}\t {1}\t {2}\t {3}\t {4}\t {5}\t {6}\t {7}\t {8}\t {9}\t {10}\t {11}\t {12}\t"
                     ,
-                    _lastId-1,
+                    _nextId-1,
                     _population.Min(x => InfoFromId(x).DNA.genes.GetPhysSize()),
                     _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize()),
                     _population.Max(x => InfoFromId(x).DNA.genes.GetPhysSize()),
@@ -317,9 +276,9 @@ public class GameDirector{
     {
         _tick_count++;
 
-        //a little bit of quick rate limiting
+        //a little bit of rate limiting
         if(_tick_count % 2 == 0)
-            warudo.SpawnEnemy(this.NewEnemy());
+            warudo.SpawnEnemy(this.NewEnemy("a"));
     }
 
 }
