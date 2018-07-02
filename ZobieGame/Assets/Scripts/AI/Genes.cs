@@ -2,8 +2,9 @@
 // Bundle containing physical parameters and also ID
 public class Genes
 {
+    // DEDUPLICATED
     // GD global ID
-    public int Id;
+    // public int Id;
     
     // Total (max) HP
     public float G_health;
@@ -52,7 +53,7 @@ public class Genes
 
     public override string ToString()
     {
-        return string.Format("ID:{0}, HP:{1}, SP:{2}, STR:{3}, RNG:{4}", Id, G_health, G_speed, G_strength, G_melee_range);
+        return string.Format("HP:{0}, SP:{1}, STR:{2}, RNG:{3}", G_health, G_speed, G_strength, G_melee_range);
     }
 
 }

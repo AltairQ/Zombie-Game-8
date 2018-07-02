@@ -63,9 +63,6 @@ public class GameDirector{
             species = pid
         };
 
-        //TODO deduplicate 
-        tmpg.genes.Id = tmpg.Id;
-
         _database.Add(tmpg.Id, new ActorInfo(g, m));
 
         Population ptmp = new Population(this, pid, tmpg.Id);
@@ -159,18 +156,18 @@ public class GameDirector{
 
     
 
-    public Genes NewEnemy(string pop_id)
+    public Genotype NewEnemy(string pop_id)
     {
         var cpop = _population_db[pop_id];
 
         Genotype newdna = cpop.Evolve();
 
         cpop.Add(AddEnemy(newdna).Id);
-        return newdna.genes;
+        return newdna;
     }
 
     // TODO remove and add proper population choice
-    public Genes NewEnemy()
+    public Genotype NewEnemy()
     {
         return NewEnemy("a");
     }
@@ -183,7 +180,7 @@ public class GameDirector{
     public Genotype AddEnemy(Genotype ing)
     {
         ing.Id = _nextId++;
-        ing.genes.Id = ing.Id;
+        
         _database.Add(ing.Id, new ActorInfo(ing));
 
         return ing;

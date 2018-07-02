@@ -26,15 +26,15 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     public float Attack { get { return _attack; } }
     public int ID { get { return _ID; } set { _ID = value; } }
 
-    public void SetGenes(Genes genes)
+    public void SetGenes(Genotype dna)
     {
         //_level = genes.level;
-        _ID = genes.Id;
-        _health = genes.G_health;
-        _attack = genes.G_strength;
-        _attackRange = genes.G_melee_range;
-        _speed = genes.G_speed;
-        _armor = genes.G_armor;
+        _ID = dna.Id;
+        _health = dna.genes.G_health;
+        _attack = dna.genes.G_strength;
+        _attackRange = dna.genes.G_melee_range;
+        _speed = dna.genes.G_speed;
+        _armor = dna.genes.G_armor;
         _nv.speed = _speed;
 
         _nv.radius = 0.4f * Mathf.Sqrt(Mathf.Sqrt(Mathf.Log(_health + 10) - 3.5f) * 1.5f);
