@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Street : MapObject
 {
+    private City _city;
+
     private Rect _road;
     private bool _roadFlipped;
 
@@ -11,6 +13,12 @@ public class Street : MapObject
     private CitySettings _settings;
     public Street(Rect rect) : base(rect)
     {
+        _city = null;
+        _settings = GeneratorAssets.Get().CitySettings;
+    }
+    public Street(City city, Rect rect) : base(rect)
+    {
+        _city = city;
         _settings = GeneratorAssets.Get().CitySettings;
     }
 
@@ -35,29 +43,60 @@ public class Street : MapObject
         GenerateCars();
     }
 
+    private Rect GetLampRect(Vector2 roadPos, Vector2 perp, float roadSize, float lampSize, bool otherSide)
+    {
+        int sign = otherSide ? -1 : 1;
+        return new Rect()
+        {
+            width = lampSize,
+            height = lampSize,
+            center = roadPos + sign * perp * (roadSize / 2 + lampSize / 2)
+        };
+    }
+
+    private Rect GetCarRect(Vector2 roadPos, Vector2 perp, float roadSize, float carWidth, float carHeight, bool otherSide)
+    {
+        int sign = otherSide ? -1 : 1;
+        return new Rect()
+        {
+            width = carWidth,
+            height = carHeight,
+            center = roadPos + sign * perp * roadSize / 4
+        };
+    }
+
+    private void TryAddLamp(Rect lamp)
+    {
+        if(_city == null || !_city.CheckOnStreetCollision(this, lamp))
+        {
+            _lampPos.Add(lamp);
+        }
+    }
+
+    private void TryAddCar(Rect car)
+    {
+        if (_city == null || !_city.CheckOnStreetCollision(this, car))
+        {
+            _carPos.Add(car);
+        }
+    }
+
     private void GenerateLamps()
     {
         _lampPos.Clear();
 
         float roadSize = _roadFlipped ? _road.height : _road.width;
         float lampSize = _roadFlipped ? (Rect.height - _road.height) / 2 : (Rect.width - _road.width) / 2;
-        Vector2 dPos = _roadFlipped ? new Vector2(0, 1) : new Vector2(1, 0);
+        Vector2 perp = _roadFlipped ? new Vector2(0, 1) : new Vector2(1, 0); // perpendicular
+        Vector2 paral = _roadFlipped ? new Vector2(1, 0) : new Vector2(0, 1); // parallel
 
-        Rect test1 = new Rect()
+        Vector2 curPos = _road.LeftTop() + perp * roadSize / 2 + paral * Random.Range(0, _settings.SpaceBetweenLamps);
+        while(_road.ContainsE(curPos))
         {
-            width = lampSize,
-            height = lampSize,
-            center = _road.center + dPos * (roadSize / 2 + lampSize / 2)
-        };
-        Rect test2 = new Rect()
-        {
-            width = lampSize,
-            height = lampSize,
-            center = _road.center - dPos * (roadSize / 2 + lampSize / 2)
-        };
-
-        _lampPos.Add(test1);
-        _lampPos.Add(test2);
+            TryAddLamp(GetLampRect(curPos, perp, roadSize, lampSize, false));
+            TryAddLamp(GetLampRect(curPos, perp, roadSize, lampSize, true));
+            curPos += _settings.SpaceBetweenLamps * paral;
+        }
     }
 
     private void GenerateCars()
@@ -72,16 +111,15 @@ public class Street : MapObject
             Utils.Swap(ref carWidth, ref carHeight);
         }
 
-        Vector2 dPos = _roadFlipped ? new Vector2(0, 1) : new Vector2(1, 0);
+        Vector2 perp = _roadFlipped ? new Vector2(0, 1) : new Vector2(1, 0); // perpendicular
+        Vector2 paral = _roadFlipped ? new Vector2(1, 0) : new Vector2(0, 1); // parallel
 
-        Rect test = new Rect()
+        Vector2 curPos = _road.LeftTop() + perp * roadSize / 2 + paral * Random.Range(0, _settings.MaxSpaceBetweenCars);
+        while (_road.ContainsE(curPos))
         {
-            width = carWidth,
-            height = carHeight,
-            center = _road.center + dPos * roadSize / 4
-        };
-
-        _carPos.Add(test);
+            TryAddCar(GetCarRect(curPos, perp, roadSize, carWidth, carHeight, Random.Range(0, 2) == 0));
+            curPos += Random.Range(_settings.MinSpaceBetweenCars, _settings.MaxSpaceBetweenCars) * paral;
+        }
     }
 
     protected override GameObject DoMake()

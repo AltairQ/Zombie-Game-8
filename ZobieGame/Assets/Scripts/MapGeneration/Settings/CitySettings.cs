@@ -8,6 +8,9 @@ public class CitySettings : ScriptableObject
     public float StreetSize;
     public float RoadPercSize;
     public float SpaceBetweenHouses;
+    public float SpaceBetweenLamps;
+    public float MinSpaceBetweenCars;
+    public float MaxSpaceBetweenCars;
 
     public GameObject LampPrefab;
     public GameObject CarPrefab;

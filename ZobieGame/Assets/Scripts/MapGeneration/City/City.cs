@@ -71,6 +71,8 @@ public class City : MapObject
                 GenerateEstates(rect, 1);
             }
         }
+
+        _streets.ForEach(street => street.Generate()); //have to be generated after all streats are created to detect lamp collisions
     }
 
     private List<Rect> AddFirstStreet(List<Rect> rects, bool vertical)
@@ -111,8 +113,7 @@ public class City : MapObject
         }
 
         Rect streetRect = Utils.SegmentToRect(p1, p2, _settings.StreetSize);
-        Street street = new Street(streetRect);
-        street.Generate();
+        Street street = new Street(this, streetRect);
         _streets.Add(street);
     }
 
@@ -245,6 +246,13 @@ public class City : MapObject
     private bool IsOnCityEdge(Vector2 p)
     {
         return Rect.ContainsOnEdge(p);
+    }
+
+    public bool CheckOnStreetCollision(Street notToCheckStreet, Rect area)
+    {
+        return _streets.Find(street =>
+        street.Rect != notToCheckStreet.Rect && street.Rect.Overlaps(area)
+        ) != null;
     }
 
     protected override GameObject DoMake()

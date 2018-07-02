@@ -30,7 +30,9 @@ public class CityEditor : Editor
         _settings.StreetSize = EditorGUILayout.Slider("StreetSize", _settings.StreetSize, 2, 6);
         _settings.RoadPercSize = EditorGUILayout.Slider("RoadPercSize", _settings.RoadPercSize, 0.1f, 0.9f);
         _settings.SpaceBetweenHouses = EditorGUILayout.Slider("SpaceBetweenHouses", _settings.SpaceBetweenHouses, 2, 5);
-
+        _settings.SpaceBetweenLamps = EditorGUILayout.Slider("SpaceBetweenLamps", _settings.SpaceBetweenLamps, 10, 30);
+        _settings.MinSpaceBetweenCars = EditorGUILayout.Slider("MinSpaceBetweenCars", _settings.MinSpaceBetweenCars, 5, _settings.MaxSpaceBetweenCars);
+        _settings.MaxSpaceBetweenCars = EditorGUILayout.Slider("MaxSpaceBetweenCars", _settings.MaxSpaceBetweenCars, _settings.MinSpaceBetweenCars, 30);
         EditorUtility.SetDirty(_settings);
 
         if (GUILayout.Button("Create"))
