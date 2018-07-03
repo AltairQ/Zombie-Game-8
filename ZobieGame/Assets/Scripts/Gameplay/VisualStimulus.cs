@@ -45,7 +45,6 @@ public class VisualStimulus : MonoBehaviour
                 {
                     if (hit.collider.gameObject == hitColliders[i].gameObject)
                     {
-                        print((hit.distance - Vector3.Distance(transform.position, hitColliders[i].transform.position)));
                         GameSystem.Get().GD.ApplyStimuli(hitColliders[i].gameObject.GetComponent<ZombieScript>(), visualStimuli);
                     }
                 }
