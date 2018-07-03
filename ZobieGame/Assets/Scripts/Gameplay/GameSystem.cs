@@ -106,12 +106,12 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
         _zombies.Clear();
     }
 
-    public void SpawnEnemy(Genes genes)
+    public void SpawnEnemy(Genotype genes)
     {
         SpawnRandomZombie(genes, 40.0F);
     }
 
-    private void SpawnRandomZombie(Genes genes, float radius = 30.0F)
+    private void SpawnRandomZombie(Genotype genes, float radius = 30.0F)
     {
         Vector2 randomShift = new Vector2(
             Mathf.Sin(Random.Range(-Mathf.PI, Mathf.PI)) * radius,
@@ -149,7 +149,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     }
 
-    public void SpawnZombie(Vector3 position, Genes genes)
+    public void SpawnZombie(Vector3 position, Genotype genes)
     {
         //DebugConsole.Log(genes.ToString());
 
