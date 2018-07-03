@@ -8,5 +8,5 @@
 public interface IAIEnvActions
 {
     // Create an enemy described by genes at a random position
-    void SpawnEnemy(Genes genes);
+    void SpawnEnemy(Genotype genes);
 }
