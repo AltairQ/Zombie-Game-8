@@ -31,7 +31,7 @@ public class GameDirector{
 
     // Pseudorandomness source
     // Let's hardcode the seed, because why not
-    private Random _rnd = new Random(unchecked ((int)0xdeadbeef));
+    private System.Random _rnd = new System.Random(unchecked ((int)0xdeadbeef));
 
 
     private float killRadius = 50.0f;
@@ -221,6 +221,9 @@ public class GameDirector{
     public void InitGraphs()
     {
         var graphs = GameSystem.Get().GraphsManager;
+
+        if (graphs == null) return;
+
         graphs.CreateGraph("physSize", UnityEngine.Color.green);
         graphs.CreateGraph("physSpeed", UnityEngine.Color.yellow);
         graphs.CreateGraph("physDamage", UnityEngine.Color.red);
