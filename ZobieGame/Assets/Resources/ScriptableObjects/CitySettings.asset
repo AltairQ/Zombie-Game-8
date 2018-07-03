@@ -13,12 +13,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EstateStreetOffset: 2
   MinEstateEdge: 20
-  StreetSize: 3
-  RoadPercSize: 0.85
+  StreetSize: 5
+  RoadPercSize: 0.9
   SpaceBetweenHouses: 4
   SpaceBetweenLamps: 15
   MinSpaceBetweenCars: 7.4
   MaxSpaceBetweenCars: 24.6
+  CarOnRoadPercSize: 0.5
   LampPrefab: {fileID: 1356350245385946, guid: e660f66d00655ae47b83f103a0970730, type: 2}
   CarPrefab: {fileID: 1078370145403054, guid: 4f5973e5e0a1c5741860d1177ddb40d2, type: 2}
   CarDWProportion: 3.82
