@@ -283,7 +283,6 @@ public class City : MapObject
             streetGO.SetParent(streets);
         }
 
-        parent.Combine(streets);
         return streets;
     }
 }
