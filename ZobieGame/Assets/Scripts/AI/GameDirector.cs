@@ -16,9 +16,9 @@ public class GameDirector{
 
     private List<Population> _populations = new List<Population>();
 
-    private int _max_candidates = 10;
+    // private int _max_candidates = 10;
 
-    private List<int> _candidates = new List<int>();
+    // private List<int> _candidates = new List<int>();
 
     private HashSet<int> _population = new HashSet<int>();
 
@@ -33,6 +33,9 @@ public class GameDirector{
     private Random _rnd = new Random(unchecked ((int)0xdeadbeef));
 
     private float killRadius = 50.0f;
+
+    // amount to be added to each populations' account every tick
+    private float _subsidy = 20.0f;
 
     // Manual "debug mode"
     // set to true to enable logging evolution history
@@ -278,9 +281,13 @@ public class GameDirector{
     {
         _tick_count++;
 
-        //a little bit of rate limiting
-        if(_tick_count % 2 == 0)
-            warudo.SpawnEnemy(this.NewEnemy("a"));
+        foreach (var pop in _populations)
+        {
+            pop.score += _subsidy;
+
+            if (pop.CanSpawn())
+                warudo.SpawnEnemy(this.NewEnemy(pop.Id));
+        }
     }
 
 }

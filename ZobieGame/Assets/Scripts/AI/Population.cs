@@ -7,9 +7,14 @@ using System.Linq;
 // Collection of actors - just a simple wrapper
 public class Population {
 
-    // to be used
-    public float score;
+    // credits to spawn zombies
+    public float score = 55.0f;
 
+    // cost of previously spawned zombie
+    // TODO
+    public float last_cost = 10.0f;
+
+    // population identifier
     public string Id;
 
     // list of alive entities
@@ -56,7 +61,9 @@ public class Population {
     public void Remove(int id)
     {
         if(_population.Remove(id))
-            _candidates.Add(id);        
+            _candidates.Add(id);
+
+        this.score += (_GD._database[id].att_score + _GD._database[id].dist_score);
     }
 
     public void Kill(int id)
@@ -135,13 +142,23 @@ public class Population {
         int mom = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
         int dad = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
 
-        return MateAndMutate(mom, dad);
+        Genotype son = MateAndMutate(mom, dad);
+
+        last_cost = son.GetValue();
+        score -= last_cost;
+
+        return son;
     }
 
     public Genotype Evolve()
     {
         this.DarwinInAction();
         return this.SelectAndBreed();
+    }
+
+    public bool CanSpawn()
+    {
+        return score > last_cost;
     }
 
 
