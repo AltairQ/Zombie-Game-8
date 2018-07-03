@@ -199,6 +199,8 @@ public class GameDirector{
         ing.Id = _nextId++;
         
         _database.Add(ing.Id, new ActorInfo(ing));
+        _population.Add(ing.Id);
+        
 
         return ing;
     }
@@ -216,6 +218,7 @@ public class GameDirector{
         Genotype tmp = InfoFromId(eid).DNA;
 
         _population_db[tmp.species].Kill(eid);
+        _population.Remove(eid);
     }
 
     public void InitGraphs()
@@ -326,6 +329,8 @@ public class GameDirector{
             if (pop.CanSpawn())
                 warudo.SpawnEnemy(this.NewEnemy(pop.Id));
         }
+
+        ShowPopulationStats();
     }
 
 }
