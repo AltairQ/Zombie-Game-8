@@ -42,7 +42,7 @@ public class Genotype
             htmp %= 131;
         }
 
-        return Color.HSVToRGB(htmp / 130.0f, 1, 1);
+        return Color.HSVToRGB(htmp / 130.0f, 1.0f, 1.0f);
     }
 
     public float GetValue()

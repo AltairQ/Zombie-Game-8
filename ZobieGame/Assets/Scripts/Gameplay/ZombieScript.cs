@@ -37,6 +37,10 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     {
         //_level = genes.level;
         _color = dna.GetColor();
+        _material = transform.GetChild(0).GetChild(1).GetComponent<SkinnedMeshRenderer>().materials[2];
+        _material.color = _color;
+        transform.GetChild(0).GetChild(1).GetComponent<SkinnedMeshRenderer>().materials[2] = _material;
+
         _ID = dna.Id;
         _health = dna.genes.G_health;
         _attack = dna.genes.G_strength;
@@ -134,11 +138,6 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Fixed Start -> Awake
     void Awake()
     {
-        print(_color);
-        _material = transform.GetChild(0).GetChild(1).GetComponent<SkinnedMeshRenderer>().materials[2];
-        _material.color = _color;
-        transform.GetChild(0).GetChild(1).GetComponent<SkinnedMeshRenderer>().materials[2] = _material;
-
         _nv = GetComponent<NavMeshAgent>();
         _health = 100;
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
