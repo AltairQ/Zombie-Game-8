@@ -83,7 +83,7 @@ public class PlayerScript : MonoBehaviour
 
         _audioInjured = GetComponents<AudioSource>()[0];
 
-        _torso = transform.GetChild(1).GetComponent<Animator>();
+        _torso = transform.GetChild(1).GetChild(0).GetComponent<Animator>();
     }
 
     public void Damage(float damage)
@@ -99,7 +99,7 @@ public class PlayerScript : MonoBehaviour
         Vector3 _gunOffset = weapon.GetComponent<WeaponScript>().GunOffset;
         weapon.GetComponent<CapsuleCollider>().enabled = false;
         weapon.GetComponent<WeaponScript>().Held = true;
-        weapon.transform.SetParent(transform);
+        weapon.transform.SetParent(transform.GetChild(1));
         weapon.transform.rotation = transform.rotation;
         weapon.transform.position = transform.position;
 //        print(_gunPos + " " + (_gunPos + new Vector3(0, 0, weapon.GetComponent<WeaponScript>().Offset)));
@@ -192,7 +192,7 @@ public class PlayerScript : MonoBehaviour
 
         _scoreText.text = _score.ToString();
 
-        if(_primarySelected && _weapon != null)
+        if(_primarySelected && _weapon != null && !_weapon.GetComponent<WeaponScript>().Melee)
         {
             _torso.SetBool("Primary", true);
             _torso.SetBool("Secondary", false);

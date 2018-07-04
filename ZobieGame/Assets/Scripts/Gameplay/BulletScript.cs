@@ -8,6 +8,16 @@ public class BulletScript : MonoBehaviour
     Rigidbody _rb;
     Vector3 _movement = new Vector3();
 
+    public void Initialize(float angle_y, float damage, float life_left)
+    {
+        this._bulletSpeed = 0;
+        this._lifeLeft = life_left;
+        this._angleY = angle_y;
+        this._damage = damage;
+        transform.rotation = Quaternion.Euler(0, this._angleY, 0);
+        transform.Translate(0, 0.2f, 0);
+    }
+
     public void Initialize(float angle_y, float damage)
     {
         this._angleY = angle_y;

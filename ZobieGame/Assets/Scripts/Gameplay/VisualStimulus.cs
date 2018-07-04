@@ -9,6 +9,8 @@ public class VisualStimulus : MonoBehaviour
     [SerializeField]
     VisualStimuli._Type _type;
 
+    private float _viewAngle = 85.0f;
+
     // Use this for initialization
     void Start()
     {
@@ -45,7 +47,16 @@ public class VisualStimulus : MonoBehaviour
                 {
                     if (hit.collider.gameObject == hitColliders[i].gameObject)
                     {
-                        GameSystem.Get().GD.ApplyStimuli(hitColliders[i].gameObject.GetComponent<ZombieScript>(), visualStimuli);
+                        Transform trans = new GameObject().transform;
+                        trans.position = hitColliders[i].transform.position;
+                        trans.LookAt(transform.position);
+
+                        if(Quaternion.Angle(hitColliders[i].transform.rotation, trans.rotation) < _viewAngle)
+                        {
+                            GameSystem.Get().GD.ApplyStimuli(hitColliders[i].gameObject.GetComponent<ZombieScript>(), visualStimuli);
+                        }
+
+                        Destroy(trans.gameObject);
                     }
                 }
             }

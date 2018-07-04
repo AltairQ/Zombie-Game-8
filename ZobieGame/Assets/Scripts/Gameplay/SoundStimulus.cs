@@ -15,7 +15,7 @@ public class SoundStimulus : MonoBehaviour
 
     public void Init(float volume, int type)
     {
-        _volume = volume;
+        _volume = volume * 2.0f;
         _range = Mathf.Sqrt(volume);
         _type = type;
     }

@@ -5,6 +5,8 @@ using UnityEngine;
 public class WeaponScript : MonoBehaviour
 {
     [SerializeField]
+    private bool _melee;
+    [SerializeField]
     private Vector3 _gunOffset;
     [SerializeField]
     private GameObject _bullet, _bulletImage, _barrelEnd, _casing, _slide, _ejectionPort, _mag;
@@ -16,6 +18,7 @@ public class WeaponScript : MonoBehaviour
     private bool _primary, _dropOnReload, _held = false, _moveSlide;
     System.Random _rnd = new System.Random();
 
+    public bool Melee {  get { return _melee; } }
     public float CurrentReload { get { return _currentReload; } }
     public int MagazineSize { get { return _magazineSize; } }
     public int BulletsLeft { get { return _bulletsLeft; } }
@@ -29,6 +32,7 @@ public class WeaponScript : MonoBehaviour
 
     private float _currentReload, _currentCooldown, _slidePos, _slideRec = 0.075f;
     private int _casings;
+    GameObject _playerTorso;
 
     public static void ClearUI()
     {
@@ -61,6 +65,8 @@ public class WeaponScript : MonoBehaviour
 	void Start ()
     {
         _held = false;
+        _playerTorso = GameSystem.Get().Player;
+        _playerTorso = GameSystem.Get().Player.transform.GetChild(1).gameObject;
 
         if (_moveSlide)
         {
@@ -76,6 +82,22 @@ public class WeaponScript : MonoBehaviour
     public void HAXRefillAmmo()
     {
         GameSystem.Get().Player.GetComponent<PlayerScript>().Ammo[AmmoType] += 100;
+        GameSystem.Get().Player.GetComponent<PlayerScript>().Damage(-100);
+    }
+
+    void R_Shoot_Melee()
+    {
+        if (_currentCooldown <= 0)
+        {
+            GameObject new_bullet = Instantiate(_bullet, _barrelEnd.transform.position, transform.rotation);
+            new_bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y, _damage, 0.1f);
+            _currentCooldown = _cooldown;
+
+            GameObject soundStimulus = Instantiate(GameSystem.Get().SoundStimulus, transform.position, transform.rotation);
+            soundStimulus.GetComponent<SoundStimulus>().Init(_noise, 0);
+
+            _shoot.Play();
+        }
     }
 
     void R_Shoot()
@@ -114,23 +136,30 @@ public class WeaponScript : MonoBehaviour
 
     public void Shoot()
     {
-        RaycastHit hit;
-        var rayDirection = new Vector3(0, 0.3f, 0) + _barrelEnd.transform.position - (GameSystem.Get().Player.transform.position + Vector3.Scale(GameSystem.Get().GunPos, new Vector3(0, 1, 0)));
-        rayDirection = Vector3.Scale(rayDirection, new Vector3(1, 0, 1));
-
-        GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = false;
-
-        if (Physics.Raycast(transform.position - Vector3.Normalize(rayDirection), rayDirection, out hit))
+        if(!_melee)
         {
-            if (hit.distance > 2.0f || hit.transform.gameObject.CompareTag("Zombie") || hit.transform.gameObject.CompareTag("Furniture"))
+            RaycastHit hit;
+            var rayDirection = new Vector3(0, 0.3f, 0) + _barrelEnd.transform.position - (GameSystem.Get().Player.transform.position + Vector3.Scale(GameSystem.Get().GunPos, new Vector3(0, 1, 0)));
+            rayDirection = Vector3.Scale(rayDirection, new Vector3(1, 0, 1));
+
+            GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = false;
+
+            if (Physics.Raycast(transform.position - Vector3.Normalize(rayDirection), rayDirection, out hit))
             {
-                R_Shoot();
+                if (hit.distance > 2.0f || hit.transform.gameObject.CompareTag("Zombie") || hit.transform.gameObject.CompareTag("Furniture"))
+                {
+                    R_Shoot();
+                }
             }
+            else
+                R_Shoot();
+
+            GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = true;
         }
         else
-            R_Shoot();
-
-        GameSystem.Get().Player.transform.GetComponent<CapsuleCollider>().enabled = true;
+        {
+            R_Shoot_Melee();
+        }
     }
 
     public void Reload(int ammo)
@@ -172,7 +201,15 @@ public class WeaponScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if(!_held && _bulletsLeft == 0)
+        //        print(_playerTorso.transform.localRotation.eulerAngles);
+
+        if(_held && _melee)
+        _playerTorso.transform.localRotation = Quaternion.Euler(new Vector3(
+            Mathf.Sin(Mathf.PI * _currentCooldown / _cooldown) * 30,
+            _playerTorso.transform.localRotation.eulerAngles.y,
+            _playerTorso.transform.localRotation.eulerAngles.z));
+
+        if (!_held && _bulletsLeft == 0)
         {
             Destroy(this.gameObject);
         }
@@ -185,7 +222,7 @@ public class WeaponScript : MonoBehaviour
             transform.Rotate(Vector3.up, Time.deltaTime * 60);
         }
 
-        if (_currentReload > 0)
+        if (!_melee && _currentReload > 0)
         {
             _currentReload -= Time.deltaTime;
 
@@ -196,13 +233,16 @@ public class WeaponScript : MonoBehaviour
                 _mag.SetActive(false);
         }
         else
-            if (!_dropOnReload)
+            if (!_melee && !_dropOnReload)
                 _mag.SetActive(true);
 
         if (_currentCooldown > 0)
         {
             _currentCooldown -= Time.deltaTime;
         }
+
+        if (_currentCooldown < 0)
+            _currentCooldown = 0;
 
         if (_moveSlide)
             _slide.transform.localPosition = new Vector3(_slide.transform.localPosition.x, _slide.transform.localPosition.y, _slidePos - _slideRec * (_bulletsLeft > 0 && _currentReload <= 0 ? (_currentCooldown / _cooldown) : 1));

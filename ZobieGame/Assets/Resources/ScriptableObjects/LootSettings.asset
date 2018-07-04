@@ -14,16 +14,16 @@ MonoBehaviour:
   _items:
   - prefab: {fileID: 1755770497969518, guid: 038dbcb0c76e8dd4ea67f0c3475d2f1c, type: 2}
     tokens: 20
-    chance: 11%
+    chance: 10%
   - prefab: {fileID: 1390526072162192, guid: 9a9aadb0e13c73549bd7a825da30940f, type: 2}
     tokens: 15
-    chance: 8%
+    chance: 7%
   - prefab: {fileID: 1979140951342306, guid: 1c72c7d43b5824c4998b312adabf92db, type: 2}
     tokens: 10
     chance: 5%
   - prefab: {fileID: 1068018167133042, guid: 59b774d6139ea65418cf21641d4eb147, type: 2}
     tokens: 15
-    chance: 8%
+    chance: 7%
   - prefab: {fileID: 1173417041691004, guid: 803fc976e5fab984c897ee4de7569c1a, type: 2}
     tokens: 10
     chance: 5%
@@ -32,10 +32,16 @@ MonoBehaviour:
     chance: 5%
   - prefab: {fileID: 1895966071829750, guid: 3a49d5b528fcc7b41a3dc6c5d43f785e, type: 2}
     tokens: 45
-    chance: 26%
+    chance: 23%
   - prefab: {fileID: 1569586453807174, guid: 13b08f4818f68f744a2f31e1ecc6731c, type: 2}
     tokens: 20
-    chance: 11%
+    chance: 10%
   - prefab: {fileID: 1712859821746392, guid: 13df80ddc676b5447ba88c19ebe8606c, type: 2}
-    tokens: 25
-    chance: 14%
+    tokens: 15
+    chance: 7%
+  - prefab: {fileID: 1508252454514962, guid: 0bebe58d9f56d184381554bbe3dd56c4, type: 2}
+    tokens: 10
+    chance: 5%
+  - prefab: {fileID: 1135940410300556, guid: 348fc65590a9f074d924bbeb5400dd09, type: 2}
+    tokens: 20
+    chance: 10%

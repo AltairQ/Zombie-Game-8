@@ -5,10 +5,13 @@ using UnityEngine.AI;
 
 public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 {
+    bool _attacking;
     int _ID;
     float _health;
-    float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 2.0f, _timeLeft = 5.0f, _armor;
+    float _attack = 10, _attackCooldown = 2.0f, _currentAttackCooldown = 0, _attackRange = 1.0f, _timeLeft = 5.0f, _armor, _disengageCooldown;
     float _currentAICooldown = 0;
+    float _meleeDelay = 1.0f;
+    float _currentMeleeDelay = 0.0f;
     GameObject _player;
     PlayerScript _playerScript;
     Animator _anim;
@@ -19,6 +22,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     int _level = 1;
 
     Stimuli _stimuli;
+    Material _material;
+    Color _color;
 
     AudioSource _audioAttack;
     AudioSource _audioInjured;
@@ -31,6 +36,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     public void SetGenes(Genotype dna)
     {
         //_level = genes.level;
+        _color = dna.GetColor();
         _ID = dna.Id;
         _health = dna.genes.G_health;
         _attack = dna.genes.G_strength;
@@ -111,11 +117,11 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public bool AttackMeleePlayer()
     {
-        if (MeleeReady() && PlayerInMeleeRange())
+        if ((_disengageCooldown <= 0) && MeleeReady() && PlayerInMeleeRange())
         {
             _audioAttack.Play();
-            _playerScript.Damage(_attack);
-            _attackScore += _attack;
+            _currentMeleeDelay = _meleeDelay;
+            _attacking = true;
             _currentAttackCooldown = _attackCooldown;
             _anim.SetBool("Attack", true);
             return true;
@@ -128,11 +134,26 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Fixed Start -> Awake
     void Awake()
     {
+        print(_color);
+        _material = transform.GetChild(0).GetChild(1).GetComponent<SkinnedMeshRenderer>().materials[2];
+        _material.color = _color;
+        transform.GetChild(0).GetChild(1).GetComponent<SkinnedMeshRenderer>().materials[2] = _material;
+
         _nv = GetComponent<NavMeshAgent>();
         _health = 100;
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
         _player = GameSystem.Get().Player;
         _anim = transform.GetChild(0).GetComponent<Animator>();
+
+        RuntimeAnimatorController ac = _anim.runtimeAnimatorController;    //Get Animator controller
+
+        for (int i = 0; i < ac.animationClips.Length; i++)                 //For all animations
+        {
+            if (ac.animationClips[i].name == "Attack1")        //If it has the same name as your clip
+            {
+                _attackCooldown = ac.animationClips[i].length * 2.0f;
+            }
+        }
 
         AudioSource[] audioSources = GetComponents<AudioSource>();
         _audioAttack = audioSources[0];
@@ -158,12 +179,27 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Update is called once per frame
     void Update()
     {
+        if (PlayerInMeleeRange())
+            _disengageCooldown -= Time.deltaTime;
+        else
+            _disengageCooldown = _attackCooldown;
+
+        if (_currentMeleeDelay > 0)
+            _currentMeleeDelay -= Time.deltaTime;
+
+        if(_attacking && (_currentMeleeDelay <= 0) && PlayerInMeleeRange())
+        {
+            _attacking = false;
+            _playerScript.Damage(_attack);
+            _attackScore += _attack;
+        }
+
         if (_stimuli == null)
             _anim.SetBool("Walking", false);
         else
             _anim.SetBool("Walking", true);
 
-        if ((_anim.GetCurrentAnimatorStateInfo(0).IsName("Attack 1")))
+        if (!PlayerInMeleeRange())
             _anim.SetBool("Attack", false);
 
         _currentAttackCooldown -= Time.deltaTime;

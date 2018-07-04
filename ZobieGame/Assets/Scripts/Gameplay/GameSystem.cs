@@ -44,6 +44,8 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     private GameObject _mine;
     [SerializeField]
     private GameObject _soundStimulus;
+    [SerializeField]
+    private GameObject _visualStimulus;
 
     private GameObject _player = null;
     private Vector3 _gunPos = new Vector3(0.1f, 0.3f, 0.75f);
@@ -64,6 +66,7 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     public GameObject Explosion { get { return _explosion; } }
     public GameObject Mine { get { return _mine; } }
     public GameObject SoundStimulus { get { return _soundStimulus; } }
+    public GameObject VisualStimulus { get { return _visualStimulus; } }
     public Light Sunlight { get { return _light; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
