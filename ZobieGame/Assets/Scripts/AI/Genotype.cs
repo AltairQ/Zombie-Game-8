@@ -6,7 +6,7 @@ using UnityEngine;
 public class Genotype
 {
     // species (population id)
-    public string species ="";
+    public string species = "";
 
     // Unique enemy ID (used by Game Director)
     public int Id;
@@ -37,12 +37,11 @@ public class Genotype
 
         for(int i = 0; i < species.Length; i++)
         {
-            htmp *= 33;
-            htmp += (species[i]) * 42;
-            htmp %= 131;
+            htmp += (species[i] - 'a') * System.Math.Max(1, 21 - 10 * i);
+            htmp %= 359;
         }
 
-        return Color.HSVToRGB(htmp / 130.0f, 1.0f, 1.0f);
+        return Color.HSVToRGB(htmp / 358.0f, 1.0f, 1.0f);
     }
 
     public float GetValue()
