@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 {
@@ -46,6 +47,12 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     private GameObject _soundStimulus;
     [SerializeField]
     private GameObject _visualStimulus;
+    [SerializeField]
+    private GameObject _silencer;
+    [SerializeField]
+    private GameObject _cracker;
+    [SerializeField]
+    private Text _leftText;
 
     private GameObject _player = null;
     private Vector3 _gunPos = new Vector3(0.1f, 0.3f, 0.75f);
@@ -55,6 +62,8 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
 
     [SerializeField]
     private GameObject _audioItemPickup;
+
+    private bool _playerMenuVisible = false;
 
     public GameObject AudioItemPickup { get { return _audioItemPickup; } }
     public GameObject Player { get { return _player; } }
@@ -67,7 +76,11 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
     public GameObject Mine { get { return _mine; } }
     public GameObject SoundStimulus { get { return _soundStimulus; } }
     public GameObject VisualStimulus { get { return _visualStimulus; } }
+    public GameObject Silencer { get { return _silencer; } }
+    public GameObject Cracker { get { return _cracker; } }
+    public Text LeftText { get { return _leftText; } }
     public Light Sunlight { get { return _light; } }
+    public bool PlayerMenuVisible { get { return _playerMenuVisible; } set { _playerMenuVisible = value; } }
     private List<GameObject> _zombies = new List<GameObject>();
 
     // (in seconds) next time to execute GameDirector routine (update)
@@ -91,6 +104,8 @@ public class GameSystem : MonoBehaviour, IAIEnvActions, IAIEnvState
         _mainCanvas.transform.GetChild(2).transform.position = new Vector3(Screen.width - 70, Screen.height - 20, 0);
         _mainCanvas.transform.GetChild(4).transform.position = new Vector3(Screen.width / 2, Screen.height - 48, 0);
         _mainCanvas.transform.GetChild(5).transform.position = new Vector3(10, Screen.height - 65, 0);
+        _mainCanvas.transform.GetChild(6).transform.position = new Vector3(10, Screen.height - 80, 0);
+        _mainCanvas.transform.GetChild(7).transform.position = new Vector3(10, Screen.height - 95, 0);
 
         _light = GameObject.FindWithTag("Light").GetComponent<Light>();
 

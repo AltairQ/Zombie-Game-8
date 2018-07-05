@@ -17,6 +17,8 @@ public class WeaponScript : MonoBehaviour
     [SerializeField]
     private bool _primary, _dropOnReload, _held = false, _moveSlide;
     System.Random _rnd = new System.Random();
+    private PlayerScript _playerScript;
+    private bool _silenced;
 
     public bool Melee {  get { return _melee; } }
     public float CurrentReload { get { return _currentReload; } }
@@ -26,6 +28,8 @@ public class WeaponScript : MonoBehaviour
     public bool Held { get { return _held; } set { _held = value; } }
     public bool Primary { get { return _primary; } }
     public float Offset { get { return _offset; } }
+    public bool Silenced { get { return _silenced; } }
+    public PlayerScript Player { get { return _playerScript; } set { _playerScript = value; } }
     public Vector3 GunOffset { get { return _gunOffset; } }
 
     AudioSource _shoot, _reload;
@@ -33,6 +37,14 @@ public class WeaponScript : MonoBehaviour
     private float _currentReload, _currentCooldown, _slidePos, _slideRec = 0.075f;
     private int _casings;
     GameObject _playerTorso;
+
+    public void Silence()
+    {
+        GameObject suppresor = Instantiate(GameSystem.Get().Silencer, _barrelEnd.transform.position, transform.rotation);
+        suppresor.SetParent(this.gameObject);
+        _noise /= 5;
+        _silenced = true;
+    }
 
     public static void ClearUI()
     {
@@ -90,7 +102,7 @@ public class WeaponScript : MonoBehaviour
         if (_currentCooldown <= 0)
         {
             GameObject new_bullet = Instantiate(_bullet, _barrelEnd.transform.position, transform.rotation);
-            new_bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y, _damage, 0.1f);
+            new_bullet.GetComponent<BulletScript>().Initialize(transform.rotation.eulerAngles.y, _damage * (1 + _playerScript.Strength / 100), 0.1f);
             _currentCooldown = _cooldown;
 
             GameObject soundStimulus = Instantiate(GameSystem.Get().SoundStimulus, transform.position, transform.rotation);
@@ -121,7 +133,8 @@ public class WeaponScript : MonoBehaviour
             soundStimulus.GetComponent<SoundStimulus>().Init(_noise, 0);
 
             _shoot.Play();
-            Instantiate(GameSystem.Get().MuzzleFlash, _barrelEnd.transform.position, Quaternion.Euler(0, transform.rotation.eulerAngles.y + 90, 0));
+            if(!_silenced)
+                Instantiate(GameSystem.Get().MuzzleFlash, _barrelEnd.transform.position, Quaternion.Euler(0, transform.rotation.eulerAngles.y + 90, 0));
 
             // TMP HACK
             _bulletsLeft--;
@@ -204,10 +217,10 @@ public class WeaponScript : MonoBehaviour
         //        print(_playerTorso.transform.localRotation.eulerAngles);
 
         if(_held && _melee)
-        _playerTorso.transform.localRotation = Quaternion.Euler(new Vector3(
-            Mathf.Sin(Mathf.PI * _currentCooldown / _cooldown) * 30,
-            _playerTorso.transform.localRotation.eulerAngles.y,
-            _playerTorso.transform.localRotation.eulerAngles.z));
+            _playerTorso.transform.localRotation = Quaternion.Euler(new Vector3(
+                Mathf.Sin(Mathf.PI * _currentCooldown / _cooldown) * 30,
+                _playerTorso.transform.localRotation.eulerAngles.y,
+                _playerTorso.transform.localRotation.eulerAngles.z));
 
         if (!_held && _bulletsLeft == 0)
         {
@@ -224,7 +237,7 @@ public class WeaponScript : MonoBehaviour
 
         if (!_melee && _currentReload > 0)
         {
-            _currentReload -= Time.deltaTime;
+            _currentReload -= Time.deltaTime * (1 + _playerScript.Dexterity / 100);
 
             if ((1 - _currentReload / _reloadSpeed) * _magazineSize <= _bulletsLeft)
                 GameSystem.Get().MainCanvas.transform.GetChild(0).GetChild(Mathf.Min((int)((1 - (_currentReload / _reloadSpeed)) * _magazineSize), _magazineSize - 1)).gameObject.SetActive(true);
@@ -238,7 +251,7 @@ public class WeaponScript : MonoBehaviour
 
         if (_currentCooldown > 0)
         {
-            _currentCooldown -= Time.deltaTime;
+            _currentCooldown -= Time.deltaTime * (1 + _playerScript.Dexterity / 100);
         }
 
         if (_currentCooldown < 0)

@@ -12,6 +12,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     float _currentAICooldown = 0;
     float _meleeDelay = 1.0f;
     float _currentMeleeDelay = 0.0f;
+    float _stimuliDecay = 10.0f;
+    float _currentStimuliDecay = 0.0f;
     GameObject _player;
     PlayerScript _playerScript;
     Animator _anim;
@@ -29,6 +31,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     AudioSource _audioInjured;
     AudioSource _audioDead;
 
+    public GameObject _visualStimulus;
     public bool Dead { get { return _dead; } }
     public float Attack { get { return _attack; } }
     public int ID { get { return _ID; } set { _ID = value; } }
@@ -68,6 +71,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     public void ChangeStimuli(Stimuli st)
     {
         _stimuli = st;
+        _currentStimuliDecay = _stimuliDecay;
     }
 
     public int GetID()
@@ -178,10 +182,20 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Update is called once per frame
     void Update()
     {
+        _visualStimulus.SetActive(_stimuli != null);
+
+        if((_stimuli != null) && ((int)_stimuli.type != 0))
+        {
+            _currentStimuliDecay -= Time.deltaTime;
+        }
+
+        if (_currentStimuliDecay < 0)
+            _stimuli = null;
+
         if (PlayerInMeleeRange())
             _disengageCooldown -= Time.deltaTime;
         else
-            _disengageCooldown = _attackCooldown;
+            _disengageCooldown = _attackCooldown / 2;
 
         if (_currentMeleeDelay > 0)
             _currentMeleeDelay -= Time.deltaTime;
@@ -228,6 +242,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
                 {
                     _audioDead.Play();
                     GameSystem.Get().Player.GetComponent<PlayerScript>().Score += 10 + _ID;
+                    GameSystem.Get().Player.GetComponent<PlayerScript>().Experience += 10 + _ID;
                     GameSystem.Get().GD.EnemyDead(_ID, _attackScore, EuclidDistanceToPlayer());
                     _sent = true;
                 }

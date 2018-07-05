@@ -5,12 +5,14 @@ using UnityEngine;
 public class CarScript : MonoBehaviour
 {
     bool _open = false;
-    float _noise = 300.0f;
-    float _light = 200.0f;
-    float _searchTime = 10.0f;
+    float _noise = 500.0f;
+    float _light = 120.0f;
+    float _searchTime = 11.0f;
     float _rotationMultiplier = -1.0f;
     float _rotationLeft = 1;
     float _trashCooldown = 2.0f;
+    float _soundCooldown = 2.0f;
+    float _currentSoundCooldown = 0.0f;
     Vector3 _trunkPosition;
     GameObject _visualStimulus;
     GameObject _trunk;
@@ -38,8 +40,8 @@ public class CarScript : MonoBehaviour
             _alarm.SetActive(true);
             _random = new System.Random((int)Time.time);
             _open = true;
-            GameObject soundStimulus = Instantiate(GameSystem.Get().SoundStimulus, transform.position, transform.rotation);
-            soundStimulus.GetComponent<SoundStimulus>().Init(_noise, 0);
+//            GameObject soundStimulus = Instantiate(GameSystem.Get().SoundStimulus, transform.position, transform.rotation);
+//            soundStimulus.GetComponent<SoundStimulus>().Init(_noise, 0);
             _visualStimulus = Instantiate(GameSystem.Get().VisualStimulus, transform.position + new Vector3(0.0f, 2.0f, 0.0f), transform.rotation);
             _visualStimulus.GetComponent<VisualStimulus>().Init(_light, 0);
             _visualStimulus.SetParent(this.gameObject);
@@ -51,7 +53,16 @@ public class CarScript : MonoBehaviour
     {
         if(_open)
         {
-            _lights.SetActive(Mathf.Sin(Time.time * 5) > 0);
+            _currentSoundCooldown -= Time.deltaTime;
+
+            if (_currentSoundCooldown < 0)
+            {
+                GameObject soundStimulus = Instantiate(GameSystem.Get().SoundStimulus, transform.position, transform.rotation);
+                soundStimulus.GetComponent<SoundStimulus>().Init(_noise, 0);
+                _currentSoundCooldown = _soundCooldown;
+            }
+
+            _lights.SetActive(Mathf.Sin(Time.time) > 0);
 
             if (_rotationLeft > 0)
             {

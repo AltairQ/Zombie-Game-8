@@ -8,12 +8,13 @@ public class Stimuli
 {
     public Vector3 position;
     public float intensity;
+    public int type;
 }
 
 // When an actor hears a sound
 public class SoundStimuli : Stimuli
 {
-    public enum _Type { Gunshot, Player, Battle, Misc};
+    public enum _Type { Player, Gunshot, Battle, Misc};
     public _Type type;
 }
 
