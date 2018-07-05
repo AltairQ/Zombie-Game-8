@@ -4,15 +4,17 @@ using System.Collections.Generic;
 
 using System.Linq;
 
+using UnityEngine;
+
 // Collection of actors - just a simple wrapper
 public class Population {
 
     // credits to spawn zombies
-    public float score = 55.0f;
+    public float score = 0.0f;
 
     // cost of previously spawned zombie
     // TODO
-    public float last_cost = 10.0f;
+    public float last_cost;
 
     // population identifier
     public string Id;
@@ -33,10 +35,13 @@ public class Population {
 
     public Population(GameDirector parentgd, string pid, int progenitor)
     {
+        Debug.Log("creating " + pid + " with score " + score);
         // saving the reference
         _GD = parentgd;
 
         Id = pid;
+
+        last_cost = _GD._database[progenitor].DNA.GetValue();
 
         // don't seed the population
         // _population.Add(progenitor);

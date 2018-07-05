@@ -47,6 +47,6 @@ public class Genotype
     public float GetValue()
     {
         // TODO find a better formula
-        return genes.G_health * genes.G_armor * (genes.G_speed / 2.0f);
+        return 2 * genes.G_health * genes.G_armor * (genes.G_speed / 2.0f);
     }
 }
