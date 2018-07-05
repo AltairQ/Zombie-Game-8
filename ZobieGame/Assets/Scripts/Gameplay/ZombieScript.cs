@@ -32,6 +32,10 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     AudioSource _audioInjured;
     AudioSource _audioDead;
 
+    System.Random _rnd;
+
+    Vector3 _point = Vector3.zero;
+
     public GameObject _visualStimulus;
     public bool Dead { get { return _dead; } }
     public float Attack { get { return _attack; } }
@@ -117,6 +121,18 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         return _nv.SetDestination(GameSystem.Get().Player.transform.position);
     }
 
+    public void GoToPoint()
+    {
+        float angle = _rnd.Next(360);
+        angle /= 2 * Mathf.PI;
+        float dist = _rnd.Next(5, 10);
+        _point = new Vector3(Mathf.Sin(angle) * dist, 0.0f, Mathf.Cos(angle) * dist);
+        _point += transform.position;
+
+        GetComponent<NavMeshAgent>().SetDestination(_point);
+    }
+
+
     public bool GoToStimuli()
     {
         if (_stimuli != null)
@@ -144,6 +160,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Fixed Start -> Awake
     void Awake()
     {
+        _rnd = new System.Random((int)Time.time);
+
         _nv = GetComponent<NavMeshAgent>();
         _health = 100;
         _playerScript = GameSystem.Get().Player.GetComponent<PlayerScript>();
@@ -194,9 +212,10 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
         if (_stimuli == null)
             _boredCounter += Time.deltaTime;
 
-        if(_boredCounter > 20)
+        if(_boredCounter > 30)
         {
-            GoToStimuli();
+            GoToPoint();
+            _boredCounter = 0.0f;
         }
 /*
         if (_currentStimuliDecay < 0)
@@ -217,7 +236,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
             _attackScore += _attack;
         }
 
-        if (_stimuli == null)
+        if (_stimuli == null && (Vector3.Distance(transform.position, _point) < 1.0f))
             _anim.SetBool("Walking", false);
         else
             _anim.SetBool("Walking", true);
