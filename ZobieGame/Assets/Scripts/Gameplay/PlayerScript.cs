@@ -46,10 +46,10 @@ public class PlayerScript : MonoBehaviour
     private Text _ammoLeft;
     private float _food;
     private float _foodMax;
-    private float _foodRate = 0.25f;
+    private float _foodRate = 0.1f;
     private float _water;
     private float _waterMax;
-    private float _waterRate = 0.50f;
+    private float _waterRate = 0.2f;
     private int _supplies = 3;
     private int _crackers = 0;
     private int _experience = 0;
@@ -58,6 +58,7 @@ public class PlayerScript : MonoBehaviour
     private int _dexterity = 0;
     private GameObject _grabbedObject, _grabIndicator;
     System.Random _rnd = new System.Random();
+    public float _visibility = 1.0f;
 
     [SerializeField]
     private Text _leftText;
@@ -267,6 +268,8 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        transform.GetChild(4).GetComponent<VisualStimulus>()._intensity = 100 * _visibility;
+
         _leftText.text = "mines: " + Mines + "\n" + "bait: " + Crackers;
 
         _stamina += Time.deltaTime * 10;
@@ -477,5 +480,7 @@ public class PlayerScript : MonoBehaviour
                 WeaponScript.ClearUI();
             _primarySelected = _primarySelected ? false : true;
         }
+
+        _visibility = Mathf.Max(0.1f, GameSystem.Get().Sunlight.intensity);
     }
 }

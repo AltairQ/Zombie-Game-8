@@ -14,6 +14,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     float _currentMeleeDelay = 0.0f;
     float _stimuliDecay = 10.0f;
     float _currentStimuliDecay = 0.0f;
+    float _boredCounter = 0.0f;
     GameObject _player;
     PlayerScript _playerScript;
     Animator _anim;
@@ -70,6 +71,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
 
     public void ChangeStimuli(Stimuli st)
     {
+        _boredCounter = 0;
         _stimuli = st;
         _currentStimuliDecay = _stimuliDecay;
     }
@@ -182,16 +184,24 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Update is called once per frame
     void Update()
     {
-        _visualStimulus.SetActive(_stimuli != null);
+//        _visualStimulus.SetActive(_stimuli != null);
 
         if((_stimuli != null) && ((int)_stimuli.type != 0))
         {
             _currentStimuliDecay -= Time.deltaTime;
         }
 
+        if (_stimuli == null)
+            _boredCounter += Time.deltaTime;
+
+        if(_boredCounter > 20)
+        {
+            GoToStimuli();
+        }
+/*
         if (_currentStimuliDecay < 0)
             _stimuli = null;
-
+*/
         if (PlayerInMeleeRange())
             _disengageCooldown -= Time.deltaTime;
         else

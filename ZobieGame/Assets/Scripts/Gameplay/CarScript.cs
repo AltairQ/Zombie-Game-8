@@ -62,7 +62,7 @@ public class CarScript : MonoBehaviour
                 _currentSoundCooldown = _soundCooldown;
             }
 
-            _lights.SetActive(Mathf.Sin(Time.time) > 0);
+            _lights.SetActive(Mathf.Sin(Time.time * 5) > 0);
 
             if (_rotationLeft > 0)
             {

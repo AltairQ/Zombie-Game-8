@@ -5,7 +5,7 @@ using UnityEngine;
 public class VisualStimulus : MonoBehaviour
 {
     [SerializeField]
-    float _range, _intensity;
+    public float _range, _intensity;
     [SerializeField]
     VisualStimuli._Type _type;
 
