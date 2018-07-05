@@ -122,7 +122,7 @@ public class Population {
 
     }
 
-    private Genotype MateAndMutate(int a, int b)
+    private Genotype MateAndMutate(int a, int b, float degree)
     {
         Genotype d1 = _GD.InfoFromId(a).DNA;
         Genotype d2 = _GD.InfoFromId(b).DNA;
@@ -132,23 +132,23 @@ public class Population {
         // Very ugly block of code       
         Genes g = new Genes
         {
-            G_health = _GD.UMChoice(d1.genes.G_health, d2.genes.G_health),
-            G_speed = _GD.UMChoice(d1.genes.G_speed, d2.genes.G_speed),
-            G_strength = _GD.UMChoice(d1.genes.G_strength, d2.genes.G_strength),
+            G_health = _GD.UMChoice(d1.genes.G_health, d2.genes.G_health, degree),
+            G_speed = _GD.UMChoice(d1.genes.G_speed, d2.genes.G_speed, degree),
+            G_strength = _GD.UMChoice(d1.genes.G_strength, d2.genes.G_strength, degree),
             // this was so strong I had to nerf it
             G_melee_range = 2, //  UMChoice(d1.genes.G_melee_range, d2.genes.G_melee_range),
-            G_armor = _GD.UMChoice(d1.genes.G_armor, d2.genes.G_armor)
+            G_armor = _GD.UMChoice(d1.genes.G_armor, d2.genes.G_armor, degree)
         };
 
         return new Genotype(g, m, this.Id);
     }
 
-    private Genotype SelectAndBreed()
+    private Genotype SelectAndBreed(float degree)
     {
         int parent1 = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
         int parent2 = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
 
-        Genotype son = MateAndMutate(parent1, parent2);
+        Genotype son = MateAndMutate(parent1, parent2, degree);
 
         last_cost = son.GetValue();
         score -= last_cost;
@@ -156,10 +156,10 @@ public class Population {
         return son;
     }
 
-    public Genotype Evolve(float mutation = 5.0f)
+    public Genotype Evolve(float mutation = 0.1f)
     {
         this.DarwinInAction();
-        return this.SelectAndBreed();
+        return this.SelectAndBreed(mutation);
     }
 
     public bool CanSpawn()

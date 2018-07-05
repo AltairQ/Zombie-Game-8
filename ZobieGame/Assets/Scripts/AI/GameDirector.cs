@@ -10,8 +10,10 @@ using System.Linq;
 public class GameDirector
 {
 
-    public static float _mutation_deg_normal = 5.0f;
+    public static float _mutation_deg_normal = 0.1f;
     public static float _mutation_deg_fork = 5 * _mutation_deg_normal;
+
+    private float _credit_target = 20.0f;
 
 
     // Internal storage
@@ -372,12 +374,14 @@ public class GameDirector
     {
         _tick_count++;
 
+        _credit_target = 20.0f + _tick_count * 2.0f;
+
         // this is necessary - foreach doesn't allow modification of the container
         List<Population> to_fork = new List<Population>();
 
         foreach (var pop in _populations)
         {
-            pop.score += _subsidy;
+            pop.score += _credit_target / _population.Count();
 
             Debug.Log("Foreach in: " + pop.Id);
 
