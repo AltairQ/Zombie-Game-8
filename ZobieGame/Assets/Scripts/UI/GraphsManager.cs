@@ -90,4 +90,16 @@ public class GraphsManager : MonoBehaviour
         return true;
     }
 
+    public bool SetMaxPoints(string graphName, int maxPoints)
+    {
+        var graph = GetGraph(graphName);
+        if (!graph)
+        {
+            return false;
+        }
+
+        graph.MaxPoints = maxPoints;
+        return true;
+    }
+
 }
