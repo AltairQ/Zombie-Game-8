@@ -7,7 +7,12 @@ using System.Linq;
 
 
 // Class coordinating populations and the interface between Unity and AI "engine"
-public class GameDirector{
+public class GameDirector
+{
+
+    public static float _mutation_deg_normal = 5.0f;
+    public static float _mutation_deg_fork = 5 * _mutation_deg_normal;
+
 
     // Internal storage
     public Dictionary<int, ActorInfo> _database = new Dictionary<int, ActorInfo>();
@@ -46,8 +51,6 @@ public class GameDirector{
 
     public GameDirector()
     {
-        string pid = "a";
-
         Genes g = new Genes
         {
             G_health = UMChoice(70, 70),
@@ -62,16 +65,54 @@ public class GameDirector{
             M_courage = 1.0F
         };
 
-        var tmpg = new Genotype(g, m)
-        {
-            Id = _nextId++,
-            species = pid
-        };
-        _database.Add(tmpg.Id, new ActorInfo(g, m));
+        var tmpg = new Genotype(g, m);
 
-        Population ptmp = new Population(this, pid, tmpg.Id);
+        AddPopulationFromGenotype(tmpg);
+    }
+
+
+    public char RandomLetter()
+    {
+        return (char)this.UniformInt((int)'a', 1+(int)'z');
+    }
+
+    /// <summary>
+    /// Adds the genotype and population to databases
+    /// </summary>
+    /// <param name="seed"></param>
+    public void AddPopulationFromGenotype(Genotype seed)
+    {
+        this.AddActor(seed);
+
+        string pid = seed.species;
+
+        Debug.Log("AddPopulationFromGenotype: " + pid);
+
+        if (pid.Length == 0)
+        {
+            pid = this.RandomLetter().ToString();
+            seed.species = pid;
+            Debug.Log("Created new pid: " + pid);
+        }
+            
+
+        Population ptmp = new Population(this, pid, seed.Id);
+
         _population_db.Add(ptmp.Id, ptmp);
         _populations.Add(ptmp);
+    }
+
+    public Genotype ForkPopulation(Population ancestors)
+    {
+        Genotype specimen = ancestors.Evolve(_mutation_deg_fork);
+        this.AddActor(specimen);
+
+        Population tmpp = new Population(this, ancestors.Id + this.RandomLetter().ToString(), specimen.Id);
+
+        _population_db.Add(tmpp.Id, tmpp);
+        _populations.Add(tmpp);
+
+        return specimen;
     }
 
 
@@ -183,10 +224,19 @@ public class GameDirector{
         return newdna;
     }
 
-    // TODO remove and add proper population choice
     public Genotype NewEnemy()
     {
-        return NewEnemy("a");
+        return NewEnemy(_populations.First().Id);
+    }
+
+
+
+    public Genotype AddActor(Genotype ing)
+    {
+        ing.Id = _nextId++;
+        _database.Add(ing.Id, new ActorInfo(ing));
+
+        return ing;
     }
 
     /// <summary>
@@ -196,11 +246,8 @@ public class GameDirector{
     /// <returns>The edited Genotype</returns>
     public Genotype AddEnemy(Genotype ing)
     {
-        ing.Id = _nextId++;
-        
-        _database.Add(ing.Id, new ActorInfo(ing));
-        _population.Add(ing.Id);
-        
+        this.AddActor(ing);        
+        _population.Add(ing.Id);        
 
         return ing;
     }
@@ -325,15 +372,34 @@ public class GameDirector{
     {
         _tick_count++;
 
+        // this is necessary - foreach doesn't allow modification of the container
+        List<Population> to_fork = new List<Population>();
+
         foreach (var pop in _populations)
         {
             pop.score += _subsidy;
 
+            Debug.Log("Foreach in: " + pop.Id);
+
             if (pop.CanSpawn())
+            {
+                if (this.UniformInt(0, 10) == 4)
+                    to_fork.Add(pop);
+
                 warudo.SpawnEnemy(this.NewEnemy(pop.Id));
+            }
+               
+        }
+
+        foreach (var pop in to_fork)
+        {
+            ForkPopulation(pop);
         }
 
         ShowPopulationStats();
+
+        Debug.Log("-------------------");
+
     }
 
 }

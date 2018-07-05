@@ -38,10 +38,16 @@ public class Population {
 
         Id = pid;
 
-        // seed the population
-        _population.Add(progenitor);
-        // and the candidates
+        // don't seed the population
+        // _population.Add(progenitor);
+        // add to the candidates
         _candidates.Add(progenitor);
+    }
+
+    public int FetchRandomCandidate()
+    {
+        // more like "arbitrary", whatever
+        return _population.First();
     }
 
 
@@ -139,10 +145,10 @@ public class Population {
 
     private Genotype SelectAndBreed()
     {
-        int mom = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
-        int dad = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
+        int parent1 = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
+        int parent2 = _candidates[_GD.NonuniformRandomLow(_candidates.Count)];
 
-        Genotype son = MateAndMutate(mom, dad);
+        Genotype son = MateAndMutate(parent1, parent2);
 
         last_cost = son.GetValue();
         score -= last_cost;
@@ -150,7 +156,7 @@ public class Population {
         return son;
     }
 
-    public Genotype Evolve()
+    public Genotype Evolve(float mutation = 5.0f)
     {
         this.DarwinInAction();
         return this.SelectAndBreed();
