@@ -235,6 +235,9 @@ public class GameDirector{
 
     public void ShowPopulationStats()
     {
+        if (_population.Count == 0)
+            return;
+
         var graphs = GameSystem.Get().GraphsManager;
 
         float physSizeValue = _population.Average(x => InfoFromId(x).DNA.genes.GetPhysSize());
