@@ -18,6 +18,17 @@ public class GraphDrawer : MonoBehaviour
         }
     }
 
+    private float? _minValue = null;
+    private float? _maxValue = null;
+    public void SetMinValue(float minValue)
+    {
+        _minValue = minValue;
+    }
+    public void SetMaxValue(float maxValue)
+    {
+        _maxValue = maxValue;
+    }
+
     private int _maxPoints = 10;
     public int MaxPoints
     {
@@ -38,10 +49,22 @@ public class GraphDrawer : MonoBehaviour
         _values.Clear();
     }
     
-    public void AddValue(float value)
+    public bool AddValue(float value)
     {
+        if(_minValue != null && _minValue.Value > value)
+        {
+            Debug.LogError("Value is smaller than min value!");
+            return false;
+        }
+        if (_maxValue != null && _maxValue.Value < value)
+        {
+            Debug.LogError("Value is bigger than max value!");
+            return false;
+        }
+
         _values.Add(value);
         Draw();
+        return true;
     }
 
     private void Draw()
@@ -60,8 +83,8 @@ public class GraphDrawer : MonoBehaviour
     {
         List<Vector2> points = new List<Vector2>();
         List<float> values = new List<float>(valuesArr);
-        float max = values.Max();
-        float min = values.Min();
+        float max = _maxValue == null ? values.Max() : _maxValue.Value;
+        float min = _minValue == null ? values.Min() : _minValue.Value;
 
         float height = _background.rect.height;
         float width = _background.rect.width;

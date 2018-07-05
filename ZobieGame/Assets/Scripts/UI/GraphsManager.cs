@@ -22,12 +22,16 @@ public class GraphsManager : MonoBehaviour
     //    var g1 = CreateGraph("graph1", Color.green);
     //    var g2 = CreateGraph("graph2", Color.blue);
     //    var g3 = CreateGraph("graph3", Color.red);
+    //    g1.SetMinValue(-1);
+    //    g1.SetMaxValue(10);
+    //    g2.SetMinValue(0);
+
     //    for (int i = 0; i < 5; i++)
     //    {
     //        g1.AddValue(i);
     //        g2.AddValue(i * i);
     //        g3.AddValue(1);
-    //    }   
+    //    }
     //}
 
     public GraphDrawer CreateGraph(string name, Color lineColor)
@@ -59,7 +63,31 @@ public class GraphsManager : MonoBehaviour
             return false;
         }
 
-        graph.AddValue(value);
+        return graph.AddValue(value);
+    }
+
+    public bool SetMaxValue(string graphName, float maxValue)
+    {
+        var graph = GetGraph(graphName);
+        if (!graph)
+        {
+            return false;
+        }
+
+        graph.SetMaxValue(maxValue);
         return true;
     }
+
+    public bool SetMinValue(string graphName, float minValue)
+    {
+        var graph = GetGraph(graphName);
+        if (!graph)
+        {
+            return false;
+        }
+
+        graph.SetMinValue(minValue);
+        return true;
+    }
+
 }
