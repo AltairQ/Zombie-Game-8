@@ -39,7 +39,12 @@ public class MapPart
         biggerRect.xMin -= width * scale;
         biggerRect.xMax += width * scale;
 
-        _ground = Utils.CreateGround(biggerRect, _map.gameObject);
+        Rect groundRect = biggerRect;
+        if(map.GlobalNavMeshgeneration)
+        {
+            groundRect = _rect;
+        }
+        _ground = Utils.CreateGround(groundRect, _map.gameObject);
     }
 
     private void ChooseType()
