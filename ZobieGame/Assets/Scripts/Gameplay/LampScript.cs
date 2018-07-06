@@ -11,9 +11,11 @@ public class LampScript : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-	}
+	void Update ()
+    {
+        transform.GetChild(0).gameObject.SetActive(GameSystem.Get().Sunlight.intensity < 0.4f);
+        transform.GetChild(1).gameObject.SetActive(GameSystem.Get().Sunlight.intensity < 0.4f);
+    }
 
     private void OnTriggerEnter(Collider other)
     {

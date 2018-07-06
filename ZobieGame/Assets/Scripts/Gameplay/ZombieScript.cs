@@ -41,6 +41,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     public float Attack { get { return _attack; } }
     public int ID { get { return _ID; } set { _ID = value; } }
 
+    GameObject _model;
+
     public void SetGenes(Genotype dna)
     {
         //_level = genes.level;
@@ -160,6 +162,8 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Fixed Start -> Awake
     void Awake()
     {
+        _model = transform.GetChild(0).gameObject;
+
         _rnd = new System.Random((int)Time.time);
 
         _nv = GetComponent<NavMeshAgent>();
@@ -202,6 +206,7 @@ public class ZombieScript : MonoBehaviour, IAIState, IAIActions
     // Update is called once per frame
     void Update()
     {
+        _model.transform.position = new Vector3(_model.transform.position.x, 0, _model.transform.position.z);
 //        _visualStimulus.SetActive(_stimuli != null);
 
         if((_stimuli != null) && ((int)_stimuli.type != 0))
